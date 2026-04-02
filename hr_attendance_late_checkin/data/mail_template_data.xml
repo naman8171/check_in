@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <data>
     <record id="mail_template_late_check_in" model="mail.template">
         <field name="name">Late Check-in Alert</field>
-        <field name="model_id" ref="hr_attendance.model_hr_attendance" />
+        <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
 
-        <!-- SUBJECT -->
-        <field name="subject">
-            Late Check-in Notice: ${object.employee_id.name or 'Employee'}
-        </field>
+        <field name="subject">Late Check-in Notice: {{ object.employee_id.name or 'Employee' }}</field>
 
-        <!-- SENDER -->
-        <field name="email_from">
-            ${(user.email_formatted or 'noreply@company.com')|safe}
-        </field>
+        <field name="email_from">{{ user.email_formatted or 'noreply@company.com' }}</field>
 
-        <!-- BODY -->
-        <field name="body_html" type="html">
-            <div style="font-family: Arial; font-size:14px;">
-
-                <p> Hello <strong>${object.employee_id.parent_id.name or 'Manager'}</strong>, </p>
-
-                <p> This is to inform you that <strong>${object.employee_id.name or 'Employee'}</strong>
-                    has checked in late. </p>
-
+        <field name="body_html" type="html"><![CDATA[
+            <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6;">
                 <p>
-                    <strong>Date:</strong> ${format_date(object.check_in) if object.check_in else
-                    'N/A'}<br />
-
-                    <strong>Scheduled Office Time:</strong>
-                    ${format_datetime(object.scheduled_start_time) if object.scheduled_start_time
-                    else 'N/A'}<br />
-
-                    <strong>Actual Check-in Time:</strong>
-                    ${format_datetime(object.check_in) if object.check_in else 'N/A'}<br />
-
-                    <strong>Late
-                    By:</strong> ${object.late_minutes if object.late_minutes else 0} minute(s) </p>
-
-                <p> Message: The employee checked in after office time and this record has been
-                    automatically marked as <strong style="color:red;">Late</strong>. </p>
-
-                <br />
-
-                <p> Regards,<br />
-                    <strong>Attendance System</strong>
+                    Hello
+                    <strong><t t-out="object.employee_id.parent_id.name or 'Manager'"/></strong>,
                 </p>
 
-            </div>
-        </field>
+                <p>
+                    This is to inform you that
+                    <strong><t t-out="object.employee_id.name or 'Employee'"/></strong>
+                    has checked in late.
+                </p>
 
-        <field name="auto_delete" eval="True" />
+                <p>
+                    <strong>Attendance ID:</strong>
+                    <t t-out="object.id"/><br/>
+
+                    <strong>Employee:</strong>
+                    <t t-out="object.employee_id.name or 'N/A'"/><br/>
+
+                    <strong>Date:</strong>
+                    <t t-out="format_datetime(object.check_in, dt_format='yyyy-MM-dd') if object.check_in else 'N/A'"/><br/>
+
+                    <strong>Scheduled Office Time:</strong>
+                    <t t-out="format_datetime(object.scheduled_start_time) if object.scheduled_start_time else 'N/A'"/><br/>
+
+                    <strong>Actual Check-in Time:</strong>
+                    <t t-out="format_datetime(object.check_in) if object.check_in else 'N/A'"/><br/>
+
+                    <strong>Late By:</strong>
+                    <t t-out="object.late_minutes or 0"/> minute(s)
+                </p>
+
+                <p>
+                    Message: The employee checked in after office time and this record has been
+                    automatically marked as <strong style="color: red;">Late</strong>.
+                </p>
+
+                <p>
+                    Regards,<br/>
+                    <strong>Attendance System</strong>
+                </p>
+            </div>
+        ]]></field>
+
+        <field name="auto_delete" eval="True"/>
     </record>
+    </data>
 </odoo>
