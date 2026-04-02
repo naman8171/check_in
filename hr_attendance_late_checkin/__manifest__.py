@@ -9,6 +9,7 @@
     "data": [
         "data/mail_template_data.xml",
         "views/hr_attendance_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     "installable": True,
     "application": False,

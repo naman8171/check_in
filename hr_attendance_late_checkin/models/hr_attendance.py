@@ -14,6 +14,13 @@ class HrAttendance(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         attendances = super().create(vals_list)
+
+        is_enabled = self.env["ir.config_parameter"].sudo().get_param(
+            "hr_attendance_late_checkin.enable_late_checkin_alerts", default="False"
+        )
+        if str(is_enabled).lower() not in ("1", "true", "yes", "on"):
+            return attendances
+
         template = self.env.ref(
             "hr_attendance_late_checkin.mail_template_late_check_in",
             raise_if_not_found=False,
