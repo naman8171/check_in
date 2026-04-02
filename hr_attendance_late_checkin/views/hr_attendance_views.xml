@@ -6,9 +6,10 @@
         <field name="inherit_id" ref="hr_attendance.view_hr_attendance_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
-                <attribute name="decoration-danger">late_check_in</attribute>
+                <attribute name="decoration-danger">late_check_in and late_feature_enabled</attribute>
             </xpath>
             <xpath expr="//tree/field[@name='worked_hours']" position="after">
+                <field name="late_feature_enabled" invisible="1"/>
                 <field name="late_check_in" optional="hide"/>
                 <field name="late_minutes" optional="hide"/>
             </xpath>
