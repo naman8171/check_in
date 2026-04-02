@@ -10,26 +10,15 @@ class HrAttendance(models.Model):
 
     late_check_in = fields.Boolean(string="Late Check-in", default=False, index=True)
     late_minutes = fields.Integer(string="Late by (minutes)", default=0)
-    late_feature_enabled = fields.Boolean(compute="_compute_late_feature_enabled")
-
-
-    @api.model
-    def _is_late_feature_enabled(self):
-        value = self.env["ir.config_parameter"].sudo().get_param(
-            "hr_attendance_late_checkin.enable_late_checkin_alerts", default="False"
-        )
-        return str(value).lower() in ("1", "true", "yes", "on")
-
-    def _compute_late_feature_enabled(self):
-        enabled = self._is_late_feature_enabled()
-        for attendance in self:
-            attendance.late_feature_enabled = enabled
 
     @api.model_create_multi
     def create(self, vals_list):
         attendances = super().create(vals_list)
 
-        if not self._is_late_feature_enabled():
+        is_enabled = self.env["ir.config_parameter"].sudo().get_param(
+            "hr_attendance_late_checkin.enable_late_checkin_alerts", default="False"
+        )
+        if str(is_enabled).lower() not in ("1", "true", "yes", "on"):
             return attendances
 
         template = self.env.ref(

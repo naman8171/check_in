@@ -3,14 +3,20 @@
     <record id="res_config_settings_view_form_late_checkin" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.late.checkin</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app string="Attendances" name="hr_attendance_late_checkin" data-string="Attendances">
+                <app string="Attendances" name="hr_attendance_late_checkin"
+                    data-string="Attendances">
                     <block title="Late Check-in Alerts">
                         <setting id="enable_late_checkin_alerts"
-                                 title="Enable late check-in highlighting and manager notification emails.">
-                            <field name="enable_late_checkin_alerts"/>
+                            title="Enable late check-in highlighting and manager notification emails.">
+                            <field name="enable_late_checkin_alerts" />
+                            <div class="text-muted">
+                                Automatically highlights late employee check-ins in red and sends an
+                                email notification to the manager. The employee is also included in
+                                CC to keep them informed about their lateness.
+                            </div>
                         </setting>
                     </block>
                 </app>
