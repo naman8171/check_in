@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="mail_template_late_check_in" model="mail.template">
+        <field name="name">Late Check-in Alert</field>
+        <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
+        <field name="subject">Late Check-in Notice: ${object.employee_id.name}</field>
+        <field name="email_from">${(user.email_formatted or '')|safe}</field>
+        <field name="email_to">${object.employee_id.parent_id.work_email or ''}</field>
+        <field name="email_cc">${object.employee_id.work_email or ''}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello ${object.employee_id.parent_id.name or 'Manager'},</p>
+                <p>
+                    This is to inform you that <strong>${object.employee_id.name}</strong>
+                    checked in late on <strong>${format_date(object.check_in)}</strong>.
+                </p>
+                <p>
+                    Scheduled office start time: <strong>${ctx.get('scheduled_start_label')}</strong><br/>
+                    Actual check-in time: <strong>${format_datetime(object.check_in)}</strong><br/>
+                    Late by: <strong>${ctx.get('late_minutes')} minute(s)</strong>
+                </p>
+                <p>
+                    Message: The employee checked in after office time and this record
+                    has been marked as late.
+                </p>
+                <p>Regards,<br/>Attendance System</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>
