@@ -1,8 +1,10 @@
 from datetime import datetime
-
 import pytz
+import logging
 
 from odoo import _, api, fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class HrAttendance(models.Model):
@@ -10,14 +12,19 @@ class HrAttendance(models.Model):
 
     late_check_in = fields.Boolean(string="Late Check-in", default=False, index=True)
     late_minutes = fields.Integer(string="Late by (minutes)", default=0)
+    scheduled_start_time = fields.Datetime(string="Scheduled Start Time")
 
     @api.model_create_multi
     def create(self, vals_list):
+        _logger.info("===== CREATE METHOD CALLED =====")
+
         attendances = super().create(vals_list)
 
+        # 🔹 setting check
         is_enabled = self.env["ir.config_parameter"].sudo().get_param(
             "hr_attendance_late_checkin.enable_late_checkin_alerts", default="False"
         )
+
         if str(is_enabled).lower() not in ("1", "true", "yes", "on"):
             return attendances
 
@@ -28,18 +35,28 @@ class HrAttendance(models.Model):
 
         for attendance in attendances:
             late_info = attendance._get_late_check_in_info()
+
             if not late_info["is_late"]:
                 continue
 
-            attendance.write(
-                {
-                    "late_check_in": True,
-                    "late_minutes": late_info["late_minutes"],
-                }
-            )
+            # ✅ timezone हटाकर store करना (IMPORTANT)
+            scheduled_time = late_info["scheduled_start_local"]
+            if scheduled_time:
+                scheduled_time = scheduled_time.replace(tzinfo=None)
 
+            # ✅ store values
+            attendance.write({
+                "late_check_in": True,
+                "late_minutes": late_info["late_minutes"],
+                "scheduled_start_time": scheduled_time,
+            })
+
+            # ✅ send mail
             if template:
-                attendance._send_late_email(template, late_info["scheduled_start_local"])
+                try:
+                    attendance._send_late_email(template)
+                except Exception as e:
+                    _logger.error("Late Check-in Email Failed: %s", e)
 
         return attendances
 
@@ -49,7 +66,11 @@ class HrAttendance(models.Model):
         if not self.employee_id or not self.check_in:
             return {"is_late": False, "late_minutes": 0, "scheduled_start_local": None}
 
-        calendar = self.employee_id.resource_calendar_id or self.employee_id.company_id.resource_calendar_id
+        calendar = (
+            self.employee_id.resource_calendar_id
+            or self.employee_id.company_id.resource_calendar_id
+        )
+
         if not calendar:
             return {"is_late": False, "late_minutes": 0, "scheduled_start_local": None}
 
@@ -59,25 +80,31 @@ class HrAttendance(models.Model):
             or self.employee_id.company_id.partner_id.tz
             or "UTC"
         )
+
         timezone = pytz.timezone(timezone_name)
 
         check_in_utc = fields.Datetime.from_string(self.check_in)
         check_in_local = pytz.UTC.localize(check_in_utc).astimezone(timezone)
+
         weekday = str(check_in_local.weekday())
 
         day_lines = calendar.attendance_ids.filtered(
-            lambda line: line.dayofweek == weekday and line.display_type == False
+            lambda l: l.dayofweek == weekday and not l.display_type
         )
+
         if not day_lines:
             return {"is_late": False, "late_minutes": 0, "scheduled_start_local": None}
 
-        earliest_line = min(day_lines, key=lambda line: line.hour_from)
+        earliest_line = min(day_lines, key=lambda l: l.hour_from)
 
         start_hour = int(earliest_line.hour_from)
         start_minute = int(round((earliest_line.hour_from - start_hour) * 60))
 
         scheduled_start_local = check_in_local.replace(
-            hour=start_hour, minute=start_minute, second=0, microsecond=0
+            hour=start_hour,
+            minute=start_minute,
+            second=0,
+            microsecond=0,
         )
 
         late_delta = check_in_local - scheduled_start_local
@@ -89,30 +116,24 @@ class HrAttendance(models.Model):
             "scheduled_start_local": scheduled_start_local,
         }
 
-    def _send_late_email(self, template, scheduled_start_local):
+    def _send_late_email(self, template):
         self.ensure_one()
 
         manager = self.employee_id.parent_id
+
         if not manager or not manager.work_email:
+            _logger.warning("Manager email missing")
             return
 
         employee_email = self.employee_id.work_email
-        email_to = manager.work_email
-        email_cc = employee_email if employee_email else False
 
-        start_label = (
-            scheduled_start_local.strftime("%H:%M")
-            if isinstance(scheduled_start_local, datetime)
-            else _("the scheduled office time")
-        )
+        _logger.info("Sending email to %s", manager.work_email)
 
-        context = {
-            "scheduled_start_label": start_label,
-            "late_minutes": self.late_minutes,
-        }
-
-        template.with_context(**context).send_mail(
+        template.send_mail(
             self.id,
             force_send=True,
-            email_values={"email_to": email_to, "email_cc": email_cc},
+            email_values={
+                "email_to": manager.work_email,
+                "email_cc": employee_email or "",
+            },
         )
