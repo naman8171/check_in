@@ -1,186 +1,73 @@
-/* ============================= */
-/* 🌐 GLOBAL */
-/* ============================= */
+/* Animated category design for Website Shop */
 
 :root {
-    --primary: #6d4c71;
-    --secondary: #9575cd;
-    --bg-light: #f3edf7;
-    --text-dark: #2d2d2d;
+    --o-cat-grad-start: #5f3b5b;
+    --o-cat-grad-end: #7d4f77;
+    --o-cat-text: #ffffff;
+    --o-cat-shadow: 0 14px 30px rgba(89, 50, 88, 0.24);
 }
 
-body {
-    background: var(--bg-light) !important;
-    color: var(--text-dark);
+.o_wsale_products_categories,
+.o_wsale_products_categories_list {
+    .o_cat_card {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.7rem;
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        color: var(--o-cat-text) !important;
+        background: linear-gradient(135deg, var(--o-cat-grad-start), var(--o-cat-grad-end));
+        box-shadow: var(--o-cat-shadow);
+        transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+        isolation: isolate;
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+        animation: o_cat_slide_up 420ms ease forwards;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.26), transparent 30%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        &:hover,
+        &:focus-visible {
+            transform: translateY(-3px) scale(1.01);
+            filter: saturate(1.08);
+            box-shadow: 0 18px 34px rgba(89, 50, 88, 0.32);
+            text-decoration: none;
+        }
+
+        &.active,
+        &[aria-current="page"] {
+            background: linear-gradient(135deg, #6c3f66, #8b4c83);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.36) inset, var(--o-cat-shadow);
+        }
+    }
 }
 
-/* ============================= */
-/* 🔥 SIDEBAR (MAIN FIXED TARGET) */
-/* ============================= */
-
-#products_grid_before {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-/* 🔥 CATEGORY LINKS (MAIN FIX) */
-#products_grid_before a {
-    display: block !important;
-    padding: 12px 16px !important;
-    margin-bottom: 10px;
-    border-radius: 10px;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    background: #f9f6fd !important;
-    color: #2d2d2d !important;
-    text-decoration: none !important;
-
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-
-    transition: all 0.3s ease !important;
-
-    /* animation */
-    opacity: 0;
-    transform: translateX(-20px);
-    animation: slideLeft 0.4s ease forwards;
-}
-
-/* 🔥 LEFT INDICATOR */
-#products_grid_before a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 0%;
-    width: 4px;
-    border-radius: 4px;
-
-    background: linear-gradient(180deg, var(--primary), var(--secondary));
-    transition: all 0.3s ease;
-}
-
-/* ✨ HOVER EFFECT (NOW WORKING) */
-#products_grid_before a:hover {
-    background: linear-gradient(135deg, #ede7f6, #e1d5f4) !important;
-    color: #2d2d2d !important;
-    transform: translateX(8px);
-    box-shadow: 0 6px 15px rgba(109, 76, 113, 0.2);
-}
-
-/* Hover bar animation */
-#products_grid_before a:hover::before {
-    height: 60%;
-}
-
-/* ✅ ACTIVE LINK */
-#products_grid_before a.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
-    color: #fff !important;
-    font-weight: 600;
-}
-
-#products_grid_before a.active::before {
-    height: 70%;
-}
-#products_grid_before ul.open {
-    display: block;
-}
-
-/* ============================= */
-/* 🟣 TOP CATEGORY */
-/* ============================= */
-
-.o_wsale_categories_grid a {
-    display: block;
-    border-radius: 16px;
-    padding: 40px 20px;
-    text-align: center;
-    color: #fff !important;
-
-    background: linear-gradient(135deg, #7e57c2, #5e35b1);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-
-    transition: all 0.3s ease;
-
-    opacity: 0;
-    transform: translateY(25px);
-    animation: fadeUp 0.5s ease forwards;
-}
-
-.o_wsale_categories_grid a:hover {
-    transform: translateY(-8px) scale(1.04);
-    box-shadow: 0 18px 35px rgba(94, 53, 177, 0.4);
-}
-
-/* ============================= */
-/* 📦 PRODUCTS */
-/* ============================= */
-
-.oe_product {
-    border-radius: 16px !important;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-
-    transition: all 0.3s ease;
-
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.4s ease forwards;
-}
-
-.oe_product:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 18px 30px rgba(0,0,0,0.18);
-}
-
-/* ============================= */
-/* 🛒 BUTTON */
-/* ============================= */
-
-.btn-primary {
-    background: linear-gradient(135deg, #7e57c2, #5e35b1) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    color: #fff !important;
-
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: scale(1.06);
-    box-shadow: 0 6px 18px rgba(94, 53, 177, 0.4);
-}
-
-/* ============================= */
-/* ✨ ANIMATIONS */
-/* ============================= */
-
-@keyframes fadeUp {
+@keyframes o_cat_slide_up {
     from {
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(12px) scale(0.985);
     }
+
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
-@keyframes slideLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-25px);
-    }
-    to {
+@media (prefers-reduced-motion: reduce) {
+    .o_wsale_products_categories .o_cat_card,
+    .o_wsale_products_categories_list .o_cat_card {
+        animation: none;
         opacity: 1;
-        transform: translateX(0);
+        transform: none;
+        transition: none;
     }
 }
