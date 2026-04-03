@@ -1,0 +1,73 @@
+/* Animated category design for Website Shop */
+
+:root {
+    --o-cat-grad-start: #5f3b5b;
+    --o-cat-grad-end: #7d4f77;
+    --o-cat-text: #ffffff;
+    --o-cat-shadow: 0 14px 30px rgba(89, 50, 88, 0.24);
+}
+
+.o_wsale_products_categories,
+.o_wsale_products_categories_list {
+    .o_cat_card {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.7rem;
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        color: var(--o-cat-text) !important;
+        background: linear-gradient(135deg, var(--o-cat-grad-start), var(--o-cat-grad-end));
+        box-shadow: var(--o-cat-shadow);
+        transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+        isolation: isolate;
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+        animation: o_cat_slide_up 420ms ease forwards;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.26), transparent 30%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        &:hover,
+        &:focus-visible {
+            transform: translateY(-3px) scale(1.01);
+            filter: saturate(1.08);
+            box-shadow: 0 18px 34px rgba(89, 50, 88, 0.32);
+            text-decoration: none;
+        }
+
+        &.active,
+        &[aria-current="page"] {
+            background: linear-gradient(135deg, #6c3f66, #8b4c83);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.36) inset, var(--o-cat-shadow);
+        }
+    }
+}
+
+@keyframes o_cat_slide_up {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .o_wsale_products_categories .o_cat_card,
+    .o_wsale_products_categories_list .o_cat_card {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
