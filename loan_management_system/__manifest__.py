@@ -1,12 +1,12 @@
 {
     "name": "Loan Management System",
-    "version": "19.0.5.0.0",
+    "version": "19.0.6.0.0",
     "summary": "End-to-end customer loan lifecycle management",
     "category": "Accounting/Accounting",
     "author": "Custom",
     "website": "https://example.com",
     "license": "LGPL-3",
-    "depends": ["mail", "account"],
+    "depends": ["mail", "account", "website", "portal"],
     "data": [
         "security/loan_security.xml",
         "security/ir.model.access.csv",
@@ -23,6 +23,7 @@
         "report/loan_agreement_report.xml",
         "report/loan_operational_reports.xml",
         "views/loan_menus.xml",
+        "views/website/loan_portal_templates.xml",
     ],
     "application": True,
     "installable": True,

@@ -39,6 +39,9 @@ class LoanLoan(models.Model):
 
     agreement_signed = fields.Boolean(default=False)
     agreement_signed_date = fields.Date()
+    agreement_signed_by = fields.Char(readonly=True)
+    agreement_signature = fields.Binary(attachment=True)
+    request_source = fields.Selection([("backend", "Backend"), ("website", "Website")], default="backend", readonly=True)
 
     state = fields.Selection(
         [
@@ -274,7 +277,11 @@ class LoanLoan(models.Model):
         }
 
     def action_mark_agreement_signed(self):
-        self.write({"agreement_signed": True, "agreement_signed_date": fields.Date.context_today(self)})
+        self.write({
+            "agreement_signed": True,
+            "agreement_signed_date": fields.Date.context_today(self),
+            "agreement_signed_by": self.env.user.name,
+        })
 
     def action_open_foreclosure_wizard(self):
         self.ensure_one()
