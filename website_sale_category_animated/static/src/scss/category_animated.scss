@@ -1,185 +1,213 @@
-/* ============================= */
-/* 🌐 GLOBAL */
-/* ============================= */
-
 :root {
-    --primary: #6d4c71;
-    --secondary: #9575cd;
-    --bg-light: #f3edf7;
-    --text-dark: #2d2d2d;
+    --wsca-bg: #f4f7fc;
+    --wsca-surface: #ffffff;
+    --wsca-surface-soft: #f6f9ff;
+    --wsca-border: #d8e2f2;
+    --wsca-text: #1f2a44;
+    --wsca-text-muted: #5e6d8c;
+    --wsca-primary: #4f46e5;
+    --wsca-primary-soft: #818cf8;
+    --wsca-accent: #06b6d4;
+    --wsca-success: #0ea5a4;
+    --wsca-shadow: 0 14px 34px rgba(31, 42, 68, 0.12);
+    --wsca-shadow-hover: 0 20px 42px rgba(79, 70, 229, 0.2);
 }
 
 body {
-    background: var(--bg-light) !important;
-    color: var(--text-dark);
+    background: radial-gradient(circle at 20% 20%, #f8f9ff 0%, var(--wsca-bg) 55%) !important;
+    color: var(--wsca-text);
     scroll-behavior: smooth;
 }
 
-/* ============================= */
-/* 🔥 SIDEBAR */
-/* ============================= */
-
+/* Sidebar */
 #products_grid_before {
-    background: #ffffff;
-    padding: 24px;
+    position: sticky;
+    top: 1.25rem;
+    background: linear-gradient(165deg, #fff, #f8fbff);
+    border: 1px solid var(--wsca-border);
     border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-
-    /* 🔥 NEW (no impact on logic) */
-    transition: all 0.3s ease;
+    padding: 1.25rem;
+    box-shadow: var(--wsca-shadow);
+    backdrop-filter: blur(8px);
 }
 
-/* 🔥 CATEGORY LINKS */
+#products_grid_before ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
 #products_grid_before a {
-    display: block !important;
-    padding: 12px 16px !important;
-    margin-bottom: 10px;
-    border-radius: 10px;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    background: #f9f6fd !important;
-    color: #2d2d2d !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem !important;
     text-decoration: none !important;
+    color: var(--wsca-text) !important;
+    background: var(--wsca-surface-soft) !important;
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
 
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-
-    /* 🔥 IMPROVED TRANSITION */
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
-
-    /* animation */
     opacity: 0;
-    transform: translateX(-20px);
-    animation: slideLeft 0.4s ease forwards;
-
-    /* 🔥 GPU ACCELERATION */
-    will-change: transform;
+    transform: translateX(-18px);
+    animation: wsca-slide-in 0.45s ease forwards;
 }
 
-/* 🔥 LEFT INDICATOR */
 #products_grid_before a::before {
     content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 0%;
-    width: 4px;
-    border-radius: 4px;
-
-    background: linear-gradient(180deg, var(--primary), var(--secondary));
-    transition: height 0.25s ease;
-}
-
-/* ✨ HOVER */
-#products_grid_before a:hover {
-    background: linear-gradient(135deg, #ede7f6, #e1d5f4) !important;
-    transform: translateX(6px) scale(1.01);
-    box-shadow: 0 8px 18px rgba(109, 76, 113, 0.25);
-}
-
-/* Hover bar animation */
-#products_grid_before a:hover::before {
+    width: 0.3rem;
     height: 60%;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, var(--wsca-primary), var(--wsca-accent));
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 220ms ease;
 }
 
-/* ✅ ACTIVE */
-#products_grid_before a.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
-    color: #fff !important;
-    font-weight: 600;
+#products_grid_before a::after {
+    content: "▸";
+    font-size: 0.75rem;
+    color: var(--wsca-text-muted);
+    transition: transform 220ms ease, color 220ms ease;
 }
 
+#products_grid_before a:hover,
+#products_grid_before a:focus-visible {
+    transform: translateX(6px);
+    border-color: #c8d5ef;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+#products_grid_before a:hover::before,
 #products_grid_before a.active::before {
-    height: 70%;
+    transform: scaleY(1);
 }
 
-/* 🔥 KEEP SAME FUNCTIONALITY */
-#products_grid_before ul.open {
+#products_grid_before a.active {
+    background: linear-gradient(115deg, var(--wsca-primary), var(--wsca-primary-soft)) !important;
+    color: #fff !important;
+    border-color: transparent;
+    box-shadow: var(--wsca-shadow-hover);
+}
+
+#products_grid_before a.active::after {
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+#products_grid_before ul ul {
+    margin: 0.3rem 0 0.6rem 0.75rem;
+    padding-left: 0.65rem;
+    border-left: 1px dashed #c8d5ef;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 260ms ease, opacity 260ms ease;
+}
+
+#products_grid_before ul ul.open {
     display: block;
+    max-height: 460px;
+    opacity: 1;
 }
 
-/* ============================= */
-/* 🟣 TOP CATEGORY */
-/* ============================= */
-
+/* Top category blocks */
 .o_wsale_categories_grid a {
+    position: relative;
     display: block;
-    border-radius: 16px;
-    padding: 40px 20px;
+    border-radius: 18px;
+    padding: clamp(1.2rem, 2.7vw, 2.2rem);
+    min-height: 170px;
     text-align: center;
     color: #fff !important;
-
-    background: linear-gradient(135deg, #7e57c2, #5e35b1);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: linear-gradient(140deg, #4f46e5 0%, #0ea5a4 100%);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+    overflow: hidden;
 
     opacity: 0;
-    transform: translateY(25px);
-    animation: fadeUp 0.5s ease forwards;
-
-    will-change: transform;
+    transform: translateY(24px) scale(0.98);
+    animation: wsca-fade-up 0.5s ease forwards;
+    transition: transform 260ms ease, box-shadow 260ms ease;
 }
 
-.o_wsale_categories_grid a:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 18px 35px rgba(94, 53, 177, 0.4);
+.o_wsale_categories_grid a::before {
+    content: "";
+    position: absolute;
+    inset: -45% 0 auto auto;
+    width: 160px;
+    height: 160px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 65%);
+    transform: translate3d(12px, -8px, 0);
+    transition: transform 300ms ease;
 }
 
-/* ============================= */
-/* 📦 PRODUCTS */
-/* ============================= */
+.o_wsale_categories_grid a:hover,
+.o_wsale_categories_grid a:focus-visible {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 34px rgba(15, 23, 42, 0.26);
+    outline: none;
+}
 
+.o_wsale_categories_grid a:hover::before {
+    transform: translate3d(-4px, 8px, 0);
+}
+
+/* Products */
 .oe_product {
-    border-radius: 16px !important;
+    border-radius: 18px !important;
+    border: 1px solid #e5ecf8;
+    background: linear-gradient(180deg, #ffffff 65%, #f8fbff 100%);
     overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 24px rgba(23, 37, 84, 0.08);
+    transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
 
     opacity: 0;
     transform: translateY(20px);
-    animation: fadeUp 0.4s ease forwards;
-
-    will-change: transform;
+    animation: wsca-fade-up 0.45s ease forwards;
 }
 
 .oe_product:hover {
-    transform: translateY(-8px) scale(1.015);
-    box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+    transform: translateY(-9px);
+    border-color: #bfd0ef;
+    box-shadow: 0 18px 32px rgba(31, 42, 68, 0.16);
 }
 
-/* ============================= */
-/* 🛒 BUTTON */
-/* ============================= */
+.oe_product .o_wsale_product_sub {
+    color: var(--wsca-text-muted);
+}
 
+/* Buttons */
 .btn-primary {
-    background: linear-gradient(135deg, #7e57c2, #5e35b1) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    color: #fff !important;
-
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: linear-gradient(120deg, #4f46e5, #2563eb) !important;
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.28);
+    transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
 }
 
-.btn-primary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 18px rgba(94, 53, 177, 0.4);
+.btn-primary:hover,
+.btn-primary:focus-visible {
+    transform: translateY(-2px);
+    filter: saturate(115%);
+    box-shadow: 0 14px 24px rgba(79, 70, 229, 0.34);
+    outline: none;
 }
 
-/* ============================= */
-/* ✨ ANIMATIONS */
-/* ============================= */
+/* Enter animation controlled by JS intersection observer */
+[data-wsca-visible="true"] {
+    opacity: 1 !important;
+    transform: none !important;
+}
 
-@keyframes fadeUp {
+@keyframes wsca-fade-up {
     from {
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(24px);
     }
     to {
         opacity: 1;
@@ -187,13 +215,22 @@ body {
     }
 }
 
-@keyframes slideLeft {
+@keyframes wsca-slide-in {
     from {
         opacity: 0;
-        transform: translateX(-25px);
+        transform: translateX(-20px);
     }
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
     }
 }
