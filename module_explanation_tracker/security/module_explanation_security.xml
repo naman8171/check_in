@@ -2,7 +2,7 @@
 <odoo>
     <record id="group_module_explanation_manager" model="res.groups">
         <field name="name">Module Explanation Manager</field>
-        <field name="category_id" ref="base.module_category_human_resources"/>
+        <field name="category_ids" eval="[(4, ref('base.module_category_human_resources'))]"/>
         <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
     </record>
 
