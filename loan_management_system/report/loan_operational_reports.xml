@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_loan_installment" model="ir.actions.report">
+        <field name="name">Loan Installment Report</field>
+        <field name="model">loan.loan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">loan_management_system.report_loan_installment_template</field>
+        <field name="report_file">loan_management_system.report_loan_installment_template</field>
+        <field name="print_report_name">'Installment Report - %s' % (object.name)</field>
+    </record>
+
+    <template id="report_loan_installment_template">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h3 style="text-align:center;">Loan Installment Report</h3>
+                <p><strong>Loan:</strong> <span t-field="o.name"/></p>
+                <p><strong>Borrower:</strong> <span t-field="o.partner_id.name"/></p>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Due Date</th><th>Principal</th><th>Interest</th><th>Total</th><th>Paid</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.installment_ids" t-as="line">
+                            <td><span t-field="line.sequence"/></td>
+                            <td><span t-field="line.due_date"/></td>
+                            <td><span t-field="line.principal_amount"/></td>
+                            <td><span t-field="line.interest_amount"/></td>
+                            <td><span t-field="line.amount_due"/></td>
+                            <td><span t-field="line.amount_paid"/></td>
+                            <td><span t-field="line.state"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_loan_collection" model="ir.actions.report">
+        <field name="name">Loan Collection Report</field>
+        <field name="model">loan.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">loan_management_system.report_loan_collection_template</field>
+        <field name="report_file">loan_management_system.report_loan_collection_template</field>
+    </record>
+
+    <template id="report_loan_collection_template">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h3 style="text-align:center;">Loan Collection Report</h3>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Date</th><th>Loan</th><th>Customer</th><th>Journal</th><th>Amount</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="docs" t-as="p">
+                            <td><span t-field="p.payment_date"/></td>
+                            <td><span t-field="p.loan_id.name"/></td>
+                            <td><span t-field="p.partner_id.name"/></td>
+                            <td><span t-field="p.journal_id.name"/></td>
+                            <td><span t-field="p.amount"/></td>
+                            <td><t t-esc="'Paid'"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>
