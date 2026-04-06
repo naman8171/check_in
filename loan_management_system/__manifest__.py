@@ -1,6 +1,6 @@
 {
     "name": "Loan Management System",
-    "version": "19.0.7.1.0",
+    "version": "19.0.8.0.0",
     "summary": "End-to-end customer loan lifecycle management",
     "category": "Accounting/Accounting",
     "author": "Custom",
@@ -13,8 +13,10 @@
         "data/loan_sequence.xml",
         "report/loan_agreement_report.xml",
         "report/loan_operational_reports.xml",
+        "report/loan_dashboard_report.xml",
         "views/crm_lead_loan_views.xml",
         "views/loan_type_views.xml",
+        "views/loan_dashboard_views.xml",
         "views/loan_views.xml",
         "views/loan_installment_views.xml",
         "views/loan_payment_views.xml",
