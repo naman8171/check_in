@@ -55,3 +55,20 @@ class LoanInstallment(models.Model):
 
     def action_mark_unpaid(self):
         self.write({"state": "unpaid", "amount_paid": 0.0, "paid_on": False})
+
+    def action_register_payment(self):
+        self.ensure_one()
+        return {
+            "name": "Register Payment",
+            "type": "ir.actions.act_window",
+            "res_model": "loan.payment.register",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_loan_id": self.loan_id.id,
+                "default_installment_id": self.id,
+                "default_payment_mode": "regular",
+                "default_amount": self.amount_due - self.amount_paid,
+                "default_journal_id": self.loan_id.loan_type_id.journal_id.id,
+            },
+        }

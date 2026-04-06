@@ -38,6 +38,7 @@
                     <button name="action_create_processing_fee_invoice" type="object" string="Create Processing Fee Invoice" invisible="has_processing_fee_invoice or processing_fee &lt;= 0"/>
                     <button name="action_view_processing_fee_invoice" type="object" string="Invoice" invisible="not has_processing_fee_invoice"/>
                     <button name="%(action_report_loan_agreement)d" type="action" string="Print Agreement"/>
+                    <button name="%(action_report_loan_installment)d" type="action" string="Print Installment"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,open,closed"/>
                 </header>
                 <sheet>
@@ -126,7 +127,7 @@
                                     <field name="state"/>
                                     <field name="late_days"/>
                                     <field name="paid_on"/>
-                                    <button name="action_mark_paid" type="object" string="Pay" class="btn-primary" invisible="state == 'paid'"/>
+                                    <button name="action_register_payment" type="object" string="Pay" class="btn-primary" invisible="state == 'paid'"/>
                                 </tree>
                             </field>
                         </page>

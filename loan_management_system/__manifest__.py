@@ -1,6 +1,6 @@
 {
     "name": "Loan Management System",
-    "version": "19.0.4.0.0",
+    "version": "19.0.5.0.0",
     "summary": "End-to-end customer loan lifecycle management",
     "category": "Accounting/Accounting",
     "author": "Custom",
@@ -19,7 +19,9 @@
         "views/loan_payment_register_views.xml",
         "views/loan_disburse_wizard_views.xml",
         "views/loan_foreclose_wizard_views.xml",
+        "views/loan_collection_report_wizard_views.xml",
         "report/loan_agreement_report.xml",
+        "report/loan_operational_reports.xml",
         "views/loan_menus.xml",
     ],
     "application": True,
