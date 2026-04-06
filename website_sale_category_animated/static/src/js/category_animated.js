@@ -64,20 +64,37 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     },
 
     _getSubmenu(link) {
-        let submenu = link.nextElementSibling;
-        if (!submenu || submenu.tagName !== "UL") {
-            submenu = link.closest("li")?.querySelector(":scope > ul");
-        }
-        return submenu && submenu.tagName === "UL" ? submenu : null;
+        const listItem = link.closest("li");
+        if (!listItem) return null;
+
+        // :scope can be unreliable in legacy storefront contexts, so use direct children.
+        const directChildUl = Array.from(listItem.children).find((el) => el.tagName === "UL");
+        if (directChildUl) return directChildUl;
+
+        // fallback when markup includes wrappers around the submenu
+        const wrappedUl = listItem.querySelector("ul");
+        return wrappedUl || null;
+    },
+
+    _setSubmenuState(link, submenu, shouldOpen) {
+        submenu.classList.toggle("open", shouldOpen);
+        submenu.classList.toggle("show", shouldOpen);
+        link.classList.toggle("active", shouldOpen);
+        link.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
     },
 
     _onSidebarClick(event, container, link, submenu) {
         event.preventDefault();
         event.stopPropagation();
 
-        const isOpen = submenu.classList.contains("open");
+        const isOpen = submenu.classList.contains("open") || submenu.classList.contains("show");
 
-        container.querySelectorAll("ul.open").forEach((el) => el.classList.remove("open"));
+        container.querySelectorAll("ul.open, ul.show").forEach((el) => {
+            if (el !== submenu) {
+                el.classList.remove("open", "show");
+            }
+        });
+
         container.querySelectorAll("a.active").forEach((el) => {
             if (el !== link && this._getSubmenu(el)) {
                 el.classList.remove("active");
@@ -85,28 +102,17 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
             }
         });
 
-        if (isOpen) {
-            submenu.classList.remove("open");
-            link.classList.remove("active");
-            link.setAttribute("aria-expanded", "false");
-        } else {
-            submenu.classList.add("open");
-            link.classList.add("active");
-            link.setAttribute("aria-expanded", "true");
-        }
+        this._setSubmenuState(link, submenu, !isOpen);
     },
 
     _openAncestorMenus(link) {
         let current = link.closest("li");
         while (current) {
-            const submenu = current.querySelector(":scope > ul");
-            if (submenu) {
-                submenu.classList.add("open");
-            }
-            const currentLink = current.querySelector(":scope > a");
-            if (currentLink) {
-                currentLink.classList.add("active");
-                currentLink.setAttribute("aria-expanded", "true");
+            const currentLink = current.querySelector(":scope > a") || current.querySelector("a");
+            const submenu = Array.from(current.children).find((el) => el.tagName === "UL") || current.querySelector("ul");
+
+            if (currentLink && submenu) {
+                this._setSubmenuState(currentLink, submenu, true);
             }
             current = current.parentElement?.closest("li");
         }
