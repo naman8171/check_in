@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_module_explanation_root"
+              name="Module Explanations"
+              sequence="20"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_module_explanation_activities"
+              name="Activities"
+              parent="menu_module_explanation_root"
+              action="action_module_explanation_activity"
+              sequence="10"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_module_explanation_dashboard"
+              name="Dashboard"
+              parent="menu_module_explanation_root"
+              action="action_module_explanation_dashboard"
+              sequence="20"
+              groups="module_explanation_tracker.group_module_explanation_manager"/>
+</odoo>
