@@ -7,9 +7,11 @@
             <tree>
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="loan_type_id"/>
                 <field name="application_date"/>
                 <field name="principal_amount"/>
-                <field name="total_amount"/>
+                <field name="next_due_date"/>
+                <field name="next_due_amount"/>
                 <field name="outstanding_amount"/>
                 <field name="state"/>
             </tree>
@@ -25,6 +27,7 @@
                     <button name="action_submit" type="object" string="Submit" class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state != 'submitted'" groups="loan_management_system.group_loan_manager"/>
                     <button name="action_disburse" type="object" string="Disburse" class="oe_highlight" invisible="state != 'approved'" groups="loan_management_system.group_loan_manager"/>
+                    <button name="action_register_payment" type="object" string="Register Payment" class="btn-primary" invisible="state not in ('disbursed')"/>
                     <button name="action_close" type="object" string="Close" invisible="state != 'disbursed'" groups="loan_management_system.group_loan_manager"/>
                     <button name="action_reject" type="object" string="Reject" invisible="state in ('rejected','closed')" groups="loan_management_system.group_loan_manager"/>
                     <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state == 'draft'"/>
@@ -35,36 +38,55 @@
                         <button class="oe_stat_button" type="object" icon="fa-list" name="action_view_installments">
                             <field name="installment_count" string="Installments" widget="statinfo"/>
                         </button>
+                        <button class="oe_stat_button" type="object" icon="fa-money" name="action_view_payments">
+                            <field name="payment_count" string="Payments" widget="statinfo"/>
+                        </button>
                         <button class="oe_stat_button" type="object" name="action_generate_schedule" icon="fa-calendar" invisible="state not in ('draft','submitted','approved')">
                             <span class="o_stat_text">Generate Schedule</span>
                         </button>
                     </div>
 
                     <group>
-                        <group>
+                        <group string="Customer Information">
                             <field name="name" readonly="1"/>
                             <field name="partner_id"/>
-                            <field name="loan_type"/>
-                            <field name="application_date"/>
-                            <field name="first_due_date"/>
+                            <field name="loan_type_id"/>
+                            <field name="user_id"/>
+                            <field name="purpose"/>
                         </group>
-                        <group>
+                        <group string="Loan Details">
+                            <field name="application_date"/>
+                            <field name="approval_date" readonly="1"/>
+                            <field name="disbursement_date" readonly="1"/>
+                            <field name="first_due_date"/>
+                            <field name="grace_period_months"/>
+                            <field name="term_months"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Financial Terms">
                             <field name="principal_amount"/>
                             <field name="interest_rate"/>
-                            <field name="term_months"/>
                             <field name="processing_fee"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="penalty_rate"/>
+                        </group>
+                        <group string="Outstanding Snapshot">
+                            <field name="next_due_date" readonly="1"/>
+                            <field name="next_due_amount" readonly="1"/>
+                            <field name="paid_amount" readonly="1"/>
+                            <field name="outstanding_amount" readonly="1"/>
                         </group>
                     </group>
 
                     <group>
                         <group>
                             <field name="total_interest" readonly="1"/>
-                            <field name="total_amount" readonly="1"/>
+                            <field name="total_fees" readonly="1"/>
                         </group>
                         <group>
-                            <field name="paid_amount" readonly="1"/>
-                            <field name="outstanding_amount" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>
 
@@ -74,12 +96,28 @@
                                 <tree editable="bottom">
                                     <field name="sequence" readonly="1"/>
                                     <field name="due_date"/>
+                                    <field name="opening_balance"/>
                                     <field name="principal_amount"/>
                                     <field name="interest_amount"/>
-                                    <field name="amount"/>
+                                    <field name="fee_amount"/>
+                                    <field name="penalty_amount"/>
+                                    <field name="amount_due"/>
+                                    <field name="amount_paid"/>
                                     <field name="balance_amount"/>
                                     <field name="state"/>
+                                    <field name="late_days"/>
                                     <field name="paid_on"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Payments">
+                            <field name="payment_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="payment_date"/>
+                                    <field name="journal_id"/>
+                                    <field name="amount"/>
+                                    <field name="installment_id"/>
                                 </tree>
                             </field>
                         </page>
@@ -100,15 +138,19 @@
             <search>
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="loan_type_id"/>
                 <field name="state"/>
                 <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="filter_submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                 <filter name="filter_approved" string="Approved" domain="[('state', '=', 'approved')]"/>
                 <filter name="filter_disbursed" string="Disbursed" domain="[('state', '=', 'disbursed')]"/>
                 <filter name="filter_closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <filter name="filter_overdue" string="Overdue" domain="[('installment_ids.late_days', '>', 0), ('state', '=', 'disbursed')]"/>
                 <group expand="0" string="Group By">
                     <filter string="State" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
                     <filter string="Customer" name="group_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Loan Type" name="group_type" domain="[]" context="{'group_by': 'loan_type_id'}"/>
+                    <filter string="Loan Officer" name="group_user" domain="[]" context="{'group_by': 'user_id'}"/>
                 </group>
             </search>
         </field>
@@ -117,8 +159,7 @@
     <record id="action_loan_loan" model="ir.actions.act_window">
         <field name="name">Loans</field>
         <field name="res_model">loan.loan</field>
-        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="view_mode">tree,form,pivot,graph,kanban</field>
         <field name="search_view_id" ref="view_loan_loan_search"/>
-        <field name="context">{'search_default_filter_draft': 1}</field>
     </record>
 </odoo>

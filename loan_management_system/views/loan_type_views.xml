@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_loan_type_tree" model="ir.ui.view">
+        <field name="name">loan.type.tree</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="min_amount"/>
+                <field name="max_amount"/>
+                <field name="default_interest_rate"/>
+                <field name="default_term_months"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_loan_type_form" model="ir.ui.view">
+        <field name="name">loan.type.form</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="min_amount"/>
+                            <field name="max_amount"/>
+                            <field name="default_interest_rate"/>
+                            <field name="default_term_months"/>
+                            <field name="processing_fee_percent"/>
+                        </group>
+                    </group>
+                    <group string="Accounting">
+                        <group>
+                            <field name="journal_id"/>
+                        </group>
+                        <group>
+                            <field name="income_account_id"/>
+                            <field name="receivable_account_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_loan_type" model="ir.actions.act_window">
+        <field name="name">Loan Types</field>
+        <field name="res_model">loan.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
