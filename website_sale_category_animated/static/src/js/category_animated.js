@@ -6,26 +6,21 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     selector: "body",
 
     start() {
-        this._initEnhancer();
+        this._visibilityObserver = this._createVisibilityObserver();
+        this._domObserver = this._observeChanges();
 
-        // 🔥 store observer (important fix)
-        this._observer = this._observeChanges();
-
+        this._decorateAll();
         return this._super(...arguments);
     },
 
     destroy() {
-        // 🔥 cleanup (memory leak fix)
-        if (this._observer) {
-            this._observer.disconnect();
+        if (this._domObserver) {
+            this._domObserver.disconnect();
+        }
+        if (this._visibilityObserver) {
+            this._visibilityObserver.disconnect();
         }
         this._super(...arguments);
-    },
-
-    _initEnhancer() {
-        setTimeout(() => {
-            this._decorateAll();
-        }, 500);
     },
 
     _decorateAll() {
@@ -34,117 +29,161 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
         this._decorateProducts();
     },
 
-    /* ============================= */
-    /* 🔥 SIDEBAR */
-    /* ============================= */
+    _decorateSidebar() {
+        const container = document.querySelector("#products_grid_before");
+        if (!container) return;
 
-_decorateSidebar() {
-    const container = document.querySelector("#products_grid_before");
-    if (!container) return;
+        const links = container.querySelectorAll("a");
+        links.forEach((link, index) => {
+            if (link.dataset.wscaEnhanced === "true") return;
 
-    const cards = container.querySelectorAll("a");
+            link.dataset.wscaEnhanced = "true";
+            link.classList.remove("nav-link");
+            link.classList.add("my_sidebar_cat");
+            link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
 
-    cards.forEach((card, index) => {
-
-        // ✅ prevent duplicate binding
-        if (card.dataset.enhanced) return;
-        card.dataset.enhanced = "true";
-
-        card.classList.remove("nav-link");
-        card.classList.add("my_sidebar_cat");
-
-        card.style.animationDelay = `${Math.min(index * 80, 600)}ms`;
-
-        card.addEventListener("click", (e) => {
-
-            // 🔥 better submenu detection
-            let submenu = card.nextElementSibling;
-
-            if (!submenu || submenu.tagName !== "UL") {
-                submenu = card.closest("li")?.querySelector(":scope > ul");
+            const submenu = this._getSubmenu(link);
+            if (submenu) {
+                link.setAttribute("role", "button");
+                link.setAttribute("aria-expanded", "false");
+                link.addEventListener("click", (ev) => this._onSidebarClick(ev, container, link, submenu));
+                link.addEventListener("keydown", (ev) => {
+                    if (ev.key === "Enter" || ev.key === " ") {
+                        this._onSidebarClick(ev, container, link, submenu);
+                    }
+                });
             }
 
-            // 👉 agar submenu nahi hai → normal redirect
-            if (!submenu || submenu.tagName !== "UL") return;
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            const isOpen = submenu.classList.contains("open");
-
-            // 🔥 CLOSE (same click)
-            if (isOpen) {
-                submenu.classList.remove("open");
-                card.classList.remove("active");
-                return;
+            if (this._isCurrentUrl(link.href)) {
+                link.classList.add("active");
+                this._openAncestorMenus(link);
             }
 
-            // 🔥 CLOSE ALL (accordion behavior)
-            container.querySelectorAll("ul.open").forEach(ul => {
-                ul.classList.remove("open");
-            });
-
-            container.querySelectorAll("a.active").forEach(a => {
-                a.classList.remove("active");
-            });
-
-            // 🔥 OPEN CURRENT
-            submenu.classList.add("open");
-            card.classList.add("active");
+            this._observeVisibility(link);
         });
-    });
-},
+    },
 
-    /* ============================= */
-    /* 🔹 TOP CATEGORIES */
-    /* ============================= */
+    _getSubmenu(link) {
+        const listItem = link.closest("li");
+        if (!listItem) return null;
+
+        // :scope can be unreliable in legacy storefront contexts, so use direct children.
+        const directChildUl = Array.from(listItem.children).find((el) => el.tagName === "UL");
+        if (directChildUl) return directChildUl;
+
+        // fallback when markup includes wrappers around the submenu
+        const wrappedUl = listItem.querySelector("ul");
+        return wrappedUl || null;
+    },
+
+    _setSubmenuState(link, submenu, shouldOpen) {
+        submenu.classList.toggle("open", shouldOpen);
+        submenu.classList.toggle("show", shouldOpen);
+        link.classList.toggle("active", shouldOpen);
+        link.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    },
+
+    _onSidebarClick(event, container, link, submenu) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const isOpen = submenu.classList.contains("open") || submenu.classList.contains("show");
+
+        container.querySelectorAll("ul.open, ul.show").forEach((el) => {
+            if (el !== submenu) {
+                el.classList.remove("open", "show");
+            }
+        });
+
+        container.querySelectorAll("a.active").forEach((el) => {
+            if (el !== link && this._getSubmenu(el)) {
+                el.classList.remove("active");
+                el.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        this._setSubmenuState(link, submenu, !isOpen);
+    },
+
+    _openAncestorMenus(link) {
+        let current = link.closest("li");
+        while (current) {
+            const currentLink = current.querySelector(":scope > a") || current.querySelector("a");
+            const submenu = Array.from(current.children).find((el) => el.tagName === "UL") || current.querySelector("ul");
+
+            if (currentLink && submenu) {
+                this._setSubmenuState(currentLink, submenu, true);
+            }
+            current = current.parentElement?.closest("li");
+        }
+    },
+
+    _isCurrentUrl(linkHref) {
+        if (!linkHref) return false;
+        try {
+            const linkUrl = new URL(linkHref, window.location.origin);
+            return linkUrl.pathname === window.location.pathname;
+        } catch {
+            return false;
+        }
+    },
 
     _decorateTopCategories() {
-        const cards = document.querySelectorAll(".o_wsale_categories_grid a");
+        document.querySelectorAll(".o_wsale_categories_grid a").forEach((card, index) => {
+            if (card.dataset.wscaEnhanced === "true") return;
 
-        cards.forEach((card, index) => {
-            if (card.classList.contains("my_top_cat")) return;
-
+            card.dataset.wscaEnhanced = "true";
             card.classList.add("my_top_cat");
-            card.style.animationDelay = `${Math.min(index * 100, 800)}ms`;
+            card.style.animationDelay = `${Math.min(index * 90, 700)}ms`;
+            this._observeVisibility(card);
         });
     },
-
-    /* ============================= */
-    /* 🔹 PRODUCTS */
-    /* ============================= */
 
     _decorateProducts() {
-        const products = document.querySelectorAll(".oe_product");
+        document.querySelectorAll(".oe_product").forEach((product, index) => {
+            if (product.dataset.wscaEnhanced === "true") return;
 
-        products.forEach((product, index) => {
-            if (product.classList.contains("my_product_card")) return;
-
+            product.dataset.wscaEnhanced = "true";
             product.classList.add("my_product_card");
-            product.style.animationDelay = `${Math.min(index * 50, 500)}ms`;
+            product.style.animationDelay = `${Math.min(index * 45, 500)}ms`;
+            this._observeVisibility(product);
         });
     },
 
-    /* ============================= */
-    /* 🔥 OBSERVER */
-    /* ============================= */
+    _createVisibilityObserver() {
+        if (!("IntersectionObserver" in window)) return null;
+
+        return new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.dataset.wscaVisible = "true";
+                    }
+                });
+            },
+            {
+                threshold: 0.18,
+                rootMargin: "0px 0px -8% 0px",
+            }
+        );
+    },
+
+    _observeVisibility(element) {
+        if (this._visibilityObserver) {
+            this._visibilityObserver.observe(element);
+        } else {
+            element.dataset.wscaVisible = "true";
+        }
+    },
 
     _observeChanges() {
         let timeout;
-
         const observer = new MutationObserver(() => {
             clearTimeout(timeout);
-
-            timeout = setTimeout(() => {
-                this._decorateAll();
-            }, 100);
+            timeout = setTimeout(() => this._decorateAll(), 120);
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-        });
-
-        return observer; // 🔥 important
+        observer.observe(document.body, { childList: true, subtree: true });
+        return observer;
     },
 });
