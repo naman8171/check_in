@@ -1,6 +1,6 @@
 {
     "name": "Loan Management System",
-    "version": "19.0.3.0.0",
+    "version": "19.0.4.0.0",
     "summary": "End-to-end customer loan lifecycle management",
     "category": "Accounting/Accounting",
     "author": "Custom",

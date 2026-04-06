@@ -34,6 +34,9 @@ class LoanLoan(models.Model):
     penalty_rate = fields.Float(default=0.0, help="Monthly penalty rate for overdue installments")
 
     agreement_html = fields.Html()
+    processing_fee_invoice_id = fields.Many2one("account.move", readonly=True, copy=False)
+    has_processing_fee_invoice = fields.Boolean(compute="_compute_has_processing_fee_invoice")
+
     agreement_signed = fields.Boolean(default=False)
     agreement_signed_date = fields.Date()
 
@@ -43,6 +46,7 @@ class LoanLoan(models.Model):
             ("submitted", "Submitted"),
             ("approved", "Approved"),
             ("disbursed", "Disbursed"),
+            ("open", "Open"),
             ("closed", "Closed"),
             ("rejected", "Rejected"),
         ],
@@ -73,6 +77,10 @@ class LoanLoan(models.Model):
 
     notes = fields.Text()
     close_note = fields.Text(readonly=True)
+
+    def _compute_has_processing_fee_invoice(self):
+        for rec in self:
+            rec.has_processing_fee_invoice = bool(rec.processing_fee_invoice_id)
 
     @api.onchange("loan_type_id")
     def _onchange_loan_type_id(self):
@@ -197,9 +205,58 @@ class LoanLoan(models.Model):
 
     def action_approve(self):
         self.write({"state": "approved", "approval_date": fields.Date.context_today(self)})
+        for rec in self:
+            if rec.processing_fee and not rec.processing_fee_invoice_id:
+                rec.action_create_processing_fee_invoice()
 
     def action_disburse(self):
-        self.write({"state": "disbursed", "disbursement_date": fields.Date.context_today(self)})
+        self.write({"state": "open", "disbursement_date": fields.Date.context_today(self)})
+
+    def action_open_loan(self):
+        self.write({"state": "open"})
+
+    def action_create_processing_fee_invoice(self):
+        for rec in self:
+            if rec.processing_fee <= 0:
+                raise UserError(_("Processing fee must be greater than zero."))
+            if rec.processing_fee_invoice_id:
+                continue
+            account = rec.loan_type_id.income_account_id
+            if not account:
+                raise UserError(_("Please configure Income Account on Loan Type."))
+            invoice = self.env["account.move"].create(
+                {
+                    "move_type": "out_invoice",
+                    "partner_id": rec.partner_id.id,
+                    "invoice_date": fields.Date.context_today(self),
+                    "invoice_origin": rec.name,
+                    "invoice_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "name": _("Loan Processing Fee") + f" - {rec.name}",
+                                "quantity": 1.0,
+                                "price_unit": rec.processing_fee,
+                                "account_id": account.id,
+                            },
+                        )
+                    ],
+                }
+            )
+            rec.processing_fee_invoice_id = invoice.id
+
+    def action_view_processing_fee_invoice(self):
+        self.ensure_one()
+        if not self.processing_fee_invoice_id:
+            return False
+        return {
+            "name": _("Processing Fee Invoice"),
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "view_mode": "form",
+            "res_id": self.processing_fee_invoice_id.id,
+        }
 
     def action_open_disburse_wizard(self):
         self.ensure_one()
@@ -244,6 +301,21 @@ class LoanLoan(models.Model):
 
     def action_reset_to_draft(self):
         self.write({"state": "draft"})
+
+    def action_advance_payment(self):
+        self.ensure_one()
+        return {
+            "name": _("Advance Payment"),
+            "type": "ir.actions.act_window",
+            "res_model": "loan.payment.register",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_loan_id": self.id,
+                "default_payment_mode": "advance",
+                "default_journal_id": self.loan_type_id.journal_id.id,
+            },
+        }
 
     def action_register_payment(self):
         self.ensure_one()

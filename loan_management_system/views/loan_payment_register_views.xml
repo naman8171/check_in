@@ -7,7 +7,9 @@
             <form string="Register Payment">
                 <group>
                     <field name="loan_id" readonly="1"/>
-                    <field name="installment_id"/>
+                    <field name="payment_mode"/>
+                    <field name="installment_id" invisible="payment_mode == 'advance'"/>
+                    <field name="percent" invisible="payment_mode != 'advance'"/>
                     <field name="payment_date"/>
                     <field name="journal_id"/>
                     <field name="amount"/>

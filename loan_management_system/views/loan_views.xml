@@ -26,15 +26,19 @@
                 <header>
                     <button name="action_submit" type="object" string="Submit" class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state != 'submitted'" groups="loan_management_system.group_loan_manager"/>
-                    <button name="action_open_disburse_wizard" type="object" string="Disburse" class="oe_highlight" invisible="state not in ('approved','disbursed')" groups="loan_management_system.group_loan_manager"/>
-                    <button name="action_register_payment" type="object" string="Register Payment" class="btn-primary" invisible="state not in ('disbursed')"/>
-                    <button name="action_open_foreclosure_wizard" type="object" string="Foreclose" invisible="state != 'disbursed'" groups="loan_management_system.group_loan_manager"/>
-                    <button name="action_close" type="object" string="Close" invisible="state != 'disbursed'" groups="loan_management_system.group_loan_manager"/>
+                    <button name="action_open_disburse_wizard" type="object" string="Disburse" class="oe_highlight" invisible="state not in ('approved','open')" groups="loan_management_system.group_loan_manager"/>
+                    <button name="action_open_loan" type="object" string="Open Loan" invisible="state != 'approved'" groups="loan_management_system.group_loan_manager"/>
+                    <button name="action_register_payment" type="object" string="Register Payment" class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_advance_payment" type="object" string="Advance Payment" invisible="state != 'open'"/>
+                    <button name="action_open_foreclosure_wizard" type="object" string="Foreclose" invisible="state != 'open'" groups="loan_management_system.group_loan_manager"/>
+                    <button name="action_close" type="object" string="Close" invisible="state != 'open'" groups="loan_management_system.group_loan_manager"/>
                     <button name="action_reject" type="object" string="Reject" invisible="state in ('rejected','closed')" groups="loan_management_system.group_loan_manager"/>
                     <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state == 'draft'"/>
                     <button name="action_mark_agreement_signed" type="object" string="Mark Agreement Signed" invisible="agreement_signed or state == 'draft'"/>
+                    <button name="action_create_processing_fee_invoice" type="object" string="Create Processing Fee Invoice" invisible="has_processing_fee_invoice or processing_fee &lt;= 0"/>
+                    <button name="action_view_processing_fee_invoice" type="object" string="Invoice" invisible="not has_processing_fee_invoice"/>
                     <button name="%(action_report_loan_agreement)d" type="action" string="Print Agreement"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,disbursed,closed"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,open,closed"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -43,6 +47,9 @@
                         </button>
                         <button class="oe_stat_button" type="object" icon="fa-money" name="action_view_payments">
                             <field name="payment_count" string="Payments" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" icon="fa-file-text-o" name="action_view_processing_fee_invoice" invisible="not has_processing_fee_invoice">
+                            <span class="o_stat_text">Invoice</span>
                         </button>
                         <button class="oe_stat_button" type="object" icon="fa-bank" name="action_view_disbursements">
                             <field name="disbursement_count" string="Disbursements" widget="statinfo"/>
@@ -119,6 +126,7 @@
                                     <field name="state"/>
                                     <field name="late_days"/>
                                     <field name="paid_on"/>
+                                    <button name="action_mark_paid" type="object" string="Pay" class="btn-primary" invisible="state == 'paid'"/>
                                 </tree>
                             </field>
                         </page>
@@ -171,9 +179,9 @@
                 <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                 <filter name="filter_submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                 <filter name="filter_approved" string="Approved" domain="[('state', '=', 'approved')]"/>
-                <filter name="filter_disbursed" string="Disbursed" domain="[('state', '=', 'disbursed')]"/>
+                <filter name="filter_open" string="Open" domain="[('state', '=', 'open')]"/>
                 <filter name="filter_closed" string="Closed" domain="[('state', '=', 'closed')]"/>
-                <filter name="filter_overdue" string="Overdue" domain="[('installment_ids.late_days', '>', 0), ('state', '=', 'disbursed')]"/>
+                <filter name="filter_overdue" string="Overdue" domain="[('installment_ids.late_days', '>', 0), ('state', '=', 'open')]"/>
                 <group expand="0" string="Group By">
                     <filter string="State" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
                     <filter string="Customer" name="group_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
