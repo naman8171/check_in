@@ -7,8 +7,19 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
 
     start() {
         this._initEnhancer();
-        this._observeChanges();
+
+        // 🔥 store observer (important fix)
+        this._observer = this._observeChanges();
+
         return this._super(...arguments);
+    },
+
+    destroy() {
+        // 🔥 cleanup (memory leak fix)
+        if (this._observer) {
+            this._observer.disconnect();
+        }
+        this._super(...arguments);
     },
 
     _initEnhancer() {
@@ -23,99 +34,117 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
         this._decorateProducts();
     },
 
-    // 🔥 SIDEBAR FINAL WORKING
-    _decorateSidebar() {
-        const cards = document.querySelectorAll("#products_grid_before a");
+    /* ============================= */
+    /* 🔥 SIDEBAR */
+    /* ============================= */
 
-        cards.forEach((card, index) => {
+_decorateSidebar() {
+    const container = document.querySelector("#products_grid_before");
+    if (!container) return;
 
-            // ✅ prevent duplicate binding
-            if (card.dataset.enhanced) return;
-            card.dataset.enhanced = "true";
+    const cards = container.querySelectorAll("a");
 
-            // remove Odoo class
-            card.classList.remove("nav-link");
+    cards.forEach((card, index) => {
 
-            // add custom class
-            card.classList.add("my_sidebar_cat");
+        // ✅ prevent duplicate binding
+        if (card.dataset.enhanced) return;
+        card.dataset.enhanced = "true";
 
-            // animation delay
-            card.style.animationDelay = `${Math.min(index * 80, 600)}ms`;
+        card.classList.remove("nav-link");
+        card.classList.add("my_sidebar_cat");
 
-            // 🔥 CLICK TOGGLE (FINAL FIX)
-            card.addEventListener("click", (e) => {
-                let submenu = card.nextElementSibling;
+        card.style.animationDelay = `${Math.min(index * 80, 600)}ms`;
 
-                // fallback for different DOM structure
-                if (!submenu || submenu.tagName !== "UL") {
-                    submenu = card.parentElement.querySelector("ul");
-                }
+        card.addEventListener("click", (e) => {
 
-                // normal redirect if no submenu
-                if (!submenu || submenu.tagName !== "UL") return;
+            // 🔥 better submenu detection
+            let submenu = card.nextElementSibling;
 
-                e.preventDefault();
-                e.stopPropagation();
+            if (!submenu || submenu.tagName !== "UL") {
+                submenu = card.closest("li")?.querySelector(":scope > ul");
+            }
 
-                const isOpen = submenu.classList.contains("open");
+            // 👉 agar submenu nahi hai → normal redirect
+            if (!submenu || submenu.tagName !== "UL") return;
 
-                if (isOpen) {
-                    submenu.classList.remove("open");
-                    card.classList.remove("active");
-                    return;
-                }
+            e.preventDefault();
+            e.stopPropagation();
 
-                // ✅ ACCORDION: close other submenus
-                document.querySelectorAll("#products_grid_before ul.open").forEach(ul => {
-                    if (ul !== submenu) ul.classList.remove("open");
-                });
+            const isOpen = submenu.classList.contains("open");
 
-                document.querySelectorAll("#products_grid_before a.active").forEach(a => {
-                    if (a !== card) a.classList.remove("active");
-                });
+            // 🔥 CLOSE (same click)
+            if (isOpen) {
+                submenu.classList.remove("open");
+                card.classList.remove("active");
+                return;
+            }
 
-                // ✅ OPEN current submenu
-                submenu.classList.add("open");
-                card.classList.add("active");
+            // 🔥 CLOSE ALL (accordion behavior)
+            container.querySelectorAll("ul.open").forEach(ul => {
+                ul.classList.remove("open");
             });
-        });
-    },
 
-    // 🔹 Top categories
+            container.querySelectorAll("a.active").forEach(a => {
+                a.classList.remove("active");
+            });
+
+            // 🔥 OPEN CURRENT
+            submenu.classList.add("open");
+            card.classList.add("active");
+        });
+    });
+},
+
+    /* ============================= */
+    /* 🔹 TOP CATEGORIES */
+    /* ============================= */
+
     _decorateTopCategories() {
         const cards = document.querySelectorAll(".o_wsale_categories_grid a");
 
         cards.forEach((card, index) => {
-            if (!card.classList.contains("my_top_cat")) {
-                card.classList.add("my_top_cat");
-                card.style.animationDelay = `${Math.min(index * 100, 800)}ms`;
-            }
+            if (card.classList.contains("my_top_cat")) return;
+
+            card.classList.add("my_top_cat");
+            card.style.animationDelay = `${Math.min(index * 100, 800)}ms`;
         });
     },
 
-    // 🔹 Products
+    /* ============================= */
+    /* 🔹 PRODUCTS */
+    /* ============================= */
+
     _decorateProducts() {
         const products = document.querySelectorAll(".oe_product");
 
         products.forEach((product, index) => {
-            if (!product.classList.contains("my_product_card")) {
-                product.classList.add("my_product_card");
-                product.style.animationDelay = `${Math.min(index * 50, 500)}ms`;
-            }
+            if (product.classList.contains("my_product_card")) return;
+
+            product.classList.add("my_product_card");
+            product.style.animationDelay = `${Math.min(index * 50, 500)}ms`;
         });
     },
 
-    // 🔥 Observe DOM safely with debounce
+    /* ============================= */
+    /* 🔥 OBSERVER */
+    /* ============================= */
+
     _observeChanges() {
         let timeout;
+
         const observer = new MutationObserver(() => {
             clearTimeout(timeout);
-            timeout = setTimeout(() => this._decorateAll(), 100); // debounce 100ms
+
+            timeout = setTimeout(() => {
+                this._decorateAll();
+            }, 100);
         });
 
         observer.observe(document.body, {
             childList: true,
             subtree: true,
         });
+
+        return observer; // 🔥 important
     },
 });
