@@ -1,6 +1,6 @@
 {
     "name": "Loan Management System",
-    "version": "19.0.8.0.0",
+    "version": "19.0.9.0.0",
     "summary": "End-to-end customer loan lifecycle management",
     "category": "Accounting/Accounting",
     "author": "Custom",
@@ -17,6 +17,7 @@
         "views/crm_lead_loan_views.xml",
         "views/loan_type_views.xml",
         "views/loan_dashboard_views.xml",
+        "views/loan_dashboard_client_action.xml",
         "views/loan_views.xml",
         "views/loan_installment_views.xml",
         "views/loan_payment_views.xml",
@@ -30,4 +31,11 @@
     ],
     "application": True,
     "installable": True,
+    "assets": {
+        "web.assets_backend": [
+            "loan_management_system/static/src/js/loan_dashboard_client_action.js",
+            "loan_management_system/static/src/xml/loan_dashboard_templates.xml",
+            "loan_management_system/static/src/scss/loan_dashboard.scss",
+        ],
+    },
 }

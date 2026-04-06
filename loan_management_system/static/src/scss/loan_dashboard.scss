@@ -1,0 +1,14 @@
+.o_loan_dashboard_main { padding: 16px; background: #f3f3f3; }
+.o_ld_header { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:12px; }
+.o_ld_greet { display:flex; gap:10px; align-items:center; background:#fff; padding:12px; border-radius:8px; }
+.o_ld_avatar { font-size:32px; }
+.o_ld_filters { display:grid; grid-template-columns: repeat(5, minmax(120px,1fr)); gap:8px; align-items:center; }
+.o_ld_cards { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; margin-bottom:12px; }
+.o_ld_card { background:#fff; border-radius:8px; padding:12px; text-align:center; border:1px solid #e2e2e2; }
+.o_ld_section { background:#fff; border-radius:8px; padding:12px; margin-bottom:12px; }
+.o_ld_bar_row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.o_ld_bar_row .o_lbl { width:60px; }
+.o_ld_bar { flex:1; height:14px; background:#eee; border-radius:7px; overflow:hidden; }
+.o_ld_bar .o_fill { height:100%; background:#4ec89b; }
+.o_ld_grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.o_ld_pager { display:flex; justify-content:center; gap:8px; align-items:center; }
