@@ -24,6 +24,7 @@ class LoanLoan(models.Model):
     approval_date = fields.Date(tracking=True)
     disbursement_date = fields.Date(tracking=True)
     first_due_date = fields.Date(required=True, tracking=True)
+    foreclosure_date = fields.Date(tracking=True)
 
     principal_amount = fields.Monetary(required=True, tracking=True)
     interest_rate = fields.Float(help="Annual interest rate in percentage", tracking=True)
@@ -31,6 +32,10 @@ class LoanLoan(models.Model):
     grace_period_months = fields.Integer(default=0)
     processing_fee = fields.Monetary(default=0.0)
     penalty_rate = fields.Float(default=0.0, help="Monthly penalty rate for overdue installments")
+
+    agreement_html = fields.Html()
+    agreement_signed = fields.Boolean(default=False)
+    agreement_signed_date = fields.Date()
 
     state = fields.Selection(
         [
@@ -48,19 +53,26 @@ class LoanLoan(models.Model):
 
     installment_ids = fields.One2many("loan.installment", "loan_id", string="Installments", copy=False)
     payment_ids = fields.One2many("loan.payment", "loan_id", string="Payments", copy=False)
+    disbursement_ids = fields.One2many("loan.disbursement", "loan_id", string="Disbursements", copy=False)
 
     installment_count = fields.Integer(compute="_compute_counts")
     payment_count = fields.Integer(compute="_compute_counts")
+    disbursement_count = fields.Integer(compute="_compute_counts")
 
     total_interest = fields.Monetary(compute="_compute_totals", store=True)
     total_fees = fields.Monetary(compute="_compute_totals", store=True)
     total_amount = fields.Monetary(compute="_compute_totals", store=True)
     outstanding_amount = fields.Monetary(compute="_compute_totals", store=True)
     paid_amount = fields.Monetary(compute="_compute_totals", store=True)
+    disbursed_amount = fields.Monetary(compute="_compute_totals", store=True)
+    remaining_to_disburse = fields.Monetary(compute="_compute_totals", store=True)
+    settlement_amount = fields.Monetary(readonly=True)
+
     next_due_date = fields.Date(compute="_compute_next_due", store=True)
     next_due_amount = fields.Monetary(compute="_compute_next_due", store=True)
 
     notes = fields.Text()
+    close_note = fields.Text(readonly=True)
 
     @api.onchange("loan_type_id")
     def _onchange_loan_type_id(self):
@@ -69,12 +81,14 @@ class LoanLoan(models.Model):
                 rec.interest_rate = rec.loan_type_id.default_interest_rate
                 rec.term_months = rec.loan_type_id.default_term_months
                 rec.processing_fee = (rec.principal_amount * rec.loan_type_id.processing_fee_percent) / 100 if rec.principal_amount else 0
+                rec.agreement_html = rec.loan_type_id.agreement_template
 
-    @api.depends("installment_ids", "payment_ids")
+    @api.depends("installment_ids", "payment_ids", "disbursement_ids")
     def _compute_counts(self):
         for rec in self:
             rec.installment_count = len(rec.installment_ids)
             rec.payment_count = len(rec.payment_ids)
+            rec.disbursement_count = len(rec.disbursement_ids)
 
     @api.depends(
         "principal_amount",
@@ -83,6 +97,8 @@ class LoanLoan(models.Model):
         "installment_ids.fee_amount",
         "installment_ids.amount_due",
         "installment_ids.amount_paid",
+        "disbursement_ids.amount",
+        "disbursement_ids.state",
     )
     def _compute_totals(self):
         for rec in self:
@@ -90,11 +106,16 @@ class LoanLoan(models.Model):
             total_fees = rec.processing_fee + sum(rec.installment_ids.mapped("fee_amount"))
             total_due = sum(rec.installment_ids.mapped("amount_due")) + rec.processing_fee
             paid_amount = sum(rec.installment_ids.mapped("amount_paid"))
+            posted_disbursements = rec.disbursement_ids.filtered(lambda d: d.state == "posted")
+            disbursed_amount = sum(posted_disbursements.mapped("amount"))
+
             rec.total_interest = total_interest
             rec.total_fees = total_fees
             rec.total_amount = total_due if total_due else rec.principal_amount + total_interest + total_fees
             rec.paid_amount = paid_amount
             rec.outstanding_amount = rec.total_amount - paid_amount
+            rec.disbursed_amount = disbursed_amount
+            rec.remaining_to_disburse = rec.principal_amount - disbursed_amount
 
     @api.depends("installment_ids.state", "installment_ids.due_date", "installment_ids.amount_due", "installment_ids.amount_paid")
     def _compute_next_due(self):
@@ -116,6 +137,7 @@ class LoanLoan(models.Model):
                 loan_type = self.env["loan.type"].browse(vals["loan_type_id"])
                 vals["interest_rate"] = loan_type.default_interest_rate
                 vals["term_months"] = vals.get("term_months") or loan_type.default_term_months
+                vals["agreement_html"] = vals.get("agreement_html") or loan_type.agreement_template
         return super().create(vals_list)
 
     def _check_before_schedule_generation(self):
@@ -153,7 +175,6 @@ class LoanLoan(models.Model):
                     principal_portion = balance
                     emi = principal_portion + interest_amount
                 ending_balance = balance - principal_portion
-                penalty = 0.0
                 self.env["loan.installment"].create(
                     {
                         "loan_id": rec.id,
@@ -163,8 +184,8 @@ class LoanLoan(models.Model):
                         "principal_amount": principal_portion,
                         "interest_amount": interest_amount,
                         "fee_amount": 0.0,
-                        "penalty_amount": penalty,
-                        "amount_due": emi + penalty,
+                        "penalty_amount": 0.0,
+                        "amount_due": emi,
                         "balance_amount": max(ending_balance, 0.0),
                     }
                 )
@@ -179,6 +200,38 @@ class LoanLoan(models.Model):
 
     def action_disburse(self):
         self.write({"state": "disbursed", "disbursement_date": fields.Date.context_today(self)})
+
+    def action_open_disburse_wizard(self):
+        self.ensure_one()
+        return {
+            "name": _("Register Disbursement"),
+            "type": "ir.actions.act_window",
+            "res_model": "loan.disburse.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_loan_id": self.id,
+                "default_amount": self.remaining_to_disburse,
+                "default_journal_id": self.loan_type_id.journal_id.id,
+            },
+        }
+
+    def action_mark_agreement_signed(self):
+        self.write({"agreement_signed": True, "agreement_signed_date": fields.Date.context_today(self)})
+
+    def action_open_foreclosure_wizard(self):
+        self.ensure_one()
+        return {
+            "name": _("Foreclosure"),
+            "type": "ir.actions.act_window",
+            "res_model": "loan.foreclose.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_loan_id": self.id,
+                "default_settlement_amount": self.outstanding_amount,
+            },
+        }
 
     def action_reject(self):
         self.write({"state": "rejected"})
@@ -225,6 +278,17 @@ class LoanLoan(models.Model):
             "type": "ir.actions.act_window",
             "res_model": "loan.payment",
             "view_mode": "tree,form,pivot,graph",
+            "domain": [("loan_id", "=", self.id)],
+            "context": {"default_loan_id": self.id},
+        }
+
+    def action_view_disbursements(self):
+        self.ensure_one()
+        return {
+            "name": _("Disbursements"),
+            "type": "ir.actions.act_window",
+            "res_model": "loan.disbursement",
+            "view_mode": "tree,form",
             "domain": [("loan_id", "=", self.id)],
             "context": {"default_loan_id": self.id},
         }

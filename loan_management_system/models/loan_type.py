@@ -21,3 +21,4 @@ class LoanType(models.Model):
     journal_id = fields.Many2one("account.journal", domain="[('type', 'in', ('bank', 'cash'))]")
     income_account_id = fields.Many2one("account.account")
     receivable_account_id = fields.Many2one("account.account")
+    agreement_template = fields.Html()

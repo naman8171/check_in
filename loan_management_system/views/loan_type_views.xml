@@ -34,6 +34,7 @@
                             <field name="default_interest_rate"/>
                             <field name="default_term_months"/>
                             <field name="processing_fee_percent"/>
+                            <field name="agreement_template" widget="html"/>
                         </group>
                     </group>
                     <group string="Accounting">

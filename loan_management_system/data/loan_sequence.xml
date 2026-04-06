@@ -13,4 +13,11 @@
         <field name="prefix">PAY/%(year)s/</field>
         <field name="padding">5</field>
     </record>
+
+    <record id="seq_loan_disbursement" model="ir.sequence">
+        <field name="name">Loan Disbursement</field>
+        <field name="code">loan.disbursement</field>
+        <field name="prefix">DISB/%(year)s/</field>
+        <field name="padding">5</field>
+    </record>
 </odoo>

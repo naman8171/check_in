@@ -7,3 +7,5 @@ access_loan_type_user,loan.type.user,model_loan_type,loan_management_system.grou
 access_loan_type_manager,loan.type.manager,model_loan_type,loan_management_system.group_loan_manager,1,1,1,1
 access_loan_payment_user,loan.payment.user,model_loan_payment,loan_management_system.group_loan_user,1,0,1,0
 access_loan_payment_manager,loan.payment.manager,model_loan_payment,loan_management_system.group_loan_manager,1,1,1,1
+access_loan_disbursement_user,loan.disbursement.user,model_loan_disbursement,loan_management_system.group_loan_user,1,0,1,0
+access_loan_disbursement_manager,loan.disbursement.manager,model_loan_disbursement,loan_management_system.group_loan_manager,1,1,1,1
