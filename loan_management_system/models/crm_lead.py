@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class CrmLead(models.Model):
@@ -9,7 +9,6 @@ class CrmLead(models.Model):
     loan_term_months = fields.Integer(string="Loan Term (Months)", default=12)
     loan_request_count = fields.Integer(compute="_compute_loan_request_count")
 
-    @api.depends("id")
     def _compute_loan_request_count(self):
         grouped = self.env["loan.loan"].read_group(
             [("lead_id", "in", self.ids)],
