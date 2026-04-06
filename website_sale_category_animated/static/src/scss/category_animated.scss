@@ -68,10 +68,14 @@ body {
 }
 
 #products_grid_before a::after {
-    content: "▸";
+    content: "";
     font-size: 0.75rem;
     color: var(--wsca-text-muted);
     transition: transform 220ms ease, color 220ms ease;
+}
+
+#products_grid_before a.has-submenu::after {
+    content: "▸";
 }
 
 #products_grid_before a:hover,

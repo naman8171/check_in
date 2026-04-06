@@ -35,17 +35,25 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
 
         const links = container.querySelectorAll("a");
         links.forEach((link, index) => {
-            if (link.dataset.wscaEnhanced === "true") return;
-
-            link.dataset.wscaEnhanced = "true";
-            link.classList.remove("nav-link");
-            link.classList.add("my_sidebar_cat");
-            link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
+            if (link.dataset.wscaEnhanced !== "true") {
+                link.dataset.wscaEnhanced = "true";
+                link.classList.remove("nav-link");
+                link.classList.add("my_sidebar_cat");
+                link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
+                this._observeVisibility(link);
+            }
 
             const submenu = this._getSubmenu(link);
-            if (submenu) {
+            if (!submenu) {
+                link.classList.remove("has-submenu");
+                return;
+            }
+
+            link.classList.add("has-submenu");
+            if (link.dataset.wscaToggleBound !== "true") {
+                link.dataset.wscaToggleBound = "true";
                 link.setAttribute("role", "button");
-                link.setAttribute("aria-expanded", "false");
+                link.setAttribute("aria-expanded", submenu.classList.contains("show") ? "true" : "false");
                 link.addEventListener("click", (ev) => this._onSidebarClick(ev, container, link, submenu));
                 link.addEventListener("keydown", (ev) => {
                     if (ev.key === "Enter" || ev.key === " ") {
@@ -58,8 +66,6 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
                 link.classList.add("active");
                 this._openAncestorMenus(link);
             }
-
-            this._observeVisibility(link);
         });
     },
 
@@ -67,13 +73,12 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
         const listItem = link.closest("li");
         if (!listItem) return null;
 
-        // :scope can be unreliable in legacy storefront contexts, so use direct children.
-        const directChildUl = Array.from(listItem.children).find((el) => el.tagName === "UL");
-        if (directChildUl) return directChildUl;
+        const directChild = Array.from(listItem.children).find((el) =>
+            el.matches("ul, .collapse, .dropdown-menu, [data-wsca-submenu]")
+        );
+        if (directChild) return directChild;
 
-        // fallback when markup includes wrappers around the submenu
-        const wrappedUl = listItem.querySelector("ul");
-        return wrappedUl || null;
+        return listItem.querySelector("ul, .collapse, .dropdown-menu, [data-wsca-submenu]") || null;
     },
 
     _setSubmenuState(link, submenu, shouldOpen) {
