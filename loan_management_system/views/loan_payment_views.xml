@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_loan_payment_tree" model="ir.ui.view">
+        <field name="name">loan.payment.tree</field>
+        <field name="model">loan.payment</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="loan_id"/>
+                <field name="installment_id"/>
+                <field name="payment_date"/>
+                <field name="journal_id"/>
+                <field name="amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_loan_payment_form" model="ir.ui.view">
+        <field name="name">loan.payment.form</field>
+        <field name="model">loan.payment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="loan_id"/>
+                            <field name="installment_id"/>
+                            <field name="payment_date"/>
+                        </group>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="amount"/>
+                            <field name="principal_component"/>
+                            <field name="interest_component"/>
+                            <field name="fee_component"/>
+                            <field name="penalty_component"/>
+                        </group>
+                    </group>
+                    <field name="note"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_loan_payment" model="ir.actions.act_window">
+        <field name="name">Loan Payments</field>
+        <field name="res_model">loan.payment</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+    </record>
+</odoo>

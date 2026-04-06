@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_loan_root" name="Loan Management" sequence="10" groups="loan_management_system.group_loan_user"/>
+
+    <menuitem id="menu_loan_dashboard" name="Loan Dashboard" parent="menu_loan_root" action="action_loan_dashboard" sequence="5"/>
+
+    <menuitem id="menu_loan_operations" name="Operations" parent="menu_loan_root" sequence="10"/>
+    <menuitem id="menu_loan_loans" name="Loans" parent="menu_loan_operations" action="action_loan_loan" sequence="10"/>
+    <menuitem id="menu_loan_installments" name="Installments" parent="menu_loan_operations" action="action_loan_installment" sequence="20"/>
+    <menuitem id="menu_loan_payments" name="Payments" parent="menu_loan_operations" action="action_loan_payment" sequence="30"/>
+    <menuitem id="menu_loan_disbursements" name="Disbursements" parent="menu_loan_operations" action="action_loan_disbursement" sequence="40"/>
+
+    <menuitem id="menu_loan_reports" name="Reports" parent="menu_loan_root" sequence="80"/>
+    <menuitem id="menu_loan_collection_report" name="Loan Collection Report" parent="menu_loan_reports" action="action_loan_collection_report_wizard" sequence="10"/>
+
+    <menuitem id="menu_loan_config" name="Configuration" parent="menu_loan_root" sequence="90" groups="loan_management_system.group_loan_manager"/>
+    <menuitem id="menu_loan_types" name="Loan Types" parent="menu_loan_config" action="action_loan_type" sequence="10"/>
+</odoo>
