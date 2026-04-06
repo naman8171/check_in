@@ -1,0 +1,23 @@
+{
+    "name": "Loan Management System",
+    "version": "19.0.2.0.0",
+    "summary": "End-to-end customer loan lifecycle management",
+    "category": "Accounting/Accounting",
+    "author": "Custom",
+    "website": "https://example.com",
+    "license": "LGPL-3",
+    "depends": ["mail", "account"],
+    "data": [
+        "security/loan_security.xml",
+        "security/ir.model.access.csv",
+        "data/loan_sequence.xml",
+        "views/loan_type_views.xml",
+        "views/loan_views.xml",
+        "views/loan_installment_views.xml",
+        "views/loan_payment_views.xml",
+        "views/loan_payment_register_views.xml",
+        "views/loan_menus.xml",
+    ],
+    "application": True,
+    "installable": True,
+}
