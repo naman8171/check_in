@@ -112,7 +112,7 @@ class LoanDashboard(models.TransientModel):
             "type": "ir.actions.act_window",
             "res_model": "loan.dashboard",
             "view_mode": "form",
-            "target": "current",
+            "target": "new",
             "res_id": self.id,
         }
 
