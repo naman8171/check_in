@@ -15,6 +15,7 @@ class LoanLoan(models.Model):
     company_id = fields.Many2one("res.company", default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related="company_id.currency_id", store=True, readonly=True)
     user_id = fields.Many2one("res.users", string="Loan Officer", default=lambda self: self.env.user, tracking=True)
+    lead_id = fields.Many2one("crm.lead", string="Source Enquiry", copy=False, tracking=True)
 
     loan_type_id = fields.Many2one("loan.type", required=True, tracking=True)
     loan_type = fields.Selection(related="loan_type_id.code", string="Loan Code", store=True)
