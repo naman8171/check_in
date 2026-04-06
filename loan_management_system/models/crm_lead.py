@@ -4,8 +4,9 @@ from odoo import fields, models
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
+    currency_id = fields.Many2one("res.currency", related="company_id.currency_id", readonly=True)
     loan_type_id = fields.Many2one("loan.type", string="Loan Type")
-    loan_amount = fields.Monetary(string="Loan Amount")
+    loan_amount = fields.Monetary(string="Loan Amount", currency_field="currency_id")
     loan_term_months = fields.Integer(string="Loan Term (Months)", default=12)
     loan_request_count = fields.Integer(compute="_compute_loan_request_count")
 
