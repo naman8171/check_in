@@ -28,7 +28,7 @@ class LoanInstallment(models.Model):
         default="unpaid",
     )
     paid_on = fields.Date()
-    late_days = fields.Integer(compute="_compute_late_days")
+    late_days = fields.Integer(compute="_compute_late_days", store=True)
 
     @api.depends("due_date", "state")
     def _compute_late_days(self):
