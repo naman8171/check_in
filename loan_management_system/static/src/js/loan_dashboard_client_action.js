@@ -149,6 +149,90 @@ class LoanDashboardClientAction extends Component {
         const perPage = Number(this.state.data?.per_page || 10);
         return Math.max(Math.ceil(total / perPage), 1);
     }
+
+    async openLoanTypeRecords(loanTypeId) {
+        if (!loanTypeId) return;
+        await this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Loan Records",
+            res_model: "loan.loan",
+            view_mode: "list,form",
+            domain: [["loan_type_id", "=", loanTypeId]],
+            target: "current",
+        });
+    }
+
+    async downloadPanel(panelId) {
+        const el = document.getElementById(panelId);
+        if (!el) return;
+        if (!window.html2canvas) {
+            this.notification.add("Install html2canvas in assets to enable PNG export.", { type: "warning" });
+            return;
+        }
+        const canvas = await window.html2canvas(el, { backgroundColor: "#ffffff" });
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = `${panelId}.png`;
+        a.click();
+    }
+
+    amount(value) {
+        return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+
+    monthlyWidth(amount) {
+        const vals = (this.state.data?.monthly_trend || []).map((row) => Number(row.amount || 0));
+        const max = Math.max(...vals, 1);
+        return `width:${Math.round((Number(amount || 0) / max) * 100)}%`;
+    }
+
+    stageRows() {
+        return Object.entries(this.state.data?.stage_counts || {}).map(([label, count]) => ({ label, count: Number(count || 0) }));
+    }
+
+    stageWidth(count) {
+        const vals = this.stageRows().map((row) => row.count);
+        const max = Math.max(...vals, 1);
+        return `height:${Math.round((Number(count || 0) / max) * 100)}%`;
+    }
+
+    loanTypeStyle() {
+        const rows = this.state.data?.loan_type_volume || [];
+        const first = Number(rows[0]?.amount || 0);
+        const second = Number(rows[1]?.amount || 0);
+        const total = first + second;
+        const ratio = total ? Math.round((first * 100) / total) : 0;
+        return `background:conic-gradient(#51c99b 0 ${ratio}%, #eb6a67 ${ratio}% 100%)`;
+    }
+
+    paidUnpaidStyle() {
+        const paid = Number(this.state.data?.kpis?.paid_installment || 0);
+        const unpaid = Number(this.state.data?.kpis?.unpaid_installment || 0);
+        const total = paid + unpaid;
+        const ratio = total ? Math.round((paid * 100) / total) : 0;
+        return `background:conic-gradient(#55cb9b 0 ${ratio}%, #ee6b67 ${ratio}% 100%)`;
+    }
+
+    upcomingInstallments() {
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + Number(this.state.filters.upcoming_duration || 365));
+        return (this.state.data?.top_installments || []).filter((item) => {
+            const due = new Date(item.due_date);
+            return due >= today && due <= maxDate;
+        });
+    }
+
+    overdueInstallments() {
+        const today = new Date();
+        return (this.state.data?.top_installments || []).filter((item) => new Date(item.due_date) < today);
+    }
+
+    totalPages() {
+        const total = Number(this.state.data?.total_installments || 0);
+        const perPage = Number(this.state.data?.per_page || 10);
+        return Math.max(Math.ceil(total / perPage), 1);
+    }
 }
 
 LoanDashboardClientAction.template = "loan_management_system.LoanDashboardClientAction";
