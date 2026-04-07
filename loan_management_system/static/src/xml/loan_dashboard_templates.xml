@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="loan_management_system.LoanDashboardClientAction">
         <div class="o_loan_dashboard_main" t-if="!state.loading and state.data">
@@ -31,7 +31,6 @@
                     <div class="o_ld_donut" t-att-style="this.paidUnpaidStyle()"><div class="o_ld_donut_hole"/></div>
                     <div class="o_ld_legend_inline"><span><i class="dot green"/> Paid Installment</span><span><i class="dot red"/> Due Installment</span></div>
                 </div>
-            </div>
 
             <div class="o_ld_grid_2">
                 <div class="o_ld_card_panel" id="panel_stage_status">
@@ -62,7 +61,6 @@
                     <div class="o_ld_subfilter"><label>Top Installment</label><select class="o_small_select" t-on-change="(ev) => this.onFilterChange(ev, 'top_limit')"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select></div>
                     <div id="panel_top_installments" class="o_ld_install_status"><div class="o_paid">Paid: <t t-esc="state.data.kpis.paid_installment"/></div><div class="o_unpaid">Unpaid: <t t-esc="state.data.kpis.unpaid_installment"/></div></div>
                 </div>
-            </div>
 
             <div class="o_ld_grid_2">
                 <div class="o_ld_card_panel">
