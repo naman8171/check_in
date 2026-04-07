@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="loan_management_system.LoanDashboardClientAction">
         <div class="o_loan_dashboard_main" t-if="!state.loading and state.data">
@@ -31,6 +31,28 @@
                     <div class="o_ld_donut" t-att-style="this.paidUnpaidStyle()"><div class="o_ld_donut_hole"/></div>
                     <div class="o_ld_legend_inline"><span><i class="dot green"/> Paid Installment</span><span><i class="dot red"/> Due Installment</span></div>
                 </div>
+                <button class="btn btn-primary" t-on-click="printDashboard">Print Dashboard</button>
+            </div>
+
+            <div class="o_ld_filters">
+                <select t-on-change="(ev) => this.onFilterChange(ev, 'user_id')">
+                    <option value="">All Users</option>
+                    <option t-foreach="state.data.filters.users" t-as="u" t-key="u.id" t-att-value="u.id" t-esc="u.name"/>
+                </select>
+                <select t-on-change="(ev) => this.onFilterChange(ev, 'borrower_id')">
+                    <option value="">All Borrowers</option>
+                    <option t-foreach="state.data.filters.borrowers" t-as="b" t-key="b.id" t-att-value="b.id" t-esc="b.name"/>
+                </select>
+                <select t-on-change="(ev) => this.onFilterChange(ev, 'loan_type_id')">
+                    <option value="">All Loan Types</option>
+                    <option t-foreach="state.data.filters.loan_types" t-as="loan_type" t-key="loan_type.id" t-att-value="loan_type.id" t-esc="loan_type.name"/>
+                </select>
+                <select t-on-change="(ev) => this.onFilterChange(ev, 'date_range')">
+                    <option value="lifetime">Lifetime</option>
+                    <option value="this_month">This Month</option>
+                    <option value="last_3_month">Last 3 Months</option>
+                    <option value="this_year">This Year</option>
+                </select>
             </div>
 
             <div class="o_ld_grid_2">

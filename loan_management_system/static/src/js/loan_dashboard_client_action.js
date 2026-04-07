@@ -149,6 +149,54 @@ class LoanDashboardClientAction extends Component {
         const perPage = Number(this.state.data?.per_page || 10);
         return Math.max(Math.ceil(total / perPage), 1);
     }
+
+    amount(value) {
+        return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+
+    monthlyWidth(amount) {
+        const vals = (this.state.data?.monthly_trend || []).map((row) => Number(row.amount || 0));
+        const max = Math.max(...vals, 1);
+        return `width:${Math.round((Number(amount || 0) / max) * 100)}%`;
+    }
+
+    stageRows() {
+        const entries = Object.entries(this.state.data?.stage_counts || {});
+        return entries.map(([label, count]) => ({ label, count: Number(count || 0) }));
+    }
+
+    stageWidth(count) {
+        const vals = this.stageRows().map((row) => row.count);
+        const max = Math.max(...vals, 1);
+        return `height:${Math.round((Number(count || 0) / max) * 100)}%`;
+    }
+
+    loanTypeStyle() {
+        const rows = this.state.data?.loan_type_volume || [];
+        const first = Number(rows[0]?.amount || 0);
+        const second = Number(rows[1]?.amount || 0);
+        const total = first + second;
+        const ratio = total ? Math.round((first * 100) / total) : 0;
+        return `background:conic-gradient(#51c99b 0 ${ratio}%, #eb6a67 ${ratio}% 100%)`;
+    }
+
+    paidUnpaidStyle() {
+        const paid = Number(this.state.data?.kpis?.paid_installment || 0);
+        const unpaid = Number(this.state.data?.kpis?.unpaid_installment || 0);
+        const total = paid + unpaid;
+        const ratio = total ? Math.round((paid * 100) / total) : 0;
+        return `background:conic-gradient(#55cb9b 0 ${ratio}%, #ee6b67 ${ratio}% 100%)`;
+    }
+
+    upcomingInstallments() {
+        const today = new Date();
+        return (this.state.data?.top_installments || []).filter((item) => new Date(item.due_date) >= today);
+    }
+
+    overdueInstallments() {
+        const today = new Date();
+        return (this.state.data?.top_installments || []).filter((item) => new Date(item.due_date) < today);
+    }
 }
 
 LoanDashboardClientAction.template = "loan_management_system.LoanDashboardClientAction";
