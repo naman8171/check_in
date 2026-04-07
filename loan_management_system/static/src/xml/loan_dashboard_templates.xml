@@ -21,7 +21,7 @@
                 </select>
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'loan_type_id')">
                     <option value="">All Loan Types</option>
-                    <option t-foreach="state.data.filters.loan_types" t-as="lt" t-key="lt.id" t-att-value="lt.id" t-esc="lt.name"/>
+                    <option t-foreach="state.data.filters.loan_types" t-as="loan_type" t-key="loan_type.id" t-att-value="loan_type.id" t-esc="loan_type.name"/>
                 </select>
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'date_range')">
                     <option value="lifetime">Lifetime</option>
