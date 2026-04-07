@@ -34,27 +34,6 @@
                 <button class="btn btn-primary" t-on-click="printDashboard">Print Dashboard</button>
             </div>
 
-            <div class="o_ld_filters">
-                <select t-on-change="(ev) => this.onFilterChange(ev, 'user_id')">
-                    <option value="">All Users</option>
-                    <option t-foreach="state.data.filters.users" t-as="u" t-key="u.id" t-att-value="u.id" t-esc="u.name"/>
-                </select>
-                <select t-on-change="(ev) => this.onFilterChange(ev, 'borrower_id')">
-                    <option value="">All Borrowers</option>
-                    <option t-foreach="state.data.filters.borrowers" t-as="b" t-key="b.id" t-att-value="b.id" t-esc="b.name"/>
-                </select>
-                <select t-on-change="(ev) => this.onFilterChange(ev, 'loan_type_id')">
-                    <option value="">All Loan Types</option>
-                    <option t-foreach="state.data.filters.loan_types" t-as="loan_type" t-key="loan_type.id" t-att-value="loan_type.id" t-esc="loan_type.name"/>
-                </select>
-                <select t-on-change="(ev) => this.onFilterChange(ev, 'date_range')">
-                    <option value="lifetime">Lifetime</option>
-                    <option value="this_month">This Month</option>
-                    <option value="last_3_month">Last 3 Months</option>
-                    <option value="this_year">This Year</option>
-                </select>
-            </div>
-
             <div class="o_ld_grid_2">
                 <div class="o_ld_card_panel" id="panel_stage_status">
                     <div class="o_ld_panel_head"><h4>Stage-Wise Loan Status Overview</h4><button class="o_ld_icon_btn" t-on-click="() => this.downloadPanel('panel_stage_status')">⬇</button></div>
@@ -84,7 +63,6 @@
                     <div class="o_ld_subfilter"><label>Top Installment</label><select class="o_small_select" t-on-change="(ev) => this.onFilterChange(ev, 'top_limit')"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select></div>
                     <div id="panel_top_installments" class="o_ld_install_status"><div class="o_paid">Paid: <t t-esc="state.data.kpis.paid_installment"/></div><div class="o_unpaid">Unpaid: <t t-esc="state.data.kpis.unpaid_installment"/></div></div>
                 </div>
-            </div>
 
             <div class="o_ld_grid_2">
                 <div class="o_ld_card_panel">
