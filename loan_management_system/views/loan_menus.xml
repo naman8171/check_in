@@ -12,23 +12,40 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_loan_root" name="Loan Management" sequence="10" groups="loan_management_system.group_loan_user"/>
+    <menuitem id="menu_loan_root" name="Loan Management" sequence="10"
+        groups="loan_management_system.group_loan_user" />
 
-    <menuitem id="menu_loan_dashboard" name="Loan Dashboard" parent="menu_loan_root" action="action_loan_dashboard_client" sequence="10"/>
-    <menuitem id="menu_loan_inquiry" name="Inquiry" parent="menu_loan_root" action="action_loan_inquiry" sequence="20"/>
-    <menuitem id="menu_loan_contacts" name="Contacts" parent="menu_loan_root" action="action_loan_contacts" sequence="30"/>
+    <menuitem id="menu_loan_dashboard" name="Loan Dashboard" parent="menu_loan_root"
+        action="action_loan_dashboard_client" sequence="10" />
+    <menuitem id="menu_loan_inquiry" name="Inquiry" parent="menu_loan_root"
+        action="action_loan_inquiry" sequence="20" />
+    <menuitem id="menu_loan_contacts" name="Contacts" parent="menu_loan_root"
+        action="action_loan_contacts" sequence="30" />
 
-    <menuitem id="menu_loan_operations" name="Loan" parent="menu_loan_root" sequence="40"/>
-    <menuitem id="menu_loan_loans" name="Loans" parent="menu_loan_operations" action="action_loan_loan" sequence="10"/>
-    <menuitem id="menu_loan_installments" name="Installments" parent="menu_loan_operations" action="action_loan_installment" sequence="20"/>
-    <menuitem id="menu_loan_payments" name="Payments" parent="menu_loan_operations" action="action_loan_payment" sequence="30"/>
-    <menuitem id="menu_loan_disbursements" name="Disbursements" parent="menu_loan_operations" action="action_loan_disbursement" sequence="40"/>
+    <menuitem id="menu_loan_operations" name="Loan" parent="menu_loan_root" sequence="40" />
+    <menuitem id="menu_loan_loans" name="Loans" parent="menu_loan_operations"
+        action="action_loan_loan" sequence="10" />
+    <menuitem id="menu_loan_installments" name="Installments" parent="menu_loan_operations"
+        action="action_loan_installment" sequence="20" />
+    <menuitem id="menu_loan_payments" name="Payments" parent="menu_loan_operations"
+        action="action_loan_payment" sequence="30" />
+    <menuitem id="menu_loan_disbursements" name="Disbursements" parent="menu_loan_operations"
+        action="action_loan_disbursement" sequence="40" />
 
-    <menuitem id="menu_loan_terms" name="Terms &amp; Notices" parent="menu_loan_root" sequence="50"/>
-    <menuitem id="menu_loan_types" name="Loan Types" parent="menu_loan_terms" action="action_loan_type" sequence="10"/>
+    <menuitem id="menu_loan_terms" name="Terms &amp; Notices" parent="menu_loan_root" sequence="50" />
+    <menuitem id="menu_loan_types" name="Loan Types" parent="menu_loan_terms"
+        action="action_loan_type" sequence="10" />
 
-    <menuitem id="menu_loan_reports" name="Reporting" parent="menu_loan_root" sequence="60"/>
-    <menuitem id="menu_loan_collection_report" name="Loan Collection Report" parent="menu_loan_reports" action="action_loan_collection_report_wizard" sequence="10"/>
+    <menuitem id="menu_loan_reports" name="Reports" parent="menu_loan_root" sequence="60" />
+    <menuitem id="menu_loan_collection_report" name="Collection Report"
+        parent="menu_loan_reports" action="action_loan_collection_report_wizard" sequence="10" />
+    <menuitem id="menu_loan_disburse_report" name="Disbursement Report"
+        parent="menu_loan_reports" action="action_loan_disbursement_report_wizard" sequence="20" />
+    <menuitem id="menu_loan_foreclose_report" name="Foreclose Report"
+        parent="menu_loan_reports" action="action_loan_foreclose_report_wizard" sequence="30" />
 
-    <menuitem id="menu_loan_config" name="Configuration" parent="menu_loan_root" sequence="70"/>
+    <menuitem id="menu_loan_config" name="Configuration" parent="menu_loan_root" sequence="70"
+        groups="loan_management_system.group_loan_manager" />
+    <menuitem id="menu_loan_config_settings" name="Settings" parent="menu_loan_config"
+        action="action_loan_config" sequence="10" />
 </odoo>

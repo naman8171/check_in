@@ -8,18 +8,10 @@ class LoanDashboardClientAction extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
-        this.notification = useService("notification");
         this.state = useState({
             loading: true,
             page: 1,
-            filters: {
-                user_id: false,
-                borrower_id: false,
-                loan_type_id: false,
-                date_range: "lifetime",
-                top_limit: 5,
-                upcoming_duration: 365,
-            },
+            filters: { user_id: false, borrower_id: false, loan_type_id: false, date_range: "lifetime", top_limit: 5 },
             data: null,
         });
         onWillStart(async () => {
@@ -41,55 +33,19 @@ class LoanDashboardClientAction extends Component {
     }
 
     async prevPage() {
-        if (this.state.data?.has_prev) await this.loadData(this.state.page - 1);
+        if (this.state.data?.has_prev) {
+            await this.loadData(this.state.page - 1);
+        }
     }
 
     async nextPage() {
-        if (this.state.data?.has_next) await this.loadData(this.state.page + 1);
+        if (this.state.data?.has_next) {
+            await this.loadData(this.state.page + 1);
+        }
     }
 
     async printDashboard() {
-        const vals = {
-            user_id: this.state.filters.user_id || false,
-            borrower_id: this.state.filters.borrower_id || false,
-            loan_type_id: this.state.filters.loan_type_id || false,
-            date_range: this.state.filters.date_range || "lifetime",
-            top_limit: this.state.filters.top_limit || 5,
-        };
-        const dashboardId = await this.orm.call("loan.dashboard", "create", [vals]);
-        await this.action.doAction("loan_management_system.action_report_loan_dashboard", {
-            additionalContext: {
-                active_model: "loan.dashboard",
-                active_id: dashboardId,
-                active_ids: [dashboardId],
-            },
-        });
-    }
-
-    async openLoanTypeRecords(loanTypeId) {
-        if (!loanTypeId) return;
-        await this.action.doAction({
-            type: "ir.actions.act_window",
-            name: "Loan Records",
-            res_model: "loan.loan",
-            view_mode: "list,form",
-            domain: [["loan_type_id", "=", loanTypeId]],
-            target: "current",
-        });
-    }
-
-    async downloadPanel(panelId) {
-        const el = document.getElementById(panelId);
-        if (!el) return;
-        if (!window.html2canvas) {
-            this.notification.add("Install html2canvas in assets to enable PNG export.", { type: "warning" });
-            return;
-        }
-        const canvas = await window.html2canvas(el, { backgroundColor: "#ffffff" });
-        const a = document.createElement("a");
-        a.href = canvas.toDataURL("image/png");
-        a.download = `${panelId}.png`;
-        a.click();
+        await this.action.doAction("loan_management_system.action_report_loan_dashboard");
     }
 
     amount(value) {
@@ -103,7 +59,8 @@ class LoanDashboardClientAction extends Component {
     }
 
     stageRows() {
-        return Object.entries(this.state.data?.stage_counts || {}).map(([label, count]) => ({ label, count: Number(count || 0) }));
+        const entries = Object.entries(this.state.data?.stage_counts || {});
+        return entries.map(([label, count]) => ({ label, count: Number(count || 0) }));
     }
 
     stageWidth(count) {
@@ -131,23 +88,12 @@ class LoanDashboardClientAction extends Component {
 
     upcomingInstallments() {
         const today = new Date();
-        const maxDate = new Date();
-        maxDate.setDate(today.getDate() + Number(this.state.filters.upcoming_duration || 365));
-        return (this.state.data?.top_installments || []).filter((item) => {
-            const due = new Date(item.due_date);
-            return due >= today && due <= maxDate;
-        });
+        return (this.state.data?.top_installments || []).filter((item) => new Date(item.due_date) >= today);
     }
 
     overdueInstallments() {
         const today = new Date();
         return (this.state.data?.top_installments || []).filter((item) => new Date(item.due_date) < today);
-    }
-
-    totalPages() {
-        const total = Number(this.state.data?.total_installments || 0);
-        const perPage = Number(this.state.data?.per_page || 10);
-        return Math.max(Math.ceil(total / perPage), 1);
     }
 }
 
