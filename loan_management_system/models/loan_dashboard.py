@@ -165,6 +165,7 @@ class LoanDashboard(models.TransientModel):
         type_group = self.env["loan.loan"].read_group(domain, ["principal_amount:sum", "loan_type_id"], ["loan_type_id"])
         type_data = [
             {
+                "id": g["loan_type_id"][0] if g.get("loan_type_id") else False,
                 "name": g["loan_type_id"][1] if g.get("loan_type_id") else "Undefined",
                 "amount": g.get("principal_amount", 0.0),
             }
@@ -239,6 +240,8 @@ class LoanDashboard(models.TransientModel):
             "top_partners": top_partners,
             "top_installments": installment_rows,
             "page": page,
+            "per_page": per_page,
+            "total_installments": len(all_top_installments),
             "has_prev": page > 1,
             "has_next": end < len(all_top_installments),
         }

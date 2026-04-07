@@ -12,3 +12,4 @@ access_loan_disbursement_manager,loan.disbursement.manager,model_loan_disburseme
 
 access_loan_dashboard_user,loan.dashboard.user,model_loan_dashboard,loan_management_system.group_loan_user,1,1,1,1
 access_loan_dashboard_manager,loan.dashboard.manager,model_loan_dashboard,loan_management_system.group_loan_manager,1,1,1,1
+access_loan_collection_report_wizard_user,loan.collection.report.wizard.user,model_loan_collection_report_wizard,loan_management_system.group_loan_user,1,1,1,1
