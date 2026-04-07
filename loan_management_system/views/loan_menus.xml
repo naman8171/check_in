@@ -30,5 +30,5 @@
     <menuitem id="menu_loan_reports" name="Reporting" parent="menu_loan_root" sequence="60"/>
     <menuitem id="menu_loan_collection_report" name="Loan Collection Report" parent="menu_loan_reports" action="action_loan_collection_report_wizard" sequence="10"/>
 
-    <menuitem id="menu_loan_config" name="Configuration" parent="menu_loan_root" sequence="70" groups="loan_management_system.group_loan_manager"/>
+    <menuitem id="menu_loan_config" name="Configuration" parent="menu_loan_root" sequence="70"/>
 </odoo>

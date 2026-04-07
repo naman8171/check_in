@@ -31,8 +31,6 @@
                     <div class="o_ld_donut" t-att-style="this.paidUnpaidStyle()"><div class="o_ld_donut_hole"/></div>
                     <div class="o_ld_legend_inline"><span><i class="dot green"/> Paid Installment</span><span><i class="dot red"/> Due Installment</span></div>
                 </div>
-                <button class="btn btn-primary" t-on-click="printDashboard">Print Dashboard</button>
-            </div>
 
             <div class="o_ld_grid_2">
                 <div class="o_ld_card_panel" id="panel_stage_status">
