@@ -2,26 +2,18 @@
 <templates xml:space="preserve">
     <t t-name="loan_management_system.LoanDashboardClientAction">
         <div class="o_loan_dashboard_main" t-if="!state.loading and state.data">
-            <div class="o_ld_topbar">
-                <div class="o_ld_title_block">
-                    <h2>Loan Operations Dashboard</h2>
-                    <p t-esc="state.data.greeting"/>
-                </div>
-                <button class="btn btn-primary" t-on-click="printDashboard">Print Dashboard</button>
-            </div>
-
-            <div class="o_ld_filters">
+            <div class="o_ld_filters_top">
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'user_id')">
                     <option value="">All Users</option>
-                    <option t-foreach="state.data.filters.users" t-as="u" t-key="u.id" t-att-value="u.id" t-esc="u.name"/>
+                    <option t-foreach="state.data.filters.users" t-as="user_item" t-key="user_item.id" t-att-value="user_item.id" t-esc="user_item.name"/>
                 </select>
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'borrower_id')">
                     <option value="">All Borrowers</option>
-                    <option t-foreach="state.data.filters.borrowers" t-as="b" t-key="b.id" t-att-value="b.id" t-esc="b.name"/>
+                    <option t-foreach="state.data.filters.borrowers" t-as="borrower_item" t-key="borrower_item.id" t-att-value="borrower_item.id" t-esc="borrower_item.name"/>
                 </select>
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'loan_type_id')">
                     <option value="">All Loan Types</option>
-                    <option t-foreach="state.data.filters.loan_types" t-as="loan_type" t-key="loan_type.id" t-att-value="loan_type.id" t-esc="loan_type.name"/>
+                    <option t-foreach="state.data.filters.loan_types" t-as="loan_type_item" t-key="loan_type_item.id" t-att-value="loan_type_item.id" t-esc="loan_type_item.name"/>
                 </select>
                 <select t-on-change="(ev) => this.onFilterChange(ev, 'date_range')">
                     <option value="lifetime">Lifetime</option>
@@ -29,101 +21,140 @@
                     <option value="last_3_month">Last 3 Months</option>
                     <option value="this_year">This Year</option>
                 </select>
+                <button class="btn btn-primary" t-on-click="printDashboard">Print</button>
             </div>
 
-            <div class="o_ld_cards">
-                <div class="o_ld_card o_ld_card--primary"><h3 t-esc="state.data.kpis.approved_amount"/><span>Approved Amount</span></div>
-                <div class="o_ld_card"><h3 t-esc="state.data.kpis.disbursed_amount"/><span>Disbursed Amount</span></div>
-                <div class="o_ld_card"><h3 t-esc="state.data.kpis.repayment_amount"/><span>Total Repayments</span></div>
-                <div class="o_ld_card"><h3 t-esc="state.data.kpis.interest_amount"/><span>Interest Collected</span></div>
-                <div class="o_ld_card"><h3 t-esc="state.data.kpis.processing_fee_total"/><span>Processing Fees</span></div>
-                <div class="o_ld_card"><h3 t-esc="state.data.kpis.lead_count"/><span>Active Leads</span></div>
-                <div class="o_ld_card"><h3><t t-esc="state.data.kpis.open_count"/> / <t t-esc="state.data.kpis.closed_count"/></h3><span>Open / Closed Loans</span></div>
-                <div class="o_ld_card"><h3><t t-esc="state.data.kpis.avg_interest_rate"/>%</h3><span>Average Interest Rate</span></div>
-            </div>
-
-            <div class="o_ld_grid2">
-                <div class="o_ld_section">
-                    <div class="o_ld_section_head">
-                        <h4>Portfolio Health</h4>
-                    </div>
-                    <div class="o_ld_kpi_split">
-                        <div>
-                            <p class="o_ld_muted">Open Loans</p>
-                            <h5 t-esc="state.data.kpis.open_count"/>
-                        </div>
-                        <div>
-                            <p class="o_ld_muted">Closed Loans</p>
-                            <h5 t-esc="state.data.kpis.closed_count"/>
+            <div class="o_ld_grid_3">
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Loan Request 3 Month Trends</h4><span>⬇</span></div>
+                    <div class="o_ld_bar_chart">
+                        <div class="o_ld_hbar" t-foreach="state.data.monthly_trend" t-as="month_row" t-key="month_row.label">
+                            <label t-esc="month_row.label"/>
+                            <div class="o_ld_hbar_track"><div class="o_ld_hbar_fill" t-att-style="this.monthlyWidth(month_row.amount)"/></div>
+                            <span t-esc="this.amount(month_row.amount)"/>
                         </div>
                     </div>
-                    <div class="o_ld_progress">
-                        <div class="o_ld_progress_fill" t-att-style="'width:' + ((state.data.kpis.closed_count + state.data.kpis.open_count) ? Math.round((state.data.kpis.closed_count * 100) / (state.data.kpis.closed_count + state.data.kpis.open_count)) : 0) + '%'"/>
-                    </div>
-                    <p class="o_ld_muted">Closure ratio based on total tracked loans.</p>
                 </div>
 
-                <div class="o_ld_section">
-                    <div class="o_ld_section_head">
-                        <h4>Top Borrowers by Exposure</h4>
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Principal vs. Interest</h4><span>⬇</span></div>
+                    <div class="o_ld_total">Total EMI Amount</div>
+                    <div class="o_ld_total_amt" t-esc="this.amount(state.data.kpis.repayment_amount + state.data.kpis.interest_amount)"/>
+                    <div class="o_ld_stacked">
+                        <div class="o_ld_stacked_principal"/>
                     </div>
-                    <ul class="o_ld_list">
-                        <li t-foreach="state.data.top_partners" t-as="p" t-key="p.name">
-                            <span t-esc="p.name"/>
-                            <strong t-esc="p.amount"/>
-                        </li>
+                    <ul class="o_ld_legend_list">
+                        <li><i class="dot orange"/> Interest Amount <b t-esc="this.amount(state.data.kpis.interest_amount)"/></li>
+                        <li><i class="dot brown"/> Principle Amount <b t-esc="this.amount(state.data.kpis.disbursed_amount)"/></li>
+                    </ul>
+                </div>
+
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Paid vs. Unpaid Installments</h4><span>⬇</span></div>
+                    <div class="o_ld_donut" t-att-style="this.paidUnpaidStyle()"><div class="o_ld_donut_hole"/></div>
+                    <div class="o_ld_legend_inline">
+                        <span><i class="dot green"/> Paid Installment</span>
+                        <span><i class="dot red"/> Due Installment</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="o_ld_grid_2">
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Stage-Wise Loan Status Overview</h4><span>⬇</span></div>
+                    <div class="o_ld_vbars">
+                        <div class="o_ld_vbar" t-foreach="this.stageRows()" t-as="stage_row" t-key="stage_row.label">
+                            <div class="o_ld_vbar_fill" t-att-style="this.stageWidth(stage_row.count)"/>
+                            <small t-esc="stage_row.label"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Loan Volume by Loan Type</h4><span>⬇</span></div>
+                    <div class="o_ld_donut" t-att-style="this.loanTypeStyle()"><div class="o_ld_donut_hole"/></div>
+                    <ul class="o_ld_legend_list">
+                        <li t-if="state.data.loan_type_volume[0]"><i class="dot green"/> <span t-esc="state.data.loan_type_volume[0].name"/> <b t-esc="this.amount(state.data.loan_type_volume[0].amount)"/></li>
+                        <li t-if="state.data.loan_type_volume[1]"><i class="dot red"/> <span t-esc="state.data.loan_type_volume[1].name"/> <b t-esc="this.amount(state.data.loan_type_volume[1].amount)"/></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="o_ld_section">
-                <div class="o_ld_section_head">
-                    <h4>Monthly Loan Trend</h4>
-                </div>
-                <div t-foreach="state.data.monthly_trend" t-as="m" t-key="m.label" class="o_ld_bar_row">
-                    <span class="o_lbl" t-esc="m.label"/>
-                    <div class="o_ld_bar">
-                        <div class="o_fill" t-att-style="'width:' + Math.min((m.amount / 10000), 100) + '%'"/>
+            <div class="o_ld_grid_2">
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head">
+                        <h4>Top Partners: Loan Amount</h4>
+                        <select class="o_small_select" t-on-change="(ev) => this.onFilterChange(ev, 'top_limit')">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
                     </div>
-                    <span class="o_ld_value" t-esc="m.amount"/>
+                    <ul class="o_ld_rank_list">
+                        <li t-foreach="state.data.top_partners" t-as="partner_row" t-key="partner_row.name">
+                            <span t-esc="partner_row.name"/>
+                            <b t-esc="this.amount(partner_row.amount)"/>
+                        </li>
+                    </ul>
                 </div>
-            </div>
 
-            <div class="o_ld_section">
-                <div class="o_ld_section_head">
-                    <h4>Upcoming Installments</h4>
-                    <span class="o_ld_muted">Page <t t-esc="state.page"/></span>
-                </div>
-                <div class="table-responsive">
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Top Installments</h4><span>Top <t t-esc="state.filters.top_limit or 5"/></span></div>
                     <table class="table table-sm o_ld_table">
-                        <thead>
-                            <tr>
-                                <th>Installment</th>
-                                <th>Loan</th>
-                                <th>Borrower</th>
-                                <th class="text-end">Amount</th>
-                                <th>Due Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Name</th><th>Loan</th><th>Client</th><th class="text-end">Amount</th><th>Date</th><th/></tr></thead>
                         <tbody>
-                            <tr t-foreach="state.data.top_installments" t-as="r" t-key="r.id">
-                                <td t-esc="r.name"/>
-                                <td t-esc="r.loan"/>
-                                <td t-esc="r.borrower"/>
-                                <td class="text-end" t-esc="r.amount_due"/>
-                                <td t-esc="r.due_date"/>
-                                <td>
-                                    <span class="o_ld_badge" t-esc="r.state"/>
-                                </td>
+                            <tr t-foreach="state.data.top_installments" t-as="installment_row" t-key="installment_row.id">
+                                <td t-esc="installment_row.name"/>
+                                <td t-esc="installment_row.loan"/>
+                                <td t-esc="installment_row.borrower"/>
+                                <td class="text-end" t-esc="this.amount(installment_row.amount_due)"/>
+                                <td t-esc="installment_row.due_date"/>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="o_ld_pager">
-                    <button class="btn btn-outline-secondary" t-on-click="prevPage" t-att-disabled="!state.data.has_prev">Previous</button>
-                    <button class="btn btn-outline-secondary" t-on-click="nextPage" t-att-disabled="!state.data.has_next">Next</button>
+            </div>
+
+            <div class="o_ld_grid_2">
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Upcoming Installment</h4><span>Duration: Next 365 Days</span></div>
+                    <table class="table table-sm o_ld_table">
+                        <thead><tr><th>Name</th><th>Loan Id</th><th>Client</th><th>Amount</th><th>Date</th><th/></tr></thead>
+                        <tbody>
+                            <tr t-foreach="this.upcomingInstallments()" t-as="up_item" t-key="up_item.id">
+                                <td t-esc="up_item.name"/>
+                                <td t-esc="up_item.loan"/>
+                                <td t-esc="up_item.borrower"/>
+                                <td t-esc="this.amount(up_item.amount_due)"/>
+                                <td t-esc="up_item.due_date"/>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+
+                <div class="o_ld_card_panel">
+                    <div class="o_ld_panel_head"><h4>Overdue Installment</h4><span>Specific Records</span></div>
+                    <table class="table table-sm o_ld_table">
+                        <thead><tr><th>Name</th><th>Loan Id</th><th>Client</th><th>Amount</th><th>Date</th><th/></tr></thead>
+                        <tbody>
+                            <tr t-foreach="this.overdueInstallments()" t-as="od_item" t-key="od_item.id">
+                                <td t-esc="od_item.name"/>
+                                <td t-esc="od_item.loan"/>
+                                <td t-esc="od_item.borrower"/>
+                                <td t-esc="this.amount(od_item.amount_due)"/>
+                                <td t-esc="od_item.due_date"/>
+                                <td><button class="btn btn-sm btn-secondary">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="o_ld_pager">
+                <button class="btn btn-outline-secondary" t-on-click="prevPage" t-att-disabled="!state.data.has_prev">See previous records</button>
+                <button class="btn btn-outline-secondary" t-on-click="nextPage" t-att-disabled="!state.data.has_next">See next records</button>
             </div>
         </div>
         <div t-else="" class="o_loan_dashboard_main o_ld_loading">Loading dashboard...</div>
