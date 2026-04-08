@@ -72,8 +72,21 @@
         <t t-call="website.layout">
             <div class="container my-4">
                 <h2>Apply for Loan</h2>
+                <p class="text-muted">Submit your details to apply for a loan. Every submission is captured as a lead.</p>
                 <form action="/loans/apply/submit" method="post" class="row g-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="col-md-6">
+                        <label>Full Name</label>
+                        <input name="full_name" type="text" class="form-control" required="required"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input name="email" type="email" class="form-control" required="required"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Phone</label>
+                        <input name="phone" type="text" class="form-control"/>
+                    </div>
                     <div class="col-md-6">
                         <label>Loan Type</label>
                         <select name="loan_type_id" class="form-control" required="required">
@@ -100,6 +113,19 @@
                         <button type="submit" class="btn btn-primary">Submit Application</button>
                     </div>
                 </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_loan_apply_thank_you" name="Loan Application Thank You">
+        <t t-call="website.layout">
+            <div class="container my-5">
+                <div class="alert alert-success">
+                    <h4 class="alert-heading">Thank you!</h4>
+                    <p>Your loan enquiry has been submitted successfully. Our team will contact you soon.</p>
+                </div>
+                <a href="/loans/apply" class="btn btn-secondary">Submit Another Enquiry</a>
+                <a href="/my/loans" class="btn btn-primary ms-2">Go to My Loans</a>
             </div>
         </t>
     </template>
