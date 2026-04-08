@@ -32,6 +32,11 @@ class LoanLoan(models.Model):
     term_months = fields.Integer(required=True, default=12, tracking=True)
     grace_period_months = fields.Integer(default=0)
     processing_fee = fields.Monetary(default=0.0)
+    processing_fee_not_deducted_from_disbursal = fields.Boolean(
+        string="Do Not Deduct Processing Fee From Disbursed Amount",
+        default=True,
+        help="If disabled, the processing fee is deducted from the displayed disbursed amount.",
+    )
     penalty_rate = fields.Float(default=0.0, help="Monthly penalty rate for overdue installments")
 
     agreement_html = fields.Html()
@@ -111,6 +116,7 @@ class LoanLoan(models.Model):
         "installment_ids.amount_paid",
         "disbursement_ids.amount",
         "disbursement_ids.state",
+        "processing_fee_not_deducted_from_disbursal",
     )
     def _compute_totals(self):
         for rec in self:
@@ -119,7 +125,10 @@ class LoanLoan(models.Model):
             total_due = sum(rec.installment_ids.mapped("amount_due")) + rec.processing_fee
             paid_amount = sum(rec.installment_ids.mapped("amount_paid"))
             posted_disbursements = rec.disbursement_ids.filtered(lambda d: d.state == "posted")
-            disbursed_amount = sum(posted_disbursements.mapped("amount"))
+            gross_disbursed_amount = sum(posted_disbursements.mapped("amount"))
+            disbursed_amount = gross_disbursed_amount
+            if not rec.processing_fee_not_deducted_from_disbursal:
+                disbursed_amount = max(gross_disbursed_amount - rec.processing_fee, 0.0)
 
             rec.total_interest = total_interest
             rec.total_fees = total_fees
@@ -127,7 +136,7 @@ class LoanLoan(models.Model):
             rec.paid_amount = paid_amount
             rec.outstanding_amount = rec.total_amount - paid_amount
             rec.disbursed_amount = disbursed_amount
-            rec.remaining_to_disburse = rec.principal_amount - disbursed_amount
+            rec.remaining_to_disburse = rec.principal_amount - gross_disbursed_amount
 
     @api.depends("installment_ids.state", "installment_ids.due_date", "installment_ids.amount_due", "installment_ids.amount_paid")
     def _compute_next_due(self):
