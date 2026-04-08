@@ -10,25 +10,29 @@
     </record>
 
     <template id="report_loan_agreement_template">
-        <t t-call="web.external_layout">
-            <div class="page">
-                <h2 style="text-align:center;">Loan Agreement</h2>
-                <p><strong>Loan Number:</strong> <span t-field="o.name"/></p>
-                <p><strong>Borrower:</strong> <span t-field="o.partner_id.name"/></p>
-                <p><strong>Loan Type:</strong> <span t-field="o.loan_type_id.name"/></p>
-                <p><strong>Principal:</strong> <span t-field="o.principal_amount"/></p>
-                <p><strong>Interest Rate:</strong> <span t-field="o.interest_rate"/>%</p>
-                <p><strong>Term:</strong> <span t-field="o.term_months"/> months</p>
-                <p><strong>First Due Date:</strong> <span t-field="o.first_due_date"/></p>
-                <hr/>
-                <div t-if="o.agreement_html" t-out="o.agreement_html"/>
-                <div t-if="not o.agreement_html">
-                    <p>The borrower agrees to repay the loan according to the approved repayment schedule.</p>
-                </div>
-                <br/><br/>
-                <p>Borrower Signature: _________________________</p>
-                <p>Date: _________________________</p>
-            </div>
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 style="text-align:center;">Loan Agreement</h2>
+                        <p><strong>Loan Number:</strong> <span t-field="o.name"/></p>
+                        <p><strong>Borrower:</strong> <span t-field="o.partner_id.name"/></p>
+                        <p><strong>Loan Type:</strong> <span t-field="o.loan_type_id.name"/></p>
+                        <p><strong>Principal:</strong> <span t-field="o.principal_amount"/></p>
+                        <p><strong>Interest Rate:</strong> <span t-field="o.interest_rate"/>%</p>
+                        <p><strong>Term:</strong> <span t-field="o.term_months"/> months</p>
+                        <p><strong>First Due Date:</strong> <span t-field="o.first_due_date"/></p>
+                        <hr/>
+                        <div t-if="o.agreement_html" t-out="o.agreement_html"/>
+                        <div t-if="not o.agreement_html">
+                            <p>The borrower agrees to repay the loan according to the approved repayment schedule.</p>
+                        </div>
+                        <br/><br/>
+                        <p>Borrower Signature: _________________________</p>
+                        <p>Date: _________________________</p>
+                    </div>
+                </t>
+            </t>
         </t>
     </template>
 </odoo>
