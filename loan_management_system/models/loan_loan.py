@@ -188,20 +188,20 @@ class LoanLoan(models.Model):
             rec.installment_ids.unlink()
             rate = (rec.interest_rate / 100.0) / 12.0
             months = rec.term_months
-            principal = rec._get_schedule_base_amount()
+            disbursed_base_amount = rec._get_schedule_base_amount()
+            total_interest_amount = disbursed_base_amount * rate * months
+            total_schedule_amount = disbursed_base_amount + total_interest_amount
+            emi = total_schedule_amount / months
+            monthly_interest = total_interest_amount / months if months else 0.0
 
-            if rate:
-                emi = (principal * rate * (1 + rate) ** months) / (((1 + rate) ** months) - 1)
-            else:
-                emi = principal / months
-
-            balance = principal
+            balance = disbursed_base_amount
             due_date = rec.first_due_date + relativedelta(months=rec.grace_period_months)
             for number in range(1, months + 1):
-                interest_amount = balance * rate
+                interest_amount = monthly_interest
                 principal_portion = emi - interest_amount
                 if number == months:
                     principal_portion = balance
+                    interest_amount = total_schedule_amount - (emi * (months - 1)) - principal_portion
                     emi = principal_portion + interest_amount
                 ending_balance = balance - principal_portion
                 self.env["loan.installment"].create(
