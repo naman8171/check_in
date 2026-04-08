@@ -120,6 +120,7 @@
                             <field name="principal_amount" />
                             <field name="interest_rate" />
                             <field name="processing_fee" />
+                            <field name="processing_fee_not_deducted_from_disbursal" />
                             <field name="penalty_rate" />
                         </group>
                         <group string="Snapshot">

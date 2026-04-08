@@ -32,6 +32,11 @@ class LoanLoan(models.Model):
     term_months = fields.Integer(required=True, default=12, tracking=True)
     grace_period_months = fields.Integer(default=0)
     processing_fee = fields.Monetary(default=0.0)
+    processing_fee_not_deducted_from_disbursal = fields.Boolean(
+        string="Do Not Deduct Processing Fee From Disbursed Amount",
+        default=True,
+        help="If disabled, the processing fee is deducted from the displayed disbursed amount.",
+    )
     penalty_rate = fields.Float(default=0.0, help="Monthly penalty rate for overdue installments")
 
     agreement_html = fields.Html()
@@ -111,6 +116,7 @@ class LoanLoan(models.Model):
         "installment_ids.amount_paid",
         "disbursement_ids.amount",
         "disbursement_ids.state",
+        "processing_fee_not_deducted_from_disbursal",
     )
     def _compute_totals(self):
         for rec in self:
@@ -119,7 +125,10 @@ class LoanLoan(models.Model):
             total_due = sum(rec.installment_ids.mapped("amount_due")) + rec.processing_fee
             paid_amount = sum(rec.installment_ids.mapped("amount_paid"))
             posted_disbursements = rec.disbursement_ids.filtered(lambda d: d.state == "posted")
-            disbursed_amount = sum(posted_disbursements.mapped("amount"))
+            gross_disbursed_amount = sum(posted_disbursements.mapped("amount"))
+            disbursed_amount = gross_disbursed_amount
+            if not rec.processing_fee_not_deducted_from_disbursal:
+                disbursed_amount = max(gross_disbursed_amount - rec.processing_fee, 0.0)
 
             rec.total_interest = total_interest
             rec.total_fees = total_fees
@@ -127,7 +136,7 @@ class LoanLoan(models.Model):
             rec.paid_amount = paid_amount
             rec.outstanding_amount = rec.total_amount - paid_amount
             rec.disbursed_amount = disbursed_amount
-            rec.remaining_to_disburse = rec.principal_amount - disbursed_amount
+            rec.remaining_to_disburse = rec.principal_amount - gross_disbursed_amount
 
     @api.depends("installment_ids.state", "installment_ids.due_date", "installment_ids.amount_due", "installment_ids.amount_paid")
     def _compute_next_due(self):
@@ -156,8 +165,8 @@ class LoanLoan(models.Model):
         for rec in self:
             if rec.term_months <= 0:
                 raise UserError(_("Term (months) must be greater than zero."))
-            if rec.principal_amount <= 0:
-                raise UserError(_("Principal amount must be greater than zero."))
+            if rec._get_schedule_base_amount() <= 0:
+                raise UserError(_("Disbursed amount used for schedule generation must be greater than zero."))
             if not rec.first_due_date:
                 raise UserError(_("Please set the first due date."))
             if rec.loan_type_id.min_amount and rec.principal_amount < rec.loan_type_id.min_amount:
@@ -165,13 +174,21 @@ class LoanLoan(models.Model):
             if rec.loan_type_id.max_amount and rec.principal_amount > rec.loan_type_id.max_amount:
                 raise UserError(_("Amount exceeds maximum allowed for this loan type."))
 
+    def _get_schedule_base_amount(self):
+        self.ensure_one()
+        if self.disbursed_amount > 0:
+            return self.disbursed_amount
+        if self.processing_fee_not_deducted_from_disbursal:
+            return self.principal_amount
+        return max(self.principal_amount - self.processing_fee, 0.0)
+
     def action_generate_schedule(self):
         self._check_before_schedule_generation()
         for rec in self:
             rec.installment_ids.unlink()
             rate = (rec.interest_rate / 100.0) / 12.0
             months = rec.term_months
-            principal = rec.principal_amount
+            principal = rec._get_schedule_base_amount()
 
             if rate:
                 emi = (principal * rate * (1 + rate) ** months) / (((1 + rate) ** months) - 1)
