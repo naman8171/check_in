@@ -12,6 +12,13 @@
         <field name="view_mode">list,form</field>
     </record>
 
+    <record id="action_rejected_loans" model="ir.actions.act_window">
+        <field name="name">Rejected Loans</field>
+        <field name="res_model">loan.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'rejected')]</field>
+    </record>
+
     <menuitem id="menu_loan_root" name="Loan Management" sequence="10" groups="loan_management_system.group_loan_user"/>
 
     <menuitem id="menu_loan_dashboard" name="Loan Dashboard" parent="menu_loan_root" action="action_loan_dashboard_client" sequence="10"/>
@@ -48,4 +55,5 @@
     <menuitem id="menu_loan_config_doc_type" name="Document Type" parent="menu_loan_config_doc_checklist" sequence="30"/>
 
     <menuitem id="menu_loan_config_installment_reminder" name="Installment Reminder Days" parent="menu_loan_config" sequence="80"/>
+    <menuitem id="menu_loan_config_rejected_loans" name="Rejected Loans" parent="menu_loan_config" action="action_rejected_loans" sequence="90"/>
 </odoo>
