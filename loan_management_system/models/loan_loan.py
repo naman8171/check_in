@@ -165,8 +165,8 @@ class LoanLoan(models.Model):
         for rec in self:
             if rec.term_months <= 0:
                 raise UserError(_("Term (months) must be greater than zero."))
-            if rec.principal_amount <= 0:
-                raise UserError(_("Principal amount must be greater than zero."))
+            if rec._get_schedule_base_amount() <= 0:
+                raise UserError(_("Disbursed amount used for schedule generation must be greater than zero."))
             if not rec.first_due_date:
                 raise UserError(_("Please set the first due date."))
             if rec.loan_type_id.min_amount and rec.principal_amount < rec.loan_type_id.min_amount:
@@ -174,13 +174,21 @@ class LoanLoan(models.Model):
             if rec.loan_type_id.max_amount and rec.principal_amount > rec.loan_type_id.max_amount:
                 raise UserError(_("Amount exceeds maximum allowed for this loan type."))
 
+    def _get_schedule_base_amount(self):
+        self.ensure_one()
+        if self.disbursed_amount > 0:
+            return self.disbursed_amount
+        if self.processing_fee_not_deducted_from_disbursal:
+            return self.principal_amount
+        return max(self.principal_amount - self.processing_fee, 0.0)
+
     def action_generate_schedule(self):
         self._check_before_schedule_generation()
         for rec in self:
             rec.installment_ids.unlink()
             rate = (rec.interest_rate / 100.0) / 12.0
             months = rec.term_months
-            principal = rec.principal_amount
+            principal = rec._get_schedule_base_amount()
 
             if rate:
                 emi = (principal * rate * (1 + rate) ** months) / (((1 + rate) ** months) - 1)
