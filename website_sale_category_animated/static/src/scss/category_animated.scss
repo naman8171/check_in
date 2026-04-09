@@ -125,6 +125,18 @@ body {
     box-shadow: none !important;
 }
 
+
+/* Ensure catalog page headings stay visible on dark background */
+.o_wsale_products_main_row h1,
+.o_wsale_products_main_row h2,
+.o_wsale_products_main_row .h1,
+.o_wsale_products_main_row .h2,
+#products_grid_before .text-muted,
+#wsale_products_categories_collapse .text-muted,
+.o_wsale_products_categories .text-muted {
+    color: #fff !important;
+}
+
 /* Product list area */
 #products_grid {
     background: #000 !important;
