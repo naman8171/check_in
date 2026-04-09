@@ -314,3 +314,29 @@ li ul .my_sidebar_cat.active {
         transition: none !important;
     }
 }
+
+@media (max-width: 991.98px) {
+    #products_grid_before a,
+    #wsale_products_categories_collapse a,
+    .o_wsale_products_categories a,
+    #products_grid_before ul ul a,
+    #wsale_products_categories_collapse ul ul a,
+    .o_wsale_products_categories ul ul a,
+    .o_wsale_categories_grid a,
+    .oe_product {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+
+    .o_wsale_categories_grid a:hover,
+    .o_wsale_categories_grid a:focus-visible,
+    .oe_product:hover {
+        transform: none;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:active {
+        transform: none;
+    }
+}
