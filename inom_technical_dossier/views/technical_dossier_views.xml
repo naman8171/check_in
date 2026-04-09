@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_technical_dossier_list" model="ir.ui.view">
+        <field name="name">technical.dossier.list</field>
+        <field name="model">technical.dossier</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+            </list>
+        </field>
+    </record>
+
+
+    <record id="view_technical_dossier_form" model="ir.ui.view">
+        <field name="name">technical.dossier.form</field>
+        <field name="model">technical.dossier</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="%(action_technical_dossier_report)d"
+                        string="Print Technical Dossier"
+                        type="action"
+                        class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="batch_no"/>
+                    </group>
+                    <notebook>
+                        <page string="Anxier 1">
+                            <notebook>
+                                <page string="Project Overview">
+                                    <group>
+                                        <group>
+                                            <field name="project_overview_title"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <field name="delivery_picking_id" string="Project ID"/>
+                                            <field name="product_id"/>
+                                            <field name="product_code"/>
+                                            <field name="partner_id"/>
+                                            <field name="category_id"/>
+                                            <field name="sensory_approval_date"/>
+                                        </group>
+                                    </group>
+                                </page>
+
+                                <page string="Product Concept">
+                                    <group>
+                                        <group>
+                                            <field name="product_concept_title"/>
+                                            <field name="target_claims"/>
+                                            <field name="market_positioning"/>
+                                            <field name="clean_label"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Final Sensory Profile">
+                                    <group>
+                                        <group>
+                                            <field name="final_sensory_profile_title"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <field name="taste"/>
+                                            <field name="aroma"/>
+                                            <field name="mouthfeel"/>
+                                            <field name="visual"/>
+                                            <field name="aftertaste"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Final Formulation">
+                                    <button name="open_import_wizard"
+                                        string="Upload File"
+                                        type="object"
+                                        context="{'import_type': 'final_formulation'}"
+                                        class="btn-primary"/>
+                                    <button name="action_download_dump"
+                                        type="object"
+                                        string="Download Dump File"
+                                        class="btn-primary ms-2"
+                                        icon="fa-download"/>
+                                     <group  col="8">
+                                        <group>
+                                            <field name="final_formulation_title"/>
+                                        </group>
+                                          <group>
+                                            <field name="size" readonly='0'/>
+                                          </group>
+                                          <group>
+                                            <button name="action_calculate_all_sizes" type='object' string="Calculate Size" class="btn btn-primary"/>
+                                          </group>
+                                        </group>
+                                    <group>
+                                    </group>
+
+                                    <field name="final_formulation_ids">
+                                        <list editable="bottom">
+                                            <field name="ingredient"/>
+                                            <field name="product_specification"/>
+                                            <field name="age1" string="Final Recepie" sum="Total"/>
+                                            <field name="calculated_size" sum="Total"/>
+                                            <field name="rate_per_kg"/>
+                                            <field name="total_value" sum="Total"/>
+
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Supplier Details">
+                                    <field name="supplier_detail_ids">
+                                        <list editable="bottom">
+                                            <field name="ingredient"/>
+                                            <field name="product_specification"/>
+                                            <field name="supplier_detail"/>
+                                            <field name="contact_no"/>
+                                            <field name="photo"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Ingredient Justification">
+                                    <group nolabel="0">
+                                        <field name="ingredient_justification_title"/>
+                                    </group>
+                                    <field name="ingredient_justification_ids">
+                                        <list editable="bottom">
+                                            <field name="ingredient"/>
+                                            <field name="product_specification"/>
+                                            <field name="why_used"/>
+                                            <field name="functional_role"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Manufacturing Process Flow">
+                                    <group nolabel="0">
+                                        <field name="manufacturing_process_flow_title"/>
+                                    </group>
+                                    <field name="manufacturing_process_flow_ids">
+                                        <list editable="bottom">
+                                            <field name="step_no"/>
+                                            <field name="process_step"/>
+                                            <field name="temperature" column_invisible="1"/>
+                                            <field name="time" column_invisible="1"/>
+                                            <field name="rpm" column_invisible="1"/>
+                                            <field name="equipment" column_invisible="1"/>
+                                            <field name="remarks"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page string="Anxier 2">
+                            <notebook>
+                                <page string="Process stages and CCP">
+                                    <group nolabel="0">
+                                        <field name="process_stages_title"/>
+                                    </group>
+                                    <field name="process_stages_ids">
+                                        <list editable="bottom">
+                                            <field name="step_no"/>
+                                            <field name="process_stage"/>
+                                            <field name="procedure"/>
+                                            <field name="key_parameters"/>
+                                            <field name="ccp_control_measure"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Quality Specification">
+                                    <group nolabel="0">
+                                        <field name="quality_specification_title"/>
+                                    </group>
+                                    <field name="quality_specification_ids">
+                                        <list editable="bottom">
+                                            <field name="parameter"/>
+                                            <field name="target"/>
+                                            <field name="minimum"/>
+                                            <field name="maximum"/>
+                                            <field name="test_method"/>
+                                            <field name="frequency"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Packaging Compatibility">
+                                    <group nolabel="0">
+                                        <group>
+                                            <field name="packaging_compatibility_title"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group>
+                                            <field name="packaging_type"/>
+                                            <field name="packaging_material"/>
+                                            <field name="filling_temp"/>
+                                            <field name="nitrogen_flush"/>
+                                            <field name="storage_condition"/>
+                                            <field name="transport_condition"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Machinery Required">
+                                    <group nolabel="0">
+                                        <field name="scale_up_title"/>
+                                    </group>
+                                    <field name="scale_up_ids">
+                                        <list editable="bottom">
+                                            <field name="sr_no"/>
+                                            <field name="name"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="COGS Analysis">
+                                    <button name="open_import_file"
+                                        string="Upload File"
+                                        type="object"
+                                        context="{'import_type': 'cogs'}"
+                                        class="btn-primary"/>
+                                    <button name="action_import_dump"
+                                        type="object"
+                                        string="Download Dump File"
+                                        class="btn-primary ms-2"
+                                        icon="fa-download"/>
+                                    <group nolabel="0">
+                                        <field name="cogs_analysis_title"/>
+                                    </group>
+                                    <field name="cogs_analysis_ids">
+                                        <list editable="bottom">
+                                            <field name="cost_component"/>
+                                            <field name="amount"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_technical_dossier"
+        model="ir.actions.act_window">
+        <field name="name">Technical Dossier</field>
+        <field name="res_model">technical.dossier</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <menuitem id="menu_technical_dossier_root"
+        name="Technical Dossier" 
+        web_icon="inom_technical_dossier,static/description/technical_dossar.png"/>
+
+
+    <menuitem id="menu_technical_dossier"
+        name="Projects"
+        parent="menu_technical_dossier_root"
+        action="action_technical_dossier"/>
+
+</odoo>

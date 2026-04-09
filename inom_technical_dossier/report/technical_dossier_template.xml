@@ -1,0 +1,1232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+<template id="technical_dossier_report_template">
+
+    <t t-call="web.html_container">
+
+
+    <t t-call="web.basic_layout">
+
+
+            
+
+          <style>
+            .page {
+                padding-left: 100px;
+                padding-right: 100px;
+            }
+        </style>
+
+
+    
+        <main>
+
+            
+            <t t-foreach="docs" t-as="doc">
+
+             <div class="page">
+                      <!-- HEADER FIRST PAGE -->
+<!--         <img src="./inom_technical_dossier/static/src/img/header.png"
+        style="width:100%;height:90px;"/>  -->
+
+
+
+                <div style=" position: relative; width:100%; height:1050px;">
+
+                    <div>
+                    <img t-att-src="'/inom_technical_dossier/static/src/img/header.png'" style="width:100%;"/>
+                </div>
+                
+    
+                
+    
+
+                    <!-- TOP LEFT LOGO -->
+                    <img src="/inom_technical_dossier/static/src/img/logo.png"
+                         style="position:absolute; top:40px; left:60px; height:60px;"/>
+
+                    <!-- TOP RIGHT LOGO -->
+                    <img src="/inom_technical_dossier/static/src/img/corner.png"
+                         style="position:absolute; top:40px; right:60px; height:50px;"/>
+
+
+
+                  <!-- TITLE -->
+                    <div style="position:absolute; top:250px; width:100%; text-align:left; font-size:34px; font-family:'Times New Roman'; font-weight:normal;">
+                        Project Summary –
+                        <t t-esc="doc.name"/>
+                    </div>
+
+                    <!-- DETAILS -->
+                    <div style="position:absolute; top:400px; left:220px; font-size:20px; font-family:'Times New Roman'; line-height:40px;">
+
+                        <p style="margin:0;">
+                            <span style="font-weight:bold;">Client Name:</span>
+                            <t t-esc="doc.partner_id.name"/>
+                        </p>
+
+                        <p style="margin:0;">
+                            <span style="font-weight:bold;">Project Code:</span>
+                            <t t-esc="doc.delivery_picking_id.name"/>
+                        </p>
+
+                        <p style="margin:0;">
+                            <span style="font-weight:bold;">Project Manager:</span>
+                            <t t-esc="doc.delivery_picking_id.assigned_id.name"/>
+                        </p>
+
+                        <p style="margin:0;">
+                            <span style="font-weight:bold;">Team Players:</span>
+                        </p>
+                    </div>
+
+
+
+                     <img src="/inom_technical_dossier/static/src/img/bottom_design.png"
+                          style="position:absolute; bottom:110px; right:60px; width:450px;"/>
+                    <!-- BOTTOM LEFT LOGO -->
+                    <img src="/inom_technical_dossier/static/src/img/logo.png"
+                         style="position:absolute; bottom:50px; left:0px; height:60px;"/>
+
+                    <!-- BOTTOM RIGHT LOGO -->
+                    <img src="/inom_technical_dossier/static/src/img/corner.png"
+                         style="position:absolute; bottom:40px; right:60px; height:50px;"/>
+
+                </div>
+                <div style="page-break-after: always;"></div>
+                    <h2 style="margin-top:30px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.project_overview_title or 'Product Concept'"/>
+                    </h2>
+
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <!-- Tab 1 -->
+
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  font-size:12px;
+                                  margin-bottom:30px;padding:6px;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.delivery_picking_id">
+                                    Project ID
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.product_id">
+                                    Product Name
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.product_id">
+                                    Product Code
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.partner_id">
+                                    client Name
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.product_id.categ_id">
+                                    Category Name
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.delivery_picking_id.close_date">
+                                    Sensory Approval Date
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t>
+                                <tr>
+                                    <td style="border:1px solid #000;" t-if="doc.delivery_picking_id">
+                                        <t t-esc="doc.delivery_picking_id.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;" t-if="doc.product_id">
+                                        <t t-esc="doc.product_id.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;" t-if="doc.product_id">
+                                        <t t-esc="doc.product_id.default_code or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;" t-if="doc.partner_id">
+                                        <t t-esc="doc.partner_id.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;" t-if="doc.product_id.categ_id">
+                                        <t t-esc="doc.product_id.categ_id.name or ''"/>
+                                    </td>
+                                    <td style="border:1px solid #000;" t-if="doc.delivery_picking_id.close_date">
+                                        <t t-esc="doc.delivery_picking_id.close_date or ''"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <!-- Tab 2 -->
+                    <h2 style="margin-top:30px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.product_concept_title or 'Product Concept'"/>
+                    </h2>
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  font-size:12px;
+                                  margin-bottom:30px;padding:6px;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.target_claims">
+                                    Target Claims
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.market_positioning">
+                                    Market Positioning
+                                </th>
+                                <th style="border:1px solid #000; font-weight:bold; text-align:left;" t-if="doc.clean_label">
+                                    Clean Label
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border:1px solid #000;" t-if="doc.target_claims">
+                                    <t t-esc="doc.target_claims or ''"/>
+                                </td>
+                                <td style="border:1px solid #000;" t-if="doc.market_positioning">
+                                    <t t-esc="doc.market_positioning or ''"/>
+                                </td>
+                                <td style="border:1px solid #000;" t-if="doc.clean_label">
+                                    <t t-esc="doc.clean_label or ''"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <!-- TAB 3 -->
+                    <h2 style="margin-top:30px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.final_sensory_profile_title or 'Final Sensory Profile'"/>
+                    </h2>
+        
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+
+
+                    <!-- Compute column visibility -->
+                    <t t-set="show_taste"
+                       t-value="any(line.taste for line in doc.final_sensory_profile_ids)"/>
+
+                    <t t-set="show_aroma"
+                       t-value="any(line.aroma for line in doc.final_sensory_profile_ids)"/>
+
+                    <t t-set="show_mouthfeel"
+                       t-value="any(line.mouthfeel for line in doc.final_sensory_profile_ids)"/>
+
+                    <t t-set="show_visual"
+                       t-value="any(line.visual for line in doc.final_sensory_profile_ids)"/>
+
+                    <t t-set="show_aftertaste"
+                       t-value="any(line.aftertaste for line in doc.final_sensory_profile_ids)"/>
+
+                    <!-- Hide table if ALL columns are empty -->
+
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:30px; padding:6px;">
+
+                            <thead>
+                                <tr>
+                                    <th t-if="show_taste" style="border:1px solid #000; text-align:left; font-weight:bold;">
+                                        Taste
+                                    </th>
+
+                                    <th t-if="show_aroma" style="border:1px solid #000; text-align:left; font-weight:bold;">
+                                        Aroma
+                                    </th>
+
+                                    <th t-if="show_mouthfeel" style="border:1px solid #000; text-align:left; font-weight:bold;">
+                                        Mouthfeel
+                                    </th>
+
+                                    <th t-if="show_visual" style="border:1px solid #000; text-align:left; font-weight:bold;">
+                                        Visual
+                                    </th>
+
+                                    <th t-if="show_aftertaste" style="border:1px solid #000; text-align:left; font-weight:bold;">
+                                        Aftertaste
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="doc.final_sensory_profile_ids" t-as="line">
+                                    <tr>
+
+                                        <td t-if="show_taste" style="border:1px solid #000;">
+                                            <t t-esc="line.taste"/>
+                                        </td>
+
+                                        <td t-if="show_aroma" style="border:1px solid #000;">
+                                            <t t-esc="line.aroma"/>
+                                        </td>
+
+                                        <td t-if="show_mouthfeel" style="border:1px solid #000;">
+                                            <t t-esc="line.mouthfeel"/>
+                                        </td>
+
+                                        <td t-if="show_visual" style="border:1px solid #000;">
+                                            <t t-esc="line.visual"/>
+                                        </td>
+
+                                        <td t-if="show_aftertaste" style="border:1px solid #000;">
+                                            <t t-esc="line.aftertaste"/>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </tbody>
+
+                        </table>
+
+
+                    <!-- TAB 4 -->
+                    
+                    <h2 style="margin-top:30px; margin-bottom:5px; text-align:left;">    
+                        <t t-esc="doc.final_formulation_title or 'Final Formulation'"/>
+                    </h2>
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <!-- Compute column visibility -->
+                    <t t-set="show_ingredient"
+                       t-value="any(line.ingredient for line in doc.final_formulation_ids)"/>
+
+                    <t t-set="show_specification"
+                       t-value="any(line.product_specification for line in doc.final_formulation_ids)"/>
+
+                    <t t-set="show_recipe"
+                       t-value="any(line.age1 for line in doc.final_formulation_ids)"/>
+
+                <!-- Hide table if ALL columns are empty -->
+
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  font-size:12px;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+                                <th t-if="show_ingredient"
+                                    style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                    Ingredient
+                                </th>
+
+                                <th t-if="show_specification"
+                                    style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                    Product Specification
+                                </th>
+
+                                <th t-if="show_recipe"
+                                    style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                    Final Recipe
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.final_formulation_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_ingredient"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.ingredient"/>
+                                    </td>
+
+                                    <td t-if="show_specification"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.product_specification"/>
+                                    </td>
+
+                                    <td t-if="show_recipe"
+                                        style="border:1px solid #000; padding:5px; text-align:left;">
+                                        <t t-esc="line.age1"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+                    <!-- TAB 5 -->
+                    <h2 style="padding-top:120px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="'Supplier details'"/>
+                    </h2>
+
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+
+                    <!-- Compute column visibility -->
+                    <t t-set="show_ingredient"
+                       t-value="any(line.ingredient for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_specification"
+                       t-value="any(line.product_specification for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_supplier"
+                       t-value="any(line.supplier_detail for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_contact"
+                       t-value="any(line.contact_no for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_photo"
+                       t-value="any(line.photo for line in doc.supplier_detail_ids)"/>
+
+                    <!-- Hide entire table if everything is empty -->
+
+                        <table style="width:100%;
+                                      border-collapse:collapse;
+                                      margin-bottom:30px;">
+
+                            <thead>
+                                <tr>
+                                    <th t-if="show_ingredient"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        INGREDIENTS
+                                    </th>
+
+                                    <th t-if="show_specification"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Product Specifications
+                                    </th>
+
+                                    <th t-if="show_supplier"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Supplier Details
+                                    </th>
+
+                                    <th t-if="show_contact"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Contact Number
+                                    </th>
+
+                                    <th t-if="show_photo"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Upload Photo
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="doc.supplier_detail_ids" t-as="line">
+                                    <tr>
+
+                                        <td t-if="show_ingredient"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.ingredient"/>
+                                        </td>
+
+                                        <td t-if="show_specification"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.product_specification"/>
+                                        </td>
+
+                                        <td t-if="show_supplier"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.supplier_detail"/>
+                                        </td>
+
+                                        <td t-if="show_contact"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.contact_no"/>
+                                        </td>
+
+                                        <td t-if="show_photo"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.photo"/>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </tbody>
+
+                        </table>
+
+
+
+
+                    <!-- TAB 6 -->
+                    <h2 style="padding-top:120px; margin-bottom:5px; text-align:left;">
+    
+                        <t t-esc="doc.ingredient_justification_title or 'Ingredient Justification'"/>
+                    </h2>
+
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+
+                    <!-- Compute column visibility -->
+                    <t t-set="show_ingredient"
+                       t-value="any(line.ingredient for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_specification"
+                       t-value="any(line.product_specification for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_supplier"
+                       t-value="any(line.supplier_detail for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_contact"
+                       t-value="any(line.contact_no for line in doc.supplier_detail_ids)"/>
+
+                    <t t-set="show_photo"
+                       t-value="any(line.photo for line in doc.supplier_detail_ids)"/>
+
+                    <!-- Hide table if ALL columns are empty -->
+
+                        <table style="width:100%;
+                                      border-collapse:collapse;
+                                      margin-bottom:30px;">
+
+                            <thead>
+                                <tr>
+
+                                    <th t-if="show_ingredient"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        INGREDIENTS
+                                    </th>
+
+                                    <th t-if="show_specification"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Product Specifications
+                                    </th>
+
+                                    <th t-if="show_supplier"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Supplier Details
+                                    </th>
+
+                                    <th t-if="show_contact"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Contact Number
+                                    </th>
+
+                                    <th t-if="show_photo"
+                                        style="border:1px solid #000; padding:6px; text-align:left; font-weight:bold;">
+                                        Upload Photo
+                                    </th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="doc.supplier_detail_ids" t-as="line">
+                                    <tr>
+
+                                        <td t-if="show_ingredient"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.ingredient"/>
+                                        </td>
+
+                                        <td t-if="show_specification"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.product_specification"/>
+                                        </td>
+
+                                        <td t-if="show_supplier"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.supplier_detail"/>
+                                        </td>
+
+                                        <td t-if="show_contact"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.contact_no"/>
+                                        </td>
+
+                                        <td t-if="show_photo"
+                                            style="border:1px solid #000; padding:5px;">
+                                            <t t-esc="line.photo"/>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </tbody>
+
+                        </table>
+
+
+
+                    <!-- TAB 7 -->
+                    
+                    <h2 style="margin-top:30px; margin-bottom:5px; text-align:left;">        
+                        <t t-esc="doc.manufacturing_process_flow_title or 'Manufacturing Process Flow'"/>
+                    </h2>
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <t t-set="show_step"
+                       t-value="any(line.step_no for line in doc.manufacturing_process_flow_ids)"/>
+                       <t t-set="show_process"
+                       t-value="any(line.process_step for line in doc.manufacturing_process_flow_ids)"/>
+                    <t t-set="show_temp"
+                       t-value="any(line.temperature for line in doc.manufacturing_process_flow_ids)"/>
+
+                    <t t-set="show_time"
+                       t-value="any(line.time for line in doc.manufacturing_process_flow_ids)"/>
+
+                    <t t-set="show_rpm"
+                       t-value="any(line.rpm for line in doc.manufacturing_process_flow_ids)"/>
+
+                    <t t-set="show_equipment"
+                       t-value="any(line.equipment for line in doc.manufacturing_process_flow_ids)"/>
+
+                    <t t-set="show_remarks"
+                       t-value="any(line.remarks for line in doc.manufacturing_process_flow_ids)"/>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  font-size:12px;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+                                <th t-if="show_step" style="border:1px solid #000; padding:6px;">Step</th>
+                                <th t-if="show_process" style="border:1px solid #000; padding:6px;">Process</th>
+
+                                <th t-if="show_temp" style="border:1px solid #000; padding:6px;">Temp</th>
+                                <th t-if="show_time" style="border:1px solid #000; padding:6px;">Time</th>
+                                <th t-if="show_rpm" style="border:1px solid #000; padding:6px;">RPM</th>
+                                <th t-if="show_equipment" style="border:1px solid #000; padding:6px;">Equipment</th>
+                                <th t-if="show_remarks" style="border:1px solid #000; padding:6px;">Remarks</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.manufacturing_process_flow_ids" t-as="line">
+                                <tr>
+                                    <td t-if="show_step" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.step_no"/>
+                                    </td>
+
+                                    <td t-if="show_process" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.process_step"/>
+                                    </td>
+
+                                    <td t-if="show_temp" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.temperature"/>
+                                    </td>
+
+                                    <td t-if="show_time" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.time"/>
+                                    </td>
+
+                                    <td t-if="show_rpm" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.rpm"/>
+                                    </td>
+
+                                    <td t-if="show_equipment" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.equipment"/>
+                                    </td>
+
+                                    <td t-if="show_remarks" style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.remarks"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+
+
+                    <!-- TAB 7 -->
+
+                    <h2 style="padding-top:60px; margin-bottom:5px; text-align:left;">    
+                        <t t-esc="doc.process_stages_title or 'Process Stages'"/>
+                    </h2>
+
+    
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <t t-set="show_stage"
+                       t-value="any(line.process_stage for line in doc.process_stages_ids)"/>
+
+                    <t t-set="show_procedure"
+                       t-value="any(line.procedure for line in doc.process_stages_ids)"/>
+
+                    <t t-set="show_key_parameters"
+                       t-value="any(line.key_parameters for line in doc.process_stages_ids)"/>
+
+                    <t t-set="show_ccp"
+                       t-value="any(line.ccp_control_measure for line in doc.process_stages_ids)"/>
+
+                    <table style="width:100%;
+              border-collapse:collapse;
+              margin-bottom:30px;">
+
+    <thead>
+        <tr>
+            <th t-if="show_stage"
+                style="border:1px solid #000; padding:6px; font-weight:bold;">
+                Stage
+            </th>
+
+            <th t-if="show_procedure"
+                style="border:1px solid #000; padding:6px; font-weight:bold;">
+                Procedure
+            </th>
+
+            <th t-if="show_key_parameters"
+                style="border:1px solid #000; padding:6px; font-weight:bold;">
+                Key Parameters
+            </th>
+
+            <th t-if="show_ccp"
+                style="border:1px solid #000; padding:6px; font-weight:bold;">
+                CCP
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <t t-foreach="doc.process_stages_ids" t-as="line">
+            <tr>
+
+                <td t-if="show_stage"
+                    style="border:1px solid #000; padding:5px;">
+                    <t t-esc="line.process_stage or ''"/>
+                </td>
+
+                <td t-if="show_procedure"
+                    style="border:1px solid #000; padding:5px;">
+                    <t t-esc="line.procedure or ''"/>
+                </td>
+
+                <td t-if="show_key_parameters"
+                    style="border:1px solid #000; padding:5px;">
+                    <t t-esc="line.key_parameters or ''"/>
+                </td>
+
+                <td t-if="show_ccp"
+                    style="border:1px solid #000; padding:5px;">
+                    <t t-esc="line.ccp_control_measure or ''"/>
+                </td>
+
+            </tr>
+        </t>
+    </tbody>
+
+</table>
+                    <!-- TAB 8 -->
+                    
+                
+                   <h2 style="margin-top:25px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.quality_specification_title or 'Quality Specification'"/>
+                    </h2>
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <t t-set="show_parameter"
+                       t-value="any(line.parameter for line in doc.quality_specification_ids)"/>
+
+                    <t t-set="show_target"
+                       t-value="any(line.target for line in doc.quality_specification_ids)"/>
+
+                    <t t-set="show_min"
+                       t-value="any(line.minimum for line in doc.quality_specification_ids)"/>
+
+                    <t t-set="show_max"
+                       t-value="any(line.maximum for line in doc.quality_specification_ids)"/>
+
+                    <t t-set="show_test_method"
+                       t-value="any(line.test_method for line in doc.quality_specification_ids)"/>
+
+                    <t t-set="show_frequency"
+                       t-value="any(line.frequency for line in doc.quality_specification_ids)"/>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  font-size:12px;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+
+                                <th t-if="show_parameter"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Parameter
+                                </th>
+
+                                <th t-if="show_target"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Target
+                                </th>
+
+                                <th t-if="show_min"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Min
+                                </th>
+
+                                <th t-if="show_max"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Max
+                                </th>
+
+                                <th t-if="show_test_method"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Test Method
+                                </th>
+
+                                <th t-if="show_frequency"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Frequency
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.quality_specification_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_parameter"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.parameter"/>
+                                    </td>
+
+                                    <td t-if="show_target"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.target"/>
+                                    </td>
+
+                                    <td t-if="show_min"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.minimum"/>
+                                    </td>
+
+                                    <td t-if="show_max"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.maximum"/>
+                                    </td>
+
+                                    <td t-if="show_test_method"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.test_method"/>
+                                    </td>
+
+                                    <td t-if="show_frequency"
+                                        style="border:1px solid #000; padding:5px;">
+                                        <t t-esc="line.frequency"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+
+                    <!-- TAB 9 -->
+                    <h2 style="margin-top:80px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.packaging_compatibility_title or 'Packaging Compatibility'"/>
+                    </h2>
+
+                
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <t t-set="show_type"
+                       t-value="any(line.packaging_type for line in doc.packaging_compatibility_ids)"/>
+
+                    <t t-set="show_material"
+                       t-value="any(line.packaging_material for line in doc.packaging_compatibility_ids)"/>
+
+                    <t t-set="show_filling_temp"
+                       t-value="any(line.filling_temp for line in doc.packaging_compatibility_ids)"/>
+
+                    <t t-set="show_nitrogen"
+                       t-value="any(line.nitrogen_flush for line in doc.packaging_compatibility_ids)"/>
+
+                    <t t-set="show_storage"
+                       t-value="any(line.storage_condition for line in doc.packaging_compatibility_ids)"/>
+
+                    <t t-set="show_transport"
+                       t-value="any(line.transport_condition for line in doc.packaging_compatibility_ids)"/>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+
+                                <th t-if="show_type"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Type
+                                </th>
+
+                                <th t-if="show_material"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Material
+                                </th>
+
+                                <th t-if="show_filling_temp"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Filling Temp
+                                </th>
+
+                                <th t-if="show_nitrogen"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Nitrogen
+                                </th>
+
+                                <th t-if="show_storage"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Storage
+                                </th>
+
+                                <th t-if="show_transport"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Transport
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.packaging_compatibility_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_type"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.packaging_type or ''"/>
+                                    </td>
+
+                                    <td t-if="show_material"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.packaging_material or ''"/>
+                                    </td>
+
+                                    <td t-if="show_filling_temp"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.filling_temp or ''"/>
+                                    </td>
+
+                                    <td t-if="show_nitrogen"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.nitrogen_flush or ''"/>
+                                    </td>
+
+                                    <td t-if="show_storage"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.storage_condition or ''"/>
+                                    </td>
+
+                                    <td t-if="show_transport"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.transport_condition or ''"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+
+
+                    <!-- TAB 10 -->
+                    <h2 style="margin-top:25px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.transport_storage_title or 'Transport And Storage'"/>
+                    </h2>
+
+                
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+
+                    <t t-set="show_hot_fill"
+                       t-value="any(line.hot_fill for line in doc.transport_storage_ids)"/>
+
+                    <t t-set="show_cold_fill"
+                       t-value="any(line.cold_fill for line in doc.transport_storage_ids)"/>
+
+                    <t t-set="show_retort"
+                       t-value="any(line.retort for line in doc.transport_storage_ids)"/>
+
+                    <t t-set="show_aseptic"
+                       t-value="any(line.aseptic for line in doc.transport_storage_ids)"/>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+
+                                <th t-if="show_hot_fill"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Hot Fill
+                                </th>
+
+                                <th t-if="show_cold_fill"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Cold Fill
+                                </th>
+
+                                <th t-if="show_retort"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Retort
+                                </th>
+
+                                <th t-if="show_aseptic"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Aseptic
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.transport_storage_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_hot_fill"
+                                        style="padding:6px 0;">
+                                        <t t-esc="line.hot_fill or ''"/>
+                                    </td>
+
+                                    <td t-if="show_cold_fill"
+                                        style="padding:6px 0;">
+                                        <t t-esc="line.cold_fill or ''"/>
+                                    </td>
+
+                                    <td t-if="show_retort"
+                                        style="padding:6px 0;">
+                                        <t t-esc="line.retort or ''"/>
+                                    </td>
+
+                                    <td t-if="show_aseptic"
+                                        style="padding:6px 0;">
+                                        <t t-esc="line.aseptic or ''"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+
+                    <!-- TAB 11 -->
+                    <h2 style="margin-top:25px; margin-bottom:5px; text-align:left;">
+                        <t t-esc="doc.scale_up_title or 'Scale Up Details'"/>
+                    </h2>
+
+                    
+                    <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                    </div>
+                    <t t-set="show_pilot"
+                       t-value="any(line.pilot_batch_size for line in doc.scale_up_ids)"/>
+
+                    <t t-set="show_commercial"
+                       t-value="any(line.commercial_batch_size for line in doc.scale_up_ids)"/>
+
+                    <t t-set="show_yield"
+                       t-value="any(line.expected_yield for line in doc.scale_up_ids)"/>
+
+                    <t t-set="show_loss"
+                       t-value="any(line.loss_assumption for line in doc.scale_up_ids)"/>
+
+                    <t t-set="show_machinery"
+                       t-value="any(line.machinery_required for line in doc.scale_up_ids)"/>
+
+                    <t t-set="show_risk"
+                       t-value="any(line.scale_up_risk_notes for line in doc.scale_up_ids)"/>
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+
+                                <th t-if="show_pilot"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Pilot Batch
+                                </th>
+
+                                <th t-if="show_commercial"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Commercial Batch
+                                </th>
+
+                                <th t-if="show_yield"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Yield %
+                                </th>
+
+                                <th t-if="show_loss"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Loss %
+                                </th>
+
+                                <th t-if="show_machinery"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Machinery
+                                </th>
+
+                                <th t-if="show_risk"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Risk Notes
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.scale_up_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_pilot"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.pilot_batch_size or ''"/>
+                                    </td>
+
+                                    <td t-if="show_commercial"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.commercial_batch_size or ''"/>
+                                    </td>
+
+                                    <td t-if="show_yield"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.expected_yield or ''"/>
+                                    </td>
+
+                                    <td t-if="show_loss"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.loss_assumption or ''"/>
+                                    </td>
+
+                                    <td t-if="show_machinery"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.machinery_required or ''"/>
+                                    </td>
+
+                                    <td t-if="show_risk"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.scale_up_risk_notes or ''"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+
+                    <!-- TAB 12 -->
+                <h2 style="margin-top:25px; margin-bottom:5px; text-align:left;">
+                    <t t-esc="doc.cogs_analysis_title or 'COGS Analysis'"/>
+                </h2>
+
+            
+                 <div style="width:100%;
+                                height:1px;
+                                border-top:1px solid #000;
+                                margin-bottom:15px;">
+                </div>
+                <t t-set="show_cost_component"
+                   t-value="any(line.cost_component for line in doc.cogs_analysis_ids)"/>
+
+                <t t-set="show_amount"
+                   t-value="any(line.amount for line in doc.cogs_analysis_ids)"/>
+
+                    <table style="width:100%;
+                                  border-collapse:collapse;
+                                  margin-bottom:30px;">
+
+                        <thead>
+                            <tr>
+
+                                <th t-if="show_cost_component"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Cost Component
+                                </th>
+
+                                <th t-if="show_amount"
+                                    style="border:1px solid #000; padding:6px; font-weight:bold;">
+                                    Amount
+                                </th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="doc.cogs_analysis_ids" t-as="line">
+                                <tr>
+
+                                    <td t-if="show_cost_component"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.cost_component or ''"/>
+                                    </td>
+
+                                    <td t-if="show_amount"
+                                        style="padding:6px 0; border:1px solid #000;">
+                                        <t t-esc="line.amount or ''"/>
+                                    </td>
+
+                                </tr>
+                            </t>
+                        </tbody>
+
+                    </table>
+                
+
+
+
+                
+                    <!-- <div style="page-break-after: always;"></div> -->
+
+                
+                    
+                </div>
+
+            </t>
+        </main>
+        <div style="page-break-before:always;"></div>
+
+
+
+        <img src="/inom_technical_dossier/static/src/img/footer.png"
+        style="position:absolute;bottom:0;width:100%;"/>
+
+        </div>
+
+               <!--  <div style="position:fixed; bottom:0; left:0; width:100%;">
+            <img src="/inom_technical_dossier/static/src/img/footer.png"
+                 style="width:100%; height:80px;"/>
+        </div> -->
+    </t>
+</t>
+</template>
+
+</odoo>

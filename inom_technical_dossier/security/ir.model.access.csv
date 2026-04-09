@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_technical_dossier,access_technical_dossier,model_technical_dossier,,1,1,1,1
+access_project_overview,access_project_overview,model_project_overview,,1,1,1,1
+access_product_concept,access_product_concept,model_product_concept,,1,1,1,1
+access_final_sensory_profile,access_final_sensory_profile,model_final_sensory_profile,,1,1,1,1
+access_final_formulation,access_final_formulation,model_final_formulation,,1,1,1,1
+access_ingredient_justification,access_ingredient_justification,model_ingredient_justification,,1,1,1,1
+access_manufacturing_process_flow,access_manufacturing_process_flow,model_manufacturing_process_flow,,1,1,1,1
+access_process_stages,access_process_stages,model_process_stages,,1,1,1,1
+access_quality_specification,access_quality_specification,model_quality_specification,,1,1,1,1
+access_packaging_compatibility,access_packaging_compatibility,model_packaging_compatibility,,1,1,1,1
+access_transport_storage,access_transport_storage,model_transport_storage,,1,1,1,1
+access_scale_up,access_scale_up,model_scale_up,,1,1,1,1
+access_cogs_analysis,access_cogs_analysis,model_cogs_analysis,,1,1,1,1
+access_import_line_wizard,access_import_line_wizard,model_import_line_wizard,,1,1,1,1
+access_supplier_details,access_supplier_details,model_supplier_details,,1,1,1,1
+
