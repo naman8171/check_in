@@ -19,7 +19,9 @@ body {
     scroll-behavior: smooth;
 }
 
-#products_grid_before {
+#products_grid_before,
+#wsale_products_categories_collapse,
+.o_wsale_products_categories {
     border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: 16px;
     padding: 1rem;
@@ -31,7 +33,9 @@ body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
-#products_grid_before a {
+#products_grid_before a,
+#wsale_products_categories_collapse a,
+.o_wsale_products_categories a {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
@@ -51,7 +55,9 @@ body {
     animation: wsca-slide-in 0.45s ease forwards;
 }
 
-#products_grid_before a:hover {
+#products_grid_before a:hover,
+#wsale_products_categories_collapse a:hover,
+.o_wsale_products_categories a:hover {
     background: linear-gradient(115deg, #eef2ff, #e0f2fe) !important;
     color: var(--wsca-primary) !important;
 
@@ -61,7 +67,9 @@ body {
     border-color: var(--wsca-primary);
 }
 
-#products_grid_before a.active {
+#products_grid_before a.active,
+#wsale_products_categories_collapse a.active,
+.o_wsale_products_categories a.active {
     background: linear-gradient(115deg, var(--wsca-primary), var(--wsca-primary-soft)) !important;
     color: #fff !important;
     box-shadow: var(--wsca-shadow-hover);
@@ -69,7 +77,9 @@ body {
     border-color: var(--wsca-primary);
 }
 
-#products_grid_before ul ul {
+#products_grid_before ul ul,
+#wsale_products_categories_collapse ul ul,
+.o_wsale_products_categories ul ul {
     margin: 0.3rem 0 0.6rem 0.8rem;
     padding-left: 0.7rem;
     border-left: 1px dashed #c8d5ef;
@@ -82,12 +92,18 @@ body {
 }
 
 #products_grid_before ul ul.open,
-#products_grid_before ul ul.show {
+#products_grid_before ul ul.show,
+#wsale_products_categories_collapse ul ul.open,
+#wsale_products_categories_collapse ul ul.show,
+.o_wsale_products_categories ul ul.open,
+.o_wsale_products_categories ul ul.show {
     max-height: 100%;
     opacity: 1;
 }
 
-#products_grid_before ul ul a {
+#products_grid_before ul ul a,
+#wsale_products_categories_collapse ul ul a,
+.o_wsale_products_categories ul ul a {
     font-size: 14px !important;
     color: var(--wsca-text-muted) !important;
     background: transparent !important;
@@ -98,7 +114,9 @@ body {
     transition: all 0.25s ease !important;
 }
 
-#products_grid_before ul ul a:hover {
+#products_grid_before ul ul a:hover,
+#wsale_products_categories_collapse ul ul a:hover,
+.o_wsale_products_categories ul ul a:hover {
     background: linear-gradient(
         120deg,
         rgba(79,70,229,0.12),
@@ -109,7 +127,9 @@ body {
     transform: translateX(5px);
 }
 
-#products_grid_before ul ul a.active {
+#products_grid_before ul ul a.active,
+#wsale_products_categories_collapse ul ul a.active,
+.o_wsale_products_categories ul ul a.active {
     background: linear-gradient(
         120deg,
         var(--wsca-primary),
@@ -290,37 +310,14 @@ body {
 }
 
 @media (max-width: 991.98px) {
-    body {
-        background: #ffffff !important;
-    }
-
-    #products_grid_before {
-        border-radius: 14px;
-        padding: 0.8rem;
-    }
-
-    #products_grid_before a {
-        font-size: 14px !important;
-        padding: 0.65rem 0.75rem !important;
-        border-radius: 10px;
-        opacity: 1;
-        transform: none;
-        animation: none;
-    }
-
-    #products_grid_before ul ul {
-        margin-left: 0.55rem;
-        padding-left: 0.55rem;
-    }
-
-    #products_grid_before ul ul a {
-        font-size: 13px !important;
-    }
-
-    .o_wsale_categories_grid a {
-        min-height: 132px;
-        border-radius: 14px;
-        padding: 1rem;
+    #products_grid_before a,
+    #wsale_products_categories_collapse a,
+    .o_wsale_products_categories a,
+    #products_grid_before ul ul a,
+    #wsale_products_categories_collapse ul ul a,
+    .o_wsale_products_categories ul ul a,
+    .o_wsale_categories_grid a,
+    .oe_product {
         opacity: 1;
         transform: none;
         animation: none;
@@ -330,13 +327,6 @@ body {
     .o_wsale_categories_grid a:focus-visible,
     .oe_product:hover {
         transform: none;
-    }
-
-    .oe_product {
-        border-radius: 14px !important;
-        opacity: 1;
-        transform: none;
-        animation: none;
     }
 
     .btn-primary:hover,
