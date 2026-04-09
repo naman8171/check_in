@@ -163,6 +163,20 @@ body {
     display: none;
 }
 
+
+#products_grid_before .o_wsale_products_categories_title,
+#products_grid_before h5,
+#products_grid_before .h5,
+.o_wsale_products_header .o_wsale_products_main_title,
+.o_wsale_products_header h1,
+.o_wsale_products_header h2,
+.o_wsale_products_header h3,
+.o_wsale_products_header .h1,
+.o_wsale_products_header .h2,
+.o_wsale_products_header .h3 {
+    color: #fff !important;
+}
+
 /* Category heading area on the right */
 .o_wsale_products_header {
     border-bottom: 0;
