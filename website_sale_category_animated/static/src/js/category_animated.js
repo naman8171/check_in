@@ -65,7 +65,30 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     _getSubmenu(link) {
         const listItem = link.closest("li");
         if (!listItem) return null;
-        return Array.from(listItem.children).find((el) => el.tagName === "UL" || el.classList.contains("collapse")) || null;
+
+        const directSubmenu = Array.from(listItem.children).find((el) =>
+            el.matches("ul, .collapse, .dropdown-menu, [data-wsca-submenu]")
+        );
+        if (directSubmenu) return directSubmenu;
+
+        const hrefTarget = link.getAttribute("href");
+        if (hrefTarget && hrefTarget.startsWith("#")) {
+            const byId = document.querySelector(hrefTarget);
+            if (byId && this._isSubmenuElement(byId)) {
+                return byId;
+            }
+        }
+
+        const nextSibling = listItem.nextElementSibling;
+        if (nextSibling && this._isSubmenuElement(nextSibling)) {
+            return nextSibling;
+        }
+
+        return listItem.querySelector("ul, .collapse, .dropdown-menu, [data-wsca-submenu]");
+    },
+
+    _isSubmenuElement(element) {
+        return !!element && element.matches("ul, .collapse, .dropdown-menu, [data-wsca-submenu]");
     },
 
     _setSubmenuState(link, submenu, shouldOpen) {
@@ -84,7 +107,7 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
         container.querySelectorAll("[data-wsca-submenu='true']").forEach((sub) => {
             if (sub !== submenu) {
                 sub.classList.remove("open", "show");
-                const ownerLink = sub.parentElement?.querySelector(":scope > a");
+                const ownerLink = sub.parentElement?.querySelector("a");
                 if (ownerLink) {
                     ownerLink.classList.remove("active");
                     ownerLink.setAttribute("aria-expanded", "false");
@@ -98,8 +121,8 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     _openAncestorMenus(link) {
         let current = link.closest("li");
         while (current) {
-            const currentLink = current.querySelector(":scope > a");
-            const submenu = current.querySelector(":scope > ul");
+            const currentLink = current.querySelector("a");
+            const submenu = this._getSubmenu(currentLink);
             if (currentLink && submenu) {
                 this._setSubmenuState(currentLink, submenu, true);
             }
