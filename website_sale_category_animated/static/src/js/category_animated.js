@@ -30,42 +30,46 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     },
 
     _decorateSidebar() {
-        const container = document.querySelector("#products_grid_before");
-        if (!container) return;
+        const containers = document.querySelectorAll(
+            "#products_grid_before, #wsale_products_categories_collapse, .o_wsale_products_categories"
+        );
+        if (!containers.length) return;
 
-        const links = container.querySelectorAll("a");
-        links.forEach((link, index) => {
-            if (link.dataset.wscaEnhanced !== "true") {
-                link.dataset.wscaEnhanced = "true";
-                link.classList.remove("nav-link");
-                link.classList.add("my_sidebar_cat");
-                link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
-                this._observeVisibility(link);
-            }
+        containers.forEach((container) => {
+            const links = container.querySelectorAll("a");
+            links.forEach((link, index) => {
+                if (link.dataset.wscaEnhanced !== "true") {
+                    link.dataset.wscaEnhanced = "true";
+                    link.classList.remove("nav-link");
+                    link.classList.add("my_sidebar_cat");
+                    link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
+                    this._observeVisibility(link);
+                }
 
-            const submenu = this._getSubmenu(link);
-            if (!submenu) {
-                link.classList.remove("has-submenu");
-                return;
-            }
+                const submenu = this._getSubmenu(link);
+                if (!submenu) {
+                    link.classList.remove("has-submenu");
+                    return;
+                }
 
-            link.classList.add("has-submenu");
-            if (link.dataset.wscaToggleBound !== "true") {
-                link.dataset.wscaToggleBound = "true";
-                link.setAttribute("role", "button");
-                link.setAttribute("aria-expanded", submenu.classList.contains("show") ? "true" : "false");
-                link.addEventListener("click", (ev) => this._onSidebarClick(ev, container, link, submenu));
-                link.addEventListener("keydown", (ev) => {
-                    if (ev.key === "Enter" || ev.key === " ") {
-                        this._onSidebarClick(ev, container, link, submenu);
-                    }
-                });
-            }
+                link.classList.add("has-submenu");
+                if (link.dataset.wscaToggleBound !== "true") {
+                    link.dataset.wscaToggleBound = "true";
+                    link.setAttribute("role", "button");
+                    link.setAttribute("aria-expanded", submenu.classList.contains("show") ? "true" : "false");
+                    link.addEventListener("click", (ev) => this._onSidebarClick(ev, container, link, submenu));
+                    link.addEventListener("keydown", (ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") {
+                            this._onSidebarClick(ev, container, link, submenu);
+                        }
+                    });
+                }
 
-            if (this._isCurrentUrl(link.href)) {
-                link.classList.add("active");
-                this._openAncestorMenus(link);
-            }
+                if (this._isCurrentUrl(link.href)) {
+                    link.classList.add("active");
+                    this._openAncestorMenus(link);
+                }
+            });
         });
     },
 
