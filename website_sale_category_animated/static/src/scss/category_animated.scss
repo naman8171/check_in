@@ -170,12 +170,26 @@ body {
 .o_wsale_categories_grid a .h6,
 .o_wsale_categories_grid a strong,
 .o_wsale_categories_grid a span,
+.o_wsale_categories_grid a p,
+.o_wsale_categories_grid a div,
+.o_wsale_categories_grid a small,
+.o_wsale_categories_grid a .text-body,
+.o_wsale_categories_grid a .text-dark,
+.o_wsale_categories_grid a .text-muted,
 .my_top_cat h5,
 .my_top_cat h6,
 .my_top_cat .h5,
 .my_top_cat .h6,
 .my_top_cat strong,
-.my_top_cat span {
+.my_top_cat span,
+.my_top_cat p,
+.my_top_cat div,
+.my_top_cat small,
+.my_top_cat .text-body,
+.my_top_cat .text-dark,
+.my_top_cat .text-muted,
+.o_wsale_categories_grid a *,
+.my_top_cat * {
     color: #fff !important;
 }
 
