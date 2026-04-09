@@ -11,6 +11,7 @@ body {
     background: var(--wsca-page) !important;
 }
 
+
 /* Left side category panel */
 #products_grid_before,
 #wsale_products_categories_collapse,
@@ -23,49 +24,20 @@ body {
 }
 
 #products_grid_before .fw-bold,
-#products_grid_before h1,
-#products_grid_before h2,
-#products_grid_before h3,
-#products_grid_before h4,
-#products_grid_before h5,
 #products_grid_before h6,
 #wsale_products_categories_collapse .fw-bold,
-#wsale_products_categories_collapse h1,
-#wsale_products_categories_collapse h2,
-#wsale_products_categories_collapse h3,
-#wsale_products_categories_collapse h4,
-#wsale_products_categories_collapse h5,
 #wsale_products_categories_collapse h6,
 .o_wsale_products_categories .fw-bold,
-.o_wsale_products_categories h1,
-.o_wsale_products_categories h2,
-.o_wsale_products_categories h3,
-.o_wsale_products_categories h4,
-.o_wsale_products_categories h5,
-.o_wsale_products_categories h6,
-.o_wsale_products_main_row > h1,
-.o_wsale_products_main_row > h2,
-.o_wsale_products_main_row > h3,
-.o_wsale_products_main_row > h4,
-.o_wsale_products_main_row > h5,
-.o_wsale_products_main_row > h6,
-.o_wsale_products_main_row > .h1,
-.o_wsale_products_main_row > .h2,
-.o_wsale_products_main_row > .h3,
-.o_wsale_products_main_row > .h4,
-.o_wsale_products_main_row > .h5,
-.o_wsale_products_main_row > .h6,
-.o_wsale_products_main_row > .fw-bold {
-    background: #33353a !important;
+.o_wsale_products_categories h6 {
+    background: #2f3136;
     color: #fff !important;
     text-transform: uppercase;
-    font-weight: 900 !important;
-    font-size: 36px !important;
+    font-weight: 800 !important;
+    font-size: 30px !important;
     letter-spacing: 0.4px;
-    line-height: 1;
     margin: 0 0 10px 0 !important;
-    padding: 18px 16px !important;
-    border: 1px solid #1d1f24 !important;
+    padding: 10px 12px !important;
+    border: 0 !important;
 }
 
 #products_grid_before ul,
@@ -116,7 +88,7 @@ body {
 #wsale_products_categories_collapse a:hover,
 .o_wsale_products_categories a:hover,
 .my_sidebar_cat:hover {
-    background: #191c22 !important;
+    background: var(--wsca-red) !important;
     color: #fff !important;
     transform: none !important;
 }
@@ -156,6 +128,10 @@ body {
 
 
 /* Ensure catalog page headings stay visible on dark background */
+.o_wsale_products_main_row h1,
+.o_wsale_products_main_row h2,
+.o_wsale_products_main_row .h1,
+.o_wsale_products_main_row .h2,
 #products_grid_before .text-muted,
 #wsale_products_categories_collapse .text-muted,
 .o_wsale_products_categories .text-muted {
@@ -257,43 +233,5 @@ body {
     .my_sidebar_cat {
         font-size: 15px !important;
         padding-right: 34px !important;
-    }
-
-    #products_grid_before .fw-bold,
-    #products_grid_before h1,
-    #products_grid_before h2,
-    #products_grid_before h3,
-    #products_grid_before h4,
-    #products_grid_before h5,
-    #products_grid_before h6,
-    #wsale_products_categories_collapse .fw-bold,
-    #wsale_products_categories_collapse h1,
-    #wsale_products_categories_collapse h2,
-    #wsale_products_categories_collapse h3,
-    #wsale_products_categories_collapse h4,
-    #wsale_products_categories_collapse h5,
-    #wsale_products_categories_collapse h6,
-    .o_wsale_products_categories .fw-bold,
-    .o_wsale_products_categories h1,
-    .o_wsale_products_categories h2,
-    .o_wsale_products_categories h3,
-    .o_wsale_products_categories h4,
-    .o_wsale_products_categories h5,
-    .o_wsale_products_categories h6,
-    .o_wsale_products_main_row > h1,
-    .o_wsale_products_main_row > h2,
-    .o_wsale_products_main_row > h3,
-    .o_wsale_products_main_row > h4,
-    .o_wsale_products_main_row > h5,
-    .o_wsale_products_main_row > h6,
-    .o_wsale_products_main_row > .h1,
-    .o_wsale_products_main_row > .h2,
-    .o_wsale_products_main_row > .h3,
-    .o_wsale_products_main_row > .h4,
-    .o_wsale_products_main_row > .h5,
-    .o_wsale_products_main_row > .h6,
-    .o_wsale_products_main_row > .fw-bold {
-        font-size: 18px !important;
-        padding: 12px 14px !important;
     }
 }
