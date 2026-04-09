@@ -82,8 +82,14 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
     },
 
     _setSubmenuState(link, submenu, shouldOpen) {
-        submenu.classList.toggle("open", shouldOpen);
-        submenu.classList.toggle("show", shouldOpen);
+        if (shouldOpen) {
+            submenu.style.maxHeight = submenu.scrollHeight + "px";
+            submenu.classList.add("open");
+        } else {
+            submenu.style.maxHeight = "0px";
+            submenu.classList.remove("open");
+        }
+
         link.classList.toggle("active", shouldOpen);
         link.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
     },
