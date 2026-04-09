@@ -42,20 +42,7 @@ body {
 .o_wsale_products_categories h3,
 .o_wsale_products_categories h4,
 .o_wsale_products_categories h5,
-.o_wsale_products_categories h6 {
-    background: #35373c !important;
-    color: #fff !important;
-    text-transform: uppercase;
-    font-weight: 900 !important;
-    font-size: 43px !important;
-    font-family: "Arial Black", Arial, sans-serif !important;
-    letter-spacing: 0.35px;
-    line-height: 1.05;
-    margin: 0 0 10px 0 !important;
-    padding: 18px 20px !important;
-    border: 1px solid #1a1c20 !important;
-}
-
+.o_wsale_products_categories h6,
 .o_wsale_products_main_row > h1,
 .o_wsale_products_main_row > h2,
 .o_wsale_products_main_row > h3,
@@ -69,17 +56,16 @@ body {
 .o_wsale_products_main_row > .h5,
 .o_wsale_products_main_row > .h6,
 .o_wsale_products_main_row > .fw-bold {
-    background: #35373c !important;
+    background: #33353a !important;
     color: #fff !important;
     text-transform: uppercase;
     font-weight: 900 !important;
-    font-size: 40px !important;
-    font-family: "Arial Black", Arial, sans-serif !important;
-    letter-spacing: 0.35px;
-    line-height: 1.05;
+    font-size: 36px !important;
+    letter-spacing: 0.4px;
+    line-height: 1;
     margin: 0 0 10px 0 !important;
-    padding: 18px 20px !important;
-    border: 1px solid #1a1c20 !important;
+    padding: 18px 16px !important;
+    border: 1px solid #1d1f24 !important;
 }
 
 #products_grid_before ul,
