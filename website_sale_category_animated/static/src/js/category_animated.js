@@ -25,6 +25,7 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
 
     _decorateAll() {
         this._decorateSidebar();
+        this._decorateCategoryLinksFallback();
         this._decorateTopCategories();
         this._decorateProducts();
     },
@@ -83,6 +84,25 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
         if (directChild) return directChild;
 
         return listItem.querySelector("ul, .collapse, .dropdown-menu, [data-wsca-submenu]") || null;
+    },
+
+    _decorateCategoryLinksFallback() {
+        const fallbackLinks = document.querySelectorAll(
+            'a.nav-link[href*="/shop/category"], a.nav-link[href*="category="]'
+        );
+
+        fallbackLinks.forEach((link, index) => {
+            if (link.dataset.wscaEnhanced === "true") return;
+
+            link.dataset.wscaEnhanced = "true";
+            link.classList.add("my_sidebar_cat");
+            link.style.animationDelay = `${Math.min(index * 60, 500)}ms`;
+            this._observeVisibility(link);
+
+            if (this._isCurrentUrl(link.href)) {
+                link.classList.add("active");
+            }
+        });
     },
 
     _setSubmenuState(link, submenu, shouldOpen) {

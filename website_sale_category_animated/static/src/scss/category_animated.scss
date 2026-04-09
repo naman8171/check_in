@@ -35,7 +35,8 @@ body {
 
 #products_grid_before a,
 #wsale_products_categories_collapse a,
-.o_wsale_products_categories a {
+.o_wsale_products_categories a,
+.my_sidebar_cat {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
@@ -57,7 +58,8 @@ body {
 
 #products_grid_before a:hover,
 #wsale_products_categories_collapse a:hover,
-.o_wsale_products_categories a:hover {
+.o_wsale_products_categories a:hover,
+.my_sidebar_cat:hover {
     background: linear-gradient(115deg, #eef2ff, #e0f2fe) !important;
     color: var(--wsca-primary) !important;
 
@@ -69,7 +71,8 @@ body {
 
 #products_grid_before a.active,
 #wsale_products_categories_collapse a.active,
-.o_wsale_products_categories a.active {
+.o_wsale_products_categories a.active,
+.my_sidebar_cat.active {
     background: linear-gradient(115deg, var(--wsca-primary), var(--wsca-primary-soft)) !important;
     color: #fff !important;
     box-shadow: var(--wsca-shadow-hover);
@@ -103,7 +106,8 @@ body {
 
 #products_grid_before ul ul a,
 #wsale_products_categories_collapse ul ul a,
-.o_wsale_products_categories ul ul a {
+.o_wsale_products_categories ul ul a,
+li ul .my_sidebar_cat {
     font-size: 14px !important;
     color: var(--wsca-text-muted) !important;
     background: transparent !important;
@@ -116,7 +120,8 @@ body {
 
 #products_grid_before ul ul a:hover,
 #wsale_products_categories_collapse ul ul a:hover,
-.o_wsale_products_categories ul ul a:hover {
+.o_wsale_products_categories ul ul a:hover,
+li ul .my_sidebar_cat:hover {
     background: linear-gradient(
         120deg,
         rgba(79,70,229,0.12),
@@ -129,7 +134,8 @@ body {
 
 #products_grid_before ul ul a.active,
 #wsale_products_categories_collapse ul ul a.active,
-.o_wsale_products_categories ul ul a.active {
+.o_wsale_products_categories ul ul a.active,
+li ul .my_sidebar_cat.active {
     background: linear-gradient(
         120deg,
         var(--wsca-primary),
