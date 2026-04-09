@@ -149,12 +149,75 @@ body {
     color: #f2be38 !important;
 }
 
-/* Hide top category cards from the previous animated design */
+/* Top category cards: match the provided reference block */
+.o_wsale_categories_grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px 18px;
+    background: #000 !important;
+    padding: 14px !important;
+    border: 1px solid #000 !important;
+}
+
 .o_wsale_categories_grid a,
 .my_top_cat {
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+    background: #000 !important;
+    border: 0 !important;
     border-radius: 0 !important;
-    background: #1b1b1d !important;
     box-shadow: none !important;
+    padding: 0 0 6px 0 !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.o_wsale_categories_grid a::after,
+.my_top_cat::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #e31e24;
+    margin-top: auto;
+}
+
+.o_wsale_categories_grid a img,
+.my_top_cat img {
+    width: 100% !important;
+    aspect-ratio: 1 / 1;
+    object-fit: contain !important;
+    background: #ececec !important;
+    border: 0 !important;
+    padding: 18px;
+}
+
+.o_wsale_categories_grid a h5,
+.o_wsale_categories_grid a h6,
+.o_wsale_categories_grid a .h5,
+.o_wsale_categories_grid a .h6,
+.o_wsale_categories_grid a strong,
+.o_wsale_categories_grid a span,
+.my_top_cat h5,
+.my_top_cat h6,
+.my_top_cat .h5,
+.my_top_cat .h6,
+.my_top_cat strong,
+.my_top_cat span {
+    color: #fff !important;
+    text-transform: uppercase;
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    line-height: 1.15;
+    margin: 0 !important;
+    letter-spacing: 0.2px;
+}
+
+.o_wsale_categories_grid a .text-muted,
+.my_top_cat .text-muted {
+    color: #fff !important;
+    opacity: 1 !important;
 }
 
 
@@ -367,6 +430,26 @@ body {
 }
 
 @media (max-width: 991.98px) {
+    .o_wsale_categories_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 14px;
+    }
+
+    .o_wsale_categories_grid a h5,
+    .o_wsale_categories_grid a h6,
+    .o_wsale_categories_grid a .h5,
+    .o_wsale_categories_grid a .h6,
+    .o_wsale_categories_grid a strong,
+    .o_wsale_categories_grid a span,
+    .my_top_cat h5,
+    .my_top_cat h6,
+    .my_top_cat .h5,
+    .my_top_cat .h6,
+    .my_top_cat strong,
+    .my_top_cat span {
+        font-size: 16px !important;
+    }
+
     .oe_product .oe_product_image,
     .oe_product .o_wsale_product_grid_wrapper {
         grid-template-columns: 1fr;
@@ -402,6 +485,10 @@ body {
 }
 
 @media (max-width: 991.98px) {
+    .o_wsale_categories_grid {
+        padding: 10px !important;
+    }
+
     #products_grid_before,
     #wsale_products_categories_collapse,
     .o_wsale_products_categories,
@@ -415,5 +502,11 @@ body {
     .my_sidebar_cat {
         font-size: 15px !important;
         padding-right: 34px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .o_wsale_categories_grid {
+        grid-template-columns: 1fr;
     }
 }
