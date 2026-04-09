@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Website Sale Category Animated",
-    "summary": "Premium animated UI and enhanced interaction for website shop categories",
-    "version": "19.0.2.0.0",
+    "summary": "Animated and modern styling for website shop categories",
+    "version": "19.0.1.0.0",
     "category": "Website/eCommerce",
     "license": "LGPL-3",
     "author": "Custom",
