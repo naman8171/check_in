@@ -153,6 +153,21 @@ body {
     border-top: 0;
 }
 
+
+/* Force exactly one product card per row */
+#products_grid .row > div,
+#products_grid .oe_product_cart,
+#products_grid [class*="col-"] .oe_product,
+#products_grid .o_wsale_product_grid_wrapper {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+#products_grid .oe_product {
+    width: 100% !important;
+}
+
 /* Match the reference card: large two-column horizontal layout */
 .oe_product,
 .my_product_card,
