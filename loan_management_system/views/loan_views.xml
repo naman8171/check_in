@@ -12,6 +12,8 @@
                 <field name="principal_amount" />
                 <field name="disbursed_amount" />
                 <field name="next_due_date" />
+                <field name="overdue_installment_count" />
+                <field name="overdue_amount" />
                 <field name="outstanding_amount" />
                 <field name="state" />
             </list>
@@ -128,6 +130,8 @@
                             <field name="remaining_to_disburse" readonly="1" />
                             <field name="next_due_date" readonly="1" />
                             <field name="next_due_amount" readonly="1" />
+                            <field name="overdue_installment_count" readonly="1" />
+                            <field name="overdue_amount" readonly="1" />
                             <field name="paid_amount" readonly="1" />
                             <field name="outstanding_amount" readonly="1" />
                         </group>

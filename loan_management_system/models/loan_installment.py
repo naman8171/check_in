@@ -29,6 +29,14 @@ class LoanInstallment(models.Model):
     )
     paid_on = fields.Date()
     late_days = fields.Integer(compute="_compute_late_days", store=True)
+    paid_principal = fields.Monetary(compute="_compute_paid_breakdown", store=True)
+    paid_interest = fields.Monetary(compute="_compute_paid_breakdown", store=True)
+    paid_fee = fields.Monetary(compute="_compute_paid_breakdown", store=True)
+    paid_penalty = fields.Monetary(compute="_compute_paid_breakdown", store=True)
+
+    _sql_constraints = [
+        ("loan_sequence_unique", "unique(loan_id, sequence)", "Installment sequence must be unique per loan."),
+    ]
 
     @api.depends("due_date", "state")
     def _compute_late_days(self):
@@ -39,9 +47,25 @@ class LoanInstallment(models.Model):
             else:
                 rec.late_days = max((today - rec.due_date).days, 0)
 
+    @api.depends(
+        "loan_id.payment_ids.amount",
+        "loan_id.payment_ids.principal_component",
+        "loan_id.payment_ids.interest_component",
+        "loan_id.payment_ids.fee_component",
+        "loan_id.payment_ids.penalty_component",
+        "loan_id.payment_ids.installment_id",
+    )
+    def _compute_paid_breakdown(self):
+        for rec in self:
+            payments = rec.loan_id.payment_ids.filtered(lambda p: p.installment_id == rec)
+            rec.paid_principal = sum(payments.mapped("principal_component"))
+            rec.paid_interest = sum(payments.mapped("interest_component"))
+            rec.paid_fee = sum(payments.mapped("fee_component"))
+            rec.paid_penalty = sum(payments.mapped("penalty_component"))
+
     def apply_payment(self, amount, payment_date):
         for rec in self:
-            new_paid = rec.amount_paid + amount
+            new_paid = min(rec.amount_paid + amount, rec.amount_due)
             vals = {"amount_paid": new_paid, "paid_on": payment_date}
             if new_paid >= rec.amount_due:
                 vals["state"] = "paid"

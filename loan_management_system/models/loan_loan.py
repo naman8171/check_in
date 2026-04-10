@@ -83,6 +83,8 @@ class LoanLoan(models.Model):
 
     next_due_date = fields.Date(compute="_compute_next_due", store=True)
     next_due_amount = fields.Monetary(compute="_compute_next_due", store=True)
+    overdue_amount = fields.Monetary(compute="_compute_next_due", store=True)
+    overdue_installment_count = fields.Integer(compute="_compute_next_due", store=True)
 
     notes = fields.Text()
     close_note = fields.Text(readonly=True)
@@ -140,14 +142,18 @@ class LoanLoan(models.Model):
 
     @api.depends("installment_ids.state", "installment_ids.due_date", "installment_ids.amount_due", "installment_ids.amount_paid")
     def _compute_next_due(self):
+        today = fields.Date.today()
         for rec in self:
             upcoming = rec.installment_ids.filtered(lambda l: l.state != "paid").sorted(key=lambda l: l.due_date or fields.Date.today())
+            overdue = rec.installment_ids.filtered(lambda l: l.state != "paid" and l.due_date and l.due_date < today)
             if upcoming:
                 rec.next_due_date = upcoming[0].due_date
                 rec.next_due_amount = upcoming[0].amount_due - upcoming[0].amount_paid
             else:
                 rec.next_due_date = False
                 rec.next_due_amount = 0.0
+            rec.overdue_amount = sum(overdue.mapped(lambda l: max(l.amount_due - l.amount_paid, 0.0)))
+            rec.overdue_installment_count = len(overdue)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -160,6 +166,26 @@ class LoanLoan(models.Model):
                 vals["term_months"] = vals.get("term_months") or loan_type.default_term_months
                 vals["agreement_html"] = vals.get("agreement_html") or loan_type.agreement_template
         return super().create(vals_list)
+
+    @api.constrains("principal_amount", "interest_rate", "term_months", "processing_fee", "grace_period_months")
+    def _check_financial_inputs(self):
+        for rec in self:
+            if rec.principal_amount <= 0:
+                raise UserError(_("Principal amount must be greater than zero."))
+            if rec.term_months <= 0:
+                raise UserError(_("Term (months) must be greater than zero."))
+            if rec.interest_rate < 0:
+                raise UserError(_("Interest rate cannot be negative."))
+            if rec.processing_fee < 0:
+                raise UserError(_("Processing fee cannot be negative."))
+            if rec.grace_period_months < 0:
+                raise UserError(_("Grace period cannot be negative."))
+
+    @api.constrains("application_date", "first_due_date")
+    def _check_dates(self):
+        for rec in self:
+            if rec.application_date and rec.first_due_date and rec.first_due_date < rec.application_date:
+                raise UserError(_("First due date cannot be before application date."))
 
     def _check_before_schedule_generation(self):
         for rec in self:
@@ -222,6 +248,7 @@ class LoanLoan(models.Model):
                 due_date = due_date + relativedelta(months=1)
 
     def action_submit(self):
+        self._check_before_schedule_generation()
         self.write({"state": "submitted"})
 
     def action_approve(self):

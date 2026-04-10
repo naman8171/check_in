@@ -22,10 +22,35 @@ class LoanPaymentRegister(models.TransientModel):
             if rec.payment_mode == "advance" and rec.loan_id:
                 rec.amount = (rec.loan_id.outstanding_amount * rec.percent) / 100
 
+    def _allocate_components(self, installment, pay_amount):
+        self.ensure_one()
+        posted_for_line = self.env["loan.payment"].search([("installment_id", "=", installment.id)])
+        remaining_penalty = max(installment.penalty_amount - sum(posted_for_line.mapped("penalty_component")), 0.0)
+        remaining_fee = max(installment.fee_amount - sum(posted_for_line.mapped("fee_component")), 0.0)
+        remaining_interest = max(installment.interest_amount - sum(posted_for_line.mapped("interest_component")), 0.0)
+        remaining_principal = max(installment.principal_amount - sum(posted_for_line.mapped("principal_component")), 0.0)
+
+        allocation = {"penalty_component": 0.0, "fee_component": 0.0, "interest_component": 0.0, "principal_component": 0.0}
+        remaining = pay_amount
+        for key, bucket in [
+            ("penalty_component", remaining_penalty),
+            ("fee_component", remaining_fee),
+            ("interest_component", remaining_interest),
+            ("principal_component", remaining_principal),
+        ]:
+            slice_amount = min(bucket, remaining)
+            allocation[key] = slice_amount
+            remaining -= slice_amount
+            if remaining <= 0:
+                break
+        return allocation
+
     def action_confirm(self):
         self.ensure_one()
         if self.amount <= 0:
             raise UserError(_("Payment amount must be greater than zero."))
+        if self.payment_date and self.loan_id.application_date and self.payment_date < self.loan_id.application_date:
+            raise UserError(_("Payment date cannot be before application date."))
 
         if self.payment_mode == "advance":
             target_lines = self.loan_id.installment_ids.filtered(lambda l: l.state != "paid")
@@ -44,6 +69,7 @@ class LoanPaymentRegister(models.TransientModel):
             if pay <= 0:
                 continue
             line.apply_payment(pay, self.payment_date)
+            allocation = self._allocate_components(line, pay)
             self.env["loan.payment"].create(
                 {
                     "loan_id": self.loan_id.id,
@@ -51,13 +77,22 @@ class LoanPaymentRegister(models.TransientModel):
                     "payment_date": self.payment_date,
                     "journal_id": self.journal_id.id,
                     "amount": pay,
-                    "principal_component": min(line.principal_amount, pay),
-                    "interest_component": min(max(pay - line.principal_amount, 0.0), line.interest_amount),
-                    "fee_component": line.fee_amount if pay >= (line.amount_due - line.fee_amount) else 0.0,
-                    "penalty_component": line.penalty_amount,
+                    "principal_component": allocation["principal_component"],
+                    "interest_component": allocation["interest_component"],
+                    "fee_component": allocation["fee_component"],
+                    "penalty_component": allocation["penalty_component"],
                     "note": self.note,
                 }
             )
             remaining -= pay
+
+        if remaining > 0.0001:
+            raise UserError(
+                _("Payment amount exceeds the total unpaid amount by %(extra).2f.")
+                % {"extra": remaining}
+            )
+
+        if self.loan_id.installment_ids and all(line.state == "paid" for line in self.loan_id.installment_ids):
+            self.loan_id.action_close()
 
         return {"type": "ir.actions.act_window_close"}
