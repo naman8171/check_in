@@ -83,6 +83,8 @@ class LoanLoan(models.Model):
 
     next_due_date = fields.Date(compute="_compute_next_due", store=True)
     next_due_amount = fields.Monetary(compute="_compute_next_due", store=True)
+    overdue_installment_count = fields.Integer(compute="_compute_overdue_metrics", store=True)
+    overdue_amount = fields.Monetary(compute="_compute_overdue_metrics", store=True)
 
     notes = fields.Text()
     close_note = fields.Text(readonly=True)
@@ -148,6 +150,38 @@ class LoanLoan(models.Model):
             else:
                 rec.next_due_date = False
                 rec.next_due_amount = 0.0
+
+    @api.depends("installment_ids.state", "installment_ids.due_date", "installment_ids.amount_due", "installment_ids.amount_paid")
+    def _compute_overdue_metrics(self):
+        today = fields.Date.context_today(self)
+        for rec in self:
+            overdue_lines = rec.installment_ids.filtered(
+                lambda l: l.state != "paid" and l.due_date and l.due_date < today and (l.amount_due - l.amount_paid) > 0
+            )
+            rec.overdue_installment_count = len(overdue_lines)
+            rec.overdue_amount = sum(overdue_lines.mapped(lambda l: l.amount_due - l.amount_paid))
+
+    @api.constrains("principal_amount", "interest_rate", "term_months", "grace_period_months", "processing_fee", "penalty_rate")
+    def _check_financial_values(self):
+        for rec in self:
+            if rec.principal_amount <= 0:
+                raise UserError(_("Principal amount must be greater than zero."))
+            if rec.term_months <= 0:
+                raise UserError(_("Term (months) must be greater than zero."))
+            if rec.grace_period_months < 0:
+                raise UserError(_("Grace period cannot be negative."))
+            if rec.interest_rate < 0 or rec.processing_fee < 0 or rec.penalty_rate < 0:
+                raise UserError(_("Interest rate, processing fee, and penalty rate cannot be negative."))
+
+    @api.constrains("application_date", "first_due_date", "approval_date", "disbursement_date")
+    def _check_dates(self):
+        for rec in self:
+            if rec.first_due_date and rec.application_date and rec.first_due_date < rec.application_date:
+                raise UserError(_("First due date cannot be before application date."))
+            if rec.approval_date and rec.application_date and rec.approval_date < rec.application_date:
+                raise UserError(_("Approval date cannot be before application date."))
+            if rec.disbursement_date and rec.approval_date and rec.disbursement_date < rec.approval_date:
+                raise UserError(_("Disbursement date cannot be before approval date."))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -356,6 +390,34 @@ class LoanLoan(models.Model):
                 "default_journal_id": self.loan_type_id.journal_id.id,
             },
         }
+
+    def action_apply_overdue_penalties(self):
+        today = fields.Date.context_today(self)
+        for rec in self:
+            if rec.penalty_rate <= 0:
+                continue
+            for line in rec.installment_ids.filtered(lambda l: l.state != "paid" and l.due_date and l.due_date < today):
+                start_date = line.penalty_last_applied_on or line.due_date
+                delta_days = (today - start_date).days
+                if delta_days <= 0:
+                    continue
+
+                outstanding = max(line.amount_due - line.amount_paid, 0.0)
+                if outstanding <= 0:
+                    continue
+
+                daily_rate = (rec.penalty_rate / 100.0) / 30.0
+                additional_penalty = outstanding * daily_rate * delta_days
+                if additional_penalty <= 0:
+                    continue
+
+                line.write(
+                    {
+                        "penalty_amount": line.penalty_amount + additional_penalty,
+                        "amount_due": line.amount_due + additional_penalty,
+                        "penalty_last_applied_on": today,
+                    }
+                )
 
     def action_view_installments(self):
         self.ensure_one()
