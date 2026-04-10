@@ -37,8 +37,6 @@
                         groups="loan_management_system.group_loan_manager" />
                     <button name="action_register_payment" type="object" string="Register Payment"
                         class="btn-primary" invisible="state != 'open'" />
-                    <button name="action_apply_overdue_penalties" type="object" string="Apply Penalties"
-                        invisible="state != 'open'" />
                     <button name="action_advance_payment" type="object" string="Advance Payment"
                         invisible="state != 'open'" />
                     <button name="action_open_foreclosure_wizard" type="object" string="Foreclose"
@@ -132,8 +130,6 @@
                             <field name="next_due_amount" readonly="1" />
                             <field name="paid_amount" readonly="1" />
                             <field name="outstanding_amount" readonly="1" />
-                            <field name="overdue_installment_count" readonly="1" />
-                            <field name="overdue_amount" readonly="1" />
                         </group>
                     </group>
 
@@ -166,7 +162,6 @@
                                     <field name="balance_amount" />
                                     <field name="state" />
                                     <field name="late_days" />
-                                    <field name="penalty_last_applied_on" />
                                     <field name="paid_on" />
                                     <button name="action_register_payment" type="object"
                                         string="Pay" class="btn-primary" invisible="state == 'paid'" />
@@ -248,5 +243,6 @@
         <field name="res_model">loan.loan</field>
         <field name="view_mode">list,form,pivot,graph,kanban</field>
         <!-- <field name="search_view_id" ref="view_loan_loan_search" /> -->
+        <field name="domain">[('state', '!=', 'rejected')]</field>
     </record>
 </odoo>

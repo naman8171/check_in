@@ -29,7 +29,6 @@ class LoanInstallment(models.Model):
     )
     paid_on = fields.Date()
     late_days = fields.Integer(compute="_compute_late_days", store=True)
-    penalty_last_applied_on = fields.Date()
 
     @api.depends("due_date", "state")
     def _compute_late_days(self):

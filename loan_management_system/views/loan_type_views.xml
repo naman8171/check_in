@@ -20,8 +20,10 @@
         <field name="name">loan.type.form</field>
         <field name="model">loan.type</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Loan Type">
                 <sheet>
+
+                    <!-- TOP INFO -->
                     <group>
                         <group>
                             <field name="name" />
@@ -33,24 +35,62 @@
                             <field name="max_amount" />
                             <field name="default_interest_rate" />
                             <field name="default_term_months" />
-                            <field name="processing_fee_percent" />
-                            <field name="agreement_template" widget="html" />
                         </group>
                     </group>
-                    <group string="Accounting">
-                        <group>
-                            <field name="journal_id" />
-                        </group>
-                        <group>
-                            <field name="income_account_id" />
-                            <field name="receivable_account_id" />
-                        </group>
+
+                    <!-- Borrower Category -->
+                    <group>
+                        <field name="borrower_category_ids" widget="many2many_tags" />
                     </group>
+
+                    <!-- NOTEBOOK (TABS) -->
+                    <notebook>
+
+                        <!-- 🔹 Accounting -->
+                        <page string="Accounting">
+                            <group>
+                                <group>
+                                    <field name="journal_id" />
+                                    <field name="receivable_account_id" />
+                                </group>
+                                <group>
+                                    <field name="income_account_id" />
+                                    <field name="processing_fee_percent" />
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- 🔹 Website -->
+                        <page string="Website">
+                            <group>
+                                <field name="active" />
+                                <field name="document_ids" widget="many2many_tags" />
+                                <field name="processing_fee_text" />
+                            </group>
+                        </page>
+
+                        <!-- 🔹 Other Details -->
+                        <page string="Other Details">
+                            <group>
+                                <field name="eligibility_criteria_ids" widget="many2many_tags" />
+                            </group>
+
+                            <group string="Reminder Settings">
+                                <field name="number_of_reminders" />
+                                <field name="reminder_days" placeholder="10,5" />
+                            </group>
+
+                            <group>
+                                <field name="color" />
+                            </group>
+                        </page>
+
+                    </notebook>
+
                 </sheet>
             </form>
         </field>
     </record>
-
     <record id="action_loan_type" model="ir.actions.act_window">
         <field name="name">Loan Types</field>
         <field name="res_model">loan.type</field>

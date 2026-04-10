@@ -47,7 +47,7 @@ class CrmLead(models.Model):
             "name": "Loan Requests",
             "type": "ir.actions.act_window",
             "res_model": "loan.loan",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("lead_id", "=", self.id)],
             "context": {"default_lead_id": self.id, "default_partner_id": self.partner_id.id},
         }
