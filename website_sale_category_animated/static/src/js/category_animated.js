@@ -24,8 +24,60 @@ publicWidget.registry.WebsiteSaleAnimatedUI = publicWidget.Widget.extend({
 
     _decorateAll() {
         this._decorateSidebar();
+        this._decorateMenus();
         this._decorateTopCategories();
         this._decorateProducts();
+    },
+
+    _decorateMenus() {
+        document.querySelectorAll("header .dropdown, #top_menu .dropdown").forEach((menu) => {
+            const trigger =
+                menu.querySelector(":scope > a.dropdown-toggle") ||
+                menu.querySelector(":scope > a, :scope > button.dropdown-toggle");
+            const submenu = menu.querySelector(":scope > .dropdown-menu");
+
+            if (!trigger || !submenu) return;
+
+            if (trigger.dataset.wscaMenuToggleBound !== "true") {
+                trigger.dataset.wscaMenuToggleBound = "true";
+                trigger.setAttribute("aria-expanded", menu.classList.contains("show") ? "true" : "false");
+                trigger.addEventListener("click", (ev) => this._onMenuClick(ev, menu, trigger, submenu));
+                trigger.addEventListener("keydown", (ev) => {
+                    if (ev.key === "Enter" || ev.key === " ") {
+                        this._onMenuClick(ev, menu, trigger, submenu);
+                    }
+                });
+            }
+        });
+    },
+
+    _onMenuClick(event, menu, trigger, submenu) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const isOpen = menu.classList.contains("show") || submenu.classList.contains("show");
+        const menuRoot = menu.closest("#top_menu, .navbar, header") || document;
+
+        menuRoot.querySelectorAll(".dropdown.show").forEach((openMenu) => {
+            if (openMenu !== menu) {
+                this._setMenuState(openMenu, false);
+            }
+        });
+
+        this._setMenuState(menu, !isOpen, trigger, submenu);
+    },
+
+    _setMenuState(menu, shouldOpen, trigger, submenu) {
+        const menuTrigger =
+            trigger ||
+            menu.querySelector(":scope > a.dropdown-toggle, :scope > a, :scope > button.dropdown-toggle");
+        const menuSubmenu = submenu || menu.querySelector(":scope > .dropdown-menu");
+
+        if (!menuTrigger || !menuSubmenu) return;
+
+        menu.classList.toggle("show", shouldOpen);
+        menuSubmenu.classList.toggle("show", shouldOpen);
+        menuTrigger.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
     },
 
     _decorateSidebar() {
