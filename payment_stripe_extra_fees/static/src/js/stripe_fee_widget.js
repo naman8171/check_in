@@ -8,6 +8,7 @@ const StripeFeeDisplay = {
     init() {
         document.addEventListener('DOMContentLoaded', () => {
             this._bindEvents();
+            this._refreshSelectedOption();
         });
     },
 
@@ -32,6 +33,27 @@ const StripeFeeDisplay = {
                 } else {
                     this._hideAllNotices();
                 }
+            }
+        });
+
+        // Portal invoice page opens payment modal dynamically.
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('a,button')) {
+                setTimeout(() => this._refreshSelectedOption(), 300);
+            }
+        });
+    },
+
+    _refreshSelectedOption() {
+        document.querySelectorAll('.o_payment_option').forEach((container) => {
+            const selected = container.querySelector('input[type="radio"]:checked');
+            if (!selected) return;
+
+            if (container.dataset.providerCode === 'stripe') {
+                const providerId = container.dataset.providerId || selected.dataset.providerId;
+                this._showFeeNotice(container, providerId);
+            } else {
+                this._hideFeeNotice(container);
             }
         });
     },

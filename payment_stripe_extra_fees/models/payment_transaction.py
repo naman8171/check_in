@@ -80,7 +80,38 @@ class PaymentTransaction(models.Model):
             )
             vals['amount'] = amount + fee
 
-        return super().create(vals_list)
+        transactions = super().create(vals_list)
+        transactions._stripe_sync_fee_amount()
+        return transactions
+
+    def write(self, vals):
+        res = super().write(vals)
+        tracked = {'provider_id', 'provider_code', 'amount', 'currency_id', 'partner_id'}
+        if not self.env.context.get('skip_stripe_fee_sync') and tracked.intersection(vals.keys()):
+            self._stripe_sync_fee_amount()
+        return res
+
+    def _stripe_sync_fee_amount(self):
+        for tx in self:
+            if tx.provider_code != 'stripe' or not tx.provider_id.stripe_add_extra_fees:
+                continue
+            if not tx.currency_id or not tx.amount:
+                continue
+
+            base_amount = tx.amount - tx.stripe_fee_amount if tx.stripe_fee_amount else tx.amount
+            fee = tx.provider_id._compute_stripe_fee(
+                base_amount,
+                tx.currency_id,
+                tx.partner_id.country_id if tx.partner_id else None,
+            )
+            values = {
+                'stripe_fee_amount': fee,
+                'stripe_fee_is_international': tx.provider_id._stripe_is_international(
+                    tx.partner_id.country_id if tx.partner_id else None
+                ),
+                'amount': base_amount + fee,
+            }
+            tx.with_context(skip_stripe_fee_sync=True).sudo().write(values)
 
     def _reconcile_after_done(self):
         res = super()._reconcile_after_done()

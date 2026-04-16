@@ -68,7 +68,10 @@ class StripeFeeController(http.Controller):
                     partner = sale_order.partner_id
 
             if not currency:
-                return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
+                website = getattr(request, 'website', False)
+                company = website.company_id if website else request.env.company
+                currency = company.currency_id
+                partner = request.env.user.partner_id
 
             fee = provider._compute_stripe_fee(base_amount, currency, partner.country_id)
 
