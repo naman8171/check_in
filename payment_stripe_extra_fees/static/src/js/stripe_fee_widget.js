@@ -6,29 +6,30 @@ import { rpc } from "@web/core/network/rpc";
 const StripeFeeDisplay = {
 
     init() {
+        console.log("✅ Stripe Fee JS Loaded");
+
         document.addEventListener('DOMContentLoaded', () => {
             this._bindEvents();
             this._refreshSelectedOption();
         });
     },
 
-    /**
-     * Bind change event on payment methods
-     */
     _bindEvents() {
         document.addEventListener('change', (e) => {
-            if (e.target.matches('input[type="radio"]') && (
-                e.target.name === 'o_payment_radio' ||
-                e.target.name === 'payment_option_id' ||
-                e.target.name === 'provider_id'
-            )) {
-                const container = e.target.closest('.o_payment_option');
+            if (e.target.matches('input[type="radio"]')) {
 
+                const container = e.target.closest('.o_payment_option');
                 if (!container) return;
 
-                // Check if Stripe selected
-                if (container.dataset.providerCode === 'stripe') {
-                    const providerId = container.dataset.providerId || e.target.dataset.providerId;
+                console.log("👉 Payment option changed");
+
+                const providerCode = container.dataset.providerCode;
+                const providerId = container.dataset.providerId || e.target.dataset.providerId;
+
+                console.log("Provider Code:", providerCode);
+                console.log("Provider ID:", providerId);
+
+                if (providerCode === 'stripe') {
                     this._showFeeNotice(container, providerId);
                 } else {
                     this._hideAllNotices();
@@ -36,11 +37,8 @@ const StripeFeeDisplay = {
             }
         });
 
-        // Portal invoice page opens payment modal dynamically.
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('a,button')) {
-                setTimeout(() => this._refreshSelectedOption(), 300);
-            }
+        document.addEventListener('click', () => {
+            setTimeout(() => this._refreshSelectedOption(), 300);
         });
     },
 
@@ -49,27 +47,30 @@ const StripeFeeDisplay = {
             const selected = container.querySelector('input[type="radio"]:checked');
             if (!selected) return;
 
-            if (container.dataset.providerCode === 'stripe') {
-                const providerId = container.dataset.providerId || selected.dataset.providerId;
+            const providerCode = container.dataset.providerCode;
+            const providerId = container.dataset.providerId || selected.dataset.providerId;
+
+            if (providerCode === 'stripe') {
                 this._showFeeNotice(container, providerId);
-            } else {
-                this._hideFeeNotice(container);
             }
         });
     },
 
-    /**
-     * Show fee notice
-     */
     async _showFeeNotice(container, providerId) {
         this._hideFeeNotice(container);
 
-        if (!providerId) return;
+        if (!providerId) {
+            console.log("❌ No provider ID");
+            return;
+        }
 
         try {
             const amount = this._getCurrentAmount();
-            const currencyId = this._getCurrencyId(container);
-            const partnerId = this._getPartnerId(container);
+            const currencyId = this._getCurrencyId();
+            const partnerId = this._getPartnerId();
+
+            console.log("🚀 Calling RPC...");
+            console.log({ providerId, amount, currencyId, partnerId });
 
             const data = await rpc('/payment/stripe/fee_preview', {
                 provider_id: providerId,
@@ -78,73 +79,54 @@ const StripeFeeDisplay = {
                 partner_id: partnerId,
             });
 
+            console.log("✅ RPC RESPONSE:", data);
+
             if (data && data.fee_amount > 0) {
                 const feeEl = document.createElement('div');
-                feeEl.className = 'o_stripe_fee_notice alert alert-info mt-2 py-1 px-2';
-                feeEl.style.fontSize = '0.85rem';
+                feeEl.className = 'o_stripe_fee_notice alert alert-warning mt-2';
 
                 feeEl.innerHTML = `
-                    <i class="fa fa-info-circle me-1"></i>
-                    ${_t('A processing fee of')} <strong>${data.fee_formatted}</strong>
-                    ${_t('will be added to your order total.')}
+                    <i class="fa fa-info-circle"></i>
+                    ${_t('Stripe fee:')} <b>${data.fee_formatted}</b>
                 `;
 
                 container.appendChild(feeEl);
+            } else {
+                console.log("⚠ Fee = 0");
             }
 
         } catch (e) {
-            // silent by design
+            console.error("❌ RPC ERROR:", e);
         }
     },
 
     _getCurrentAmount() {
-        const amountNode = document.querySelector('[data-amount]');
-        if (amountNode && amountNode.dataset.amount) {
-            return parseFloat(amountNode.dataset.amount) || 0;
-        }
+        const el = document.querySelector('[data-amount]');
+        if (el) return parseFloat(el.dataset.amount) || 0;
 
-        const textNode = document.querySelector('.o_payment_summary [data-oe-expression="amount"]')
-            || document.querySelector('.modal .o_amount')
-            || document.querySelector('.oe_currency_value');
-        if (!textNode) return 0;
+        const fallback = document.querySelector('.oe_currency_value');
+        if (!fallback) return 0;
 
-        const value = (textNode.textContent || '').replace(/[^0-9.,-]/g, '').replace(',', '');
-        return parseFloat(value) || 0;
+        return parseFloat(
+            fallback.textContent.replace(/[^0-9.]/g, '')
+        ) || 0;
     },
 
-    _getCurrencyId(container) {
-        const form = container.closest('form');
-        const currencyInput = form && form.querySelector('input[name="currency_id"]');
-        if (currencyInput && currencyInput.value) {
-            return parseInt(currencyInput.value, 10);
-        }
-
-        const amountNode = document.querySelector('[data-currency-id]');
-        return amountNode ? parseInt(amountNode.dataset.currencyId, 10) : false;
+    _getCurrencyId() {
+        const el = document.querySelector('[data-currency-id]');
+        return el ? parseInt(el.dataset.currencyId) : false;
     },
 
-    _getPartnerId(container) {
-        const form = container.closest('form');
-        const partnerInput = form && form.querySelector('input[name="partner_id"]');
-        if (partnerInput && partnerInput.value) {
-            return parseInt(partnerInput.value, 10);
-        }
-
-        const partnerNode = document.querySelector('[data-partner-id]');
-        return partnerNode ? parseInt(partnerNode.dataset.partnerId, 10) : false;
+    _getPartnerId() {
+        const el = document.querySelector('[data-partner-id]');
+        return el ? parseInt(el.dataset.partnerId) : false;
     },
 
-    /**
-     * Remove notice from specific container
-     */
     _hideFeeNotice(container) {
         const existing = container.querySelector('.o_stripe_fee_notice');
         if (existing) existing.remove();
     },
 
-    /**
-     * Remove all notices
-     */
     _hideAllNotices() {
         document.querySelectorAll('.o_stripe_fee_notice').forEach(el => el.remove());
     },

@@ -14,7 +14,9 @@
     """,
     'author': 'Custom Development',
     'depends': [
+        'payment',
         'payment_stripe',
+        'website_sale',
         'sale_management',
         'account',
     ],

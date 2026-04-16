@@ -16,7 +16,8 @@
                         '|',
                         ['provider_code', '!=', 'stripe'],
                         ['stripe_fee_amount', '=', 0.0]
-                    ]}" />
+                    ]}"
+                />
                 <field
                     name="stripe_fee_is_international"
                     string="International Fee"
@@ -42,7 +43,8 @@
                     name="stripe_fee_amount"
                     string="Stripe Fee"
                     optional="show"
-                    modifiers="{'invisible': [['provider_code', '!=', 'stripe']]}" />
+                    modifiers="{'invisible': [['provider_code', '!=', 'stripe']]}"
+                    invisible="1" />
             </xpath>
         </field>
     </record>
