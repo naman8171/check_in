@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_stripe_fees_form_view" model="ir.ui.view">
+        <field name="name">payment.provider.stripe.fees.form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='configuration']" position="after">
+
+                <page
+                    string="Stripe Fees"
+                    name="stripe_fees_tab"
+                    modifiers="{'invisible': [['code', '!=', 'stripe']]}">
+
+                    <group>
+                        <group string="" col="2">
+                            <field
+                                name="stripe_add_extra_fees"
+                                widget="boolean_toggle"
+                                string="Add Extra Fees" />
+                            <field
+                                name="stripe_fee_product_id"
+                                string="Stripe Fee Product"
+                                modifiers="{'invisible': [['stripe_add_extra_fees', '=', False]],
+                                        'required': [['stripe_add_extra_fees', '=', True]]}"
+                                options="{'no_create': False, 'no_open': False}" />
+                        </group>
+                    </group>
+                    <div modifiers="{'invisible': [['stripe_add_extra_fees', '=', False]]}">
+                        <div class="row mt-2">
+
+                            <div class="col-md-6">
+                                <h4 class="o_stripe_fee_section_title">
+                                    <strong>DOMESTIC FEES</strong>
+                                </h4>
+                                <group col="2">
+                                    <field
+                                        name="stripe_domestic_fixed_fee"
+                                        string="Fixed Domestic Fees"
+                                        widget="monetary"
+                                        options="{'currency_field': 'main_currency_id'}" />
+                                    <field
+                                        name="stripe_domestic_variable_fee"
+                                        string="Variable Domestic Fees (in percents)"
+                                        widget="float"
+                                        digits="[16, 4]" />
+                                    <field
+                                        name="stripe_domestic_free_above"
+                                        string="Free Domestic Fees if Total Amount is Above"
+                                        widget="boolean_toggle" />
+                                    <field
+                                        name="stripe_domestic_total_amount"
+                                        string="Domestic Total Amount"
+                                        modifiers="{'invisible': [['stripe_domestic_free_above', '=', False]],
+                                                    'required': [['stripe_domestic_free_above', '=', True]]}"
+                                        widget="monetary"
+                                        options="{'currency_field': 'main_currency_id'}" />
+                                </group>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h4 class="o_stripe_fee_section_title">
+                                    <strong>INTERNATIONAL FEES</strong>
+                                </h4>
+                                <group col="2">
+                                    <field
+                                        name="stripe_international_fixed_fee"
+                                        string="Fixed International Fees"
+                                        widget="monetary"
+                                        options="{'currency_field': 'main_currency_id'}" />
+                                    <field
+                                        name="stripe_international_variable_fee"
+                                        string="Variable International Fees (in percents)"
+                                        widget="float"
+                                        digits="[16, 4]" />
+                                    <field
+                                        name="stripe_international_free_above"
+                                        string="Free International Fees if Total Amount is Above"
+                                        widget="boolean_toggle" />
+                                    <field
+                                        name="stripe_international_total_amount"
+                                        string="International Total Amount"
+                                        modifiers="{'invisible': [['stripe_international_free_above', '=', False]],
+                                                    'required': [['stripe_international_free_above', '=', True]]}"
+                                        widget="monetary"
+                                        options="{'currency_field': 'main_currency_id'}" />
+                                </group>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

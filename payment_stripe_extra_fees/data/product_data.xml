@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Default Stripe Fee Product -->
+    <record id="product_stripe_fee" model="product.template">
+        <field name="name">[STRIPE_FEE] Stripe Fee</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="purchase_ok">False</field>
+        <field name="invoice_policy">order</field>
+        <field name="description_sale">Stripe payment processing fee</field>
+        <field name="list_price">0.0</field>
+        <field name="standard_price">0.0</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Product variant reference used in provider onchange -->
+    <!-- <record id="product_stripe_fee_product" model="product.product">
+        <field name="product_tmpl_id" ref="product_stripe_fee"/>
+        <field name="active">True</field>
+    </record> -->
+
+</odoo>
