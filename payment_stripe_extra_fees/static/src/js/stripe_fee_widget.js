@@ -58,6 +58,7 @@ const StripeFeeDisplay = {
 
     async _showFeeNotice(container, providerId) {
         this._hideFeeNotice(container);
+        this._hideSummaryFee();
 
         if (!providerId) {
             console.log("❌ No provider ID");
@@ -91,6 +92,7 @@ const StripeFeeDisplay = {
                 `;
 
                 container.appendChild(feeEl);
+                this._showSummaryFee(data.fee_formatted);
             } else {
                 console.log("⚠ Fee = 0");
             }
@@ -129,6 +131,47 @@ const StripeFeeDisplay = {
 
     _hideAllNotices() {
         document.querySelectorAll('.o_stripe_fee_notice').forEach(el => el.remove());
+        this._hideSummaryFee();
+    },
+
+    _showSummaryFee(feeFormatted) {
+        const modalBody = document.querySelector('.modal-content .modal-body');
+        if (!modalBody) {
+            return;
+        }
+
+        const amountLabel = Array.from(modalBody.querySelectorAll('label, span, div, p, strong'))
+            .find((el) => el.textContent && el.textContent.trim().toLowerCase() === 'amount');
+        if (!amountLabel) {
+            return;
+        }
+
+        const amountBlock = amountLabel.closest('.col, .col-6, .col-12, div');
+        if (!amountBlock || !amountBlock.parentElement) {
+            return;
+        }
+
+        const existing = modalBody.querySelector('.o_stripe_fee_summary');
+        if (existing) {
+            const valueEl = existing.querySelector('.o_stripe_fee_summary_value');
+            if (valueEl) {
+                valueEl.textContent = feeFormatted;
+            }
+            return;
+        }
+
+        const feeBlock = document.createElement('div');
+        feeBlock.className = `${amountBlock.className || ''} o_stripe_fee_summary`.trim();
+        feeBlock.innerHTML = `
+            <div>${_t('Stripe Fee')}</div>
+            <div class="o_stripe_fee_summary_value"><b>${feeFormatted}</b></div>
+        `;
+
+        amountBlock.insertAdjacentElement('afterend', feeBlock);
+    },
+
+    _hideSummaryFee() {
+        document.querySelectorAll('.o_stripe_fee_summary').forEach((el) => el.remove());
     },
 };
 
