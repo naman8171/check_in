@@ -21,7 +21,7 @@ class StripeFeeController(http.Controller):
         csrf=False,
         website=True,
     )
-    def stripe_fee_preview(self, provider_id=None, **kwargs):
+    def stripe_fee_preview(self, provider_id=None, amount=None, currency_id=None, partner_id=None, **kwargs):
         """
         Return a preview of the Stripe extra fee for the current cart.
 
@@ -49,16 +49,28 @@ class StripeFeeController(http.Controller):
             if not provider.stripe_add_extra_fees:
                 return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
 
-            # Get current cart / sale order
-            sale_order = request.website.sale_get_order() if hasattr(request, 'website') else None
-            if not sale_order:
+            currency = None
+            partner = None
+            base_amount = 0.0
+
+            # 1) explicit data from frontend (invoice modal / custom forms)
+            if amount is not None and currency_id:
+                base_amount = float(amount)
+                currency = request.env['res.currency'].sudo().browse(int(currency_id))
+                partner = request.env['res.partner'].sudo().browse(int(partner_id)) if partner_id else request.env.user.partner_id
+
+            # 2) website cart fallback (shop checkout)
+            if not currency:
+                sale_order = request.website.sale_get_order() if hasattr(request, 'website') else None
+                if sale_order:
+                    base_amount = sale_order.amount_total
+                    currency = sale_order.currency_id
+                    partner = sale_order.partner_id
+
+            if not currency:
                 return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
 
-            amount = sale_order.amount_total
-            currency = sale_order.currency_id
-            partner = sale_order.partner_id
-
-            fee = provider._compute_stripe_fee(amount, currency, partner.country_id)
+            fee = provider._compute_stripe_fee(base_amount, currency, partner.country_id)
 
             if fee <= 0:
                 return {'fee_amount': 0.0, 'fee_formatted': '0.00'}

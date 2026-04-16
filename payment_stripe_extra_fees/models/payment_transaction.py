@@ -56,6 +56,32 @@ class PaymentTransaction(models.Model):
         })
         return tx_values
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Fallback coverage for flows that bypass _get_specific_create_values."""
+        for vals in vals_list:
+            provider = self.env['payment.provider'].sudo().browse(vals.get('provider_id'))
+            if not provider.exists() or provider.code != 'stripe' or not provider.stripe_add_extra_fees:
+                continue
+
+            amount = vals.get('amount')
+            currency = self.env['res.currency'].browse(vals.get('currency_id'))
+            partner = self.env['res.partner'].browse(vals.get('partner_id'))
+            if not amount or not currency:
+                continue
+
+            fee = provider._compute_stripe_fee(amount, currency, partner.country_id if partner else None)
+            if fee <= 0:
+                continue
+
+            vals['stripe_fee_amount'] = fee
+            vals['stripe_fee_is_international'] = provider._stripe_is_international(
+                partner.country_id if partner else None
+            )
+            vals['amount'] = amount + fee
+
+        return super().create(vals_list)
+
     def _reconcile_after_done(self):
         res = super()._reconcile_after_done()
 

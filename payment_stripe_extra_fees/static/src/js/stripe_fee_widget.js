@@ -16,7 +16,11 @@ const StripeFeeDisplay = {
      */
     _bindEvents() {
         document.addEventListener('change', (e) => {
-            if (e.target.name === 'o_payment_radio') {
+            if (e.target.matches('input[type="radio"]') && (
+                e.target.name === 'o_payment_radio' ||
+                e.target.name === 'payment_option_id' ||
+                e.target.name === 'provider_id'
+            )) {
                 const container = e.target.closest('.o_payment_option');
 
                 if (!container) return;
@@ -41,13 +45,16 @@ const StripeFeeDisplay = {
         if (!providerId) return;
 
         try {
-            console.log("Stripe provider ID:", providerId);
+            const amount = this._getCurrentAmount();
+            const currencyId = this._getCurrencyId(container);
+            const partnerId = this._getPartnerId(container);
 
             const data = await rpc('/payment/stripe/fee_preview', {
                 provider_id: providerId,
+                amount: amount,
+                currency_id: currencyId,
+                partner_id: partnerId,
             });
-
-            console.log("Stripe fee response:", data);
 
             if (data && data.fee_amount > 0) {
                 const feeEl = document.createElement('div');
@@ -64,8 +71,45 @@ const StripeFeeDisplay = {
             }
 
         } catch (e) {
-            console.log('Stripe fee error:', e);
+            // silent by design
         }
+    },
+
+    _getCurrentAmount() {
+        const amountNode = document.querySelector('[data-amount]');
+        if (amountNode && amountNode.dataset.amount) {
+            return parseFloat(amountNode.dataset.amount) || 0;
+        }
+
+        const textNode = document.querySelector('.o_payment_summary [data-oe-expression="amount"]')
+            || document.querySelector('.modal .o_amount')
+            || document.querySelector('.oe_currency_value');
+        if (!textNode) return 0;
+
+        const value = (textNode.textContent || '').replace(/[^0-9.,-]/g, '').replace(',', '');
+        return parseFloat(value) || 0;
+    },
+
+    _getCurrencyId(container) {
+        const form = container.closest('form');
+        const currencyInput = form && form.querySelector('input[name="currency_id"]');
+        if (currencyInput && currencyInput.value) {
+            return parseInt(currencyInput.value, 10);
+        }
+
+        const amountNode = document.querySelector('[data-currency-id]');
+        return amountNode ? parseInt(amountNode.dataset.currencyId, 10) : false;
+    },
+
+    _getPartnerId(container) {
+        const form = container.closest('form');
+        const partnerInput = form && form.querySelector('input[name="partner_id"]');
+        if (partnerInput && partnerInput.value) {
+            return parseInt(partnerInput.value, 10);
+        }
+
+        const partnerNode = document.querySelector('[data-partner-id]');
+        return partnerNode ? parseInt(partnerNode.dataset.partnerId, 10) : false;
     },
 
     /**
