@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payment_provider_form_stripe_fees" model="ir.ui.view">
+        <field name="name">payment.provider.form.stripe.fees</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="stripe_fees" string="Fees" invisible="code != 'stripe'">
+                    <group>
+                        <group string="Domestic Fees">
+                            <field name="fees_dom_var" string="Variable Fees (%)"/>
+                            <field name="fees_dom_fixed" string="Fixed Fees"/>
+                        </group>
+                        <group string="International Fees">
+                            <field name="fees_int_var" string="Variable Fees (%)"/>
+                            <field name="fees_int_fixed" string="Fixed Fees"/>
+                        </group>
+                    </group>
+                    <label string="Domestic fees are applied when the customer delivery country matches your company country. International fees are applied otherwise." class="text-muted"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
