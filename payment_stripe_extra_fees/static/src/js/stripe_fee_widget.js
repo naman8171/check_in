@@ -135,19 +135,23 @@ const StripeFeeDisplay = {
     },
 
     _showSummaryFee(feeFormatted) {
-        const amountLabel = Array.from(document.querySelectorAll('label, span, div'))
-            .find((el) => el.textContent && el.textContent.trim().toLowerCase() === 'amount');
+        const modalBody = document.querySelector('.modal-content .modal-body');
+        if (!modalBody) {
+            return;
+        }
 
+        const amountLabel = Array.from(modalBody.querySelectorAll('label, span, div, p, strong'))
+            .find((el) => el.textContent && el.textContent.trim().toLowerCase() === 'amount');
         if (!amountLabel) {
             return;
         }
 
-        const amountBlock = amountLabel.closest('div');
+        const amountBlock = amountLabel.closest('.col, .col-6, .col-12, div');
         if (!amountBlock || !amountBlock.parentElement) {
             return;
         }
 
-        const existing = document.querySelector('.o_stripe_fee_summary');
+        const existing = modalBody.querySelector('.o_stripe_fee_summary');
         if (existing) {
             const valueEl = existing.querySelector('.o_stripe_fee_summary_value');
             if (valueEl) {
@@ -156,26 +160,12 @@ const StripeFeeDisplay = {
             return;
         }
 
-        const feeBlock = amountBlock.cloneNode(true);
-        feeBlock.classList.add('o_stripe_fee_summary');
-
-        const textNodes = feeBlock.querySelectorAll('label, span, div, b, strong, h1, h2, h3, h4, h5, h6');
-        let labelUpdated = false;
-        let valueUpdated = false;
-
-        textNodes.forEach((node) => {
-            if (!labelUpdated && node.textContent && node.textContent.trim().toLowerCase() === 'amount') {
-                node.textContent = _t('Stripe Fee');
-                labelUpdated = true;
-                return;
-            }
-
-            if (!valueUpdated && node.textContent && /\d/.test(node.textContent)) {
-                node.textContent = feeFormatted;
-                node.classList.add('o_stripe_fee_summary_value');
-                valueUpdated = true;
-            }
-        });
+        const feeBlock = document.createElement('div');
+        feeBlock.className = `${amountBlock.className || ''} o_stripe_fee_summary`.trim();
+        feeBlock.innerHTML = `
+            <div>${_t('Stripe Fee')}</div>
+            <div class="o_stripe_fee_summary_value"><b>${feeFormatted}</b></div>
+        `;
 
         amountBlock.insertAdjacentElement('afterend', feeBlock);
     },
