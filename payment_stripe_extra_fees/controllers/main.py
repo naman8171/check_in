@@ -29,12 +29,22 @@ class StripeFeeController(http.Controller):
         :return: dict with fee_amount and fee_formatted.
         """
         try:
-            if not provider_id:
-                return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
+            provider = None
+            if provider_id:
+                provider = request.env['payment.provider'].sudo().browse(int(provider_id))
+                if not provider.exists() or provider.code != 'stripe':
+                    provider = None
 
-            provider = request.env['payment.provider'].sudo().browse(int(provider_id))
-            if not provider.exists() or provider.code != 'stripe':
-                return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
+            if not provider:
+                website = getattr(request, 'website', False)
+                company = website.company_id if website else request.env.company
+                provider = request.env['payment.provider'].sudo().search([
+                    ('code', '=', 'stripe'),
+                    ('company_id', '=', company.id),
+                    ('state', '!=', 'disabled'),
+                ], limit=1)
+                if not provider:
+                    return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
 
             if not provider.stripe_add_extra_fees:
                 return {'fee_amount': 0.0, 'fee_formatted': '0.00'}
