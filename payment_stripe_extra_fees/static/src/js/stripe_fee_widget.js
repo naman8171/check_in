@@ -58,6 +58,7 @@ const StripeFeeDisplay = {
 
     async _showFeeNotice(container, providerId) {
         this._hideFeeNotice(container);
+        this._hideSummaryFee();
 
         if (!providerId) {
             console.log("❌ No provider ID");
@@ -91,6 +92,7 @@ const StripeFeeDisplay = {
                 `;
 
                 container.appendChild(feeEl);
+                this._showSummaryFee(data.fee_formatted);
             } else {
                 console.log("⚠ Fee = 0");
             }
@@ -129,6 +131,57 @@ const StripeFeeDisplay = {
 
     _hideAllNotices() {
         document.querySelectorAll('.o_stripe_fee_notice').forEach(el => el.remove());
+        this._hideSummaryFee();
+    },
+
+    _showSummaryFee(feeFormatted) {
+        const amountLabel = Array.from(document.querySelectorAll('label, span, div'))
+            .find((el) => el.textContent && el.textContent.trim().toLowerCase() === 'amount');
+
+        if (!amountLabel) {
+            return;
+        }
+
+        const amountBlock = amountLabel.closest('div');
+        if (!amountBlock || !amountBlock.parentElement) {
+            return;
+        }
+
+        const existing = document.querySelector('.o_stripe_fee_summary');
+        if (existing) {
+            const valueEl = existing.querySelector('.o_stripe_fee_summary_value');
+            if (valueEl) {
+                valueEl.textContent = feeFormatted;
+            }
+            return;
+        }
+
+        const feeBlock = amountBlock.cloneNode(true);
+        feeBlock.classList.add('o_stripe_fee_summary');
+
+        const textNodes = feeBlock.querySelectorAll('label, span, div, b, strong, h1, h2, h3, h4, h5, h6');
+        let labelUpdated = false;
+        let valueUpdated = false;
+
+        textNodes.forEach((node) => {
+            if (!labelUpdated && node.textContent && node.textContent.trim().toLowerCase() === 'amount') {
+                node.textContent = _t('Stripe Fee');
+                labelUpdated = true;
+                return;
+            }
+
+            if (!valueUpdated && node.textContent && /\d/.test(node.textContent)) {
+                node.textContent = feeFormatted;
+                node.classList.add('o_stripe_fee_summary_value');
+                valueUpdated = true;
+            }
+        });
+
+        amountBlock.insertAdjacentElement('afterend', feeBlock);
+    },
+
+    _hideSummaryFee() {
+        document.querySelectorAll('.o_stripe_fee_summary').forEach((el) => el.remove());
     },
 };
 
