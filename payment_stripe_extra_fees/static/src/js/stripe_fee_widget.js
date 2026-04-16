@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { _t } from "@web/core/l10n/translation";
-import ajax from "@web/core/network/rpc_service";
+import { rpc } from "@web/core/network/rpc";
 
 const StripeFeeDisplay = {
 
@@ -23,7 +23,8 @@ const StripeFeeDisplay = {
 
                 // Check if Stripe selected
                 if (container.dataset.providerCode === 'stripe') {
-                    this._showFeeNotice(container, e.target.value);
+                    const providerId = container.dataset.providerId || e.target.dataset.providerId;
+                    this._showFeeNotice(container, providerId);
                 } else {
                     this._hideAllNotices();
                 }
@@ -42,7 +43,7 @@ const StripeFeeDisplay = {
         try {
             console.log("Stripe provider ID:", providerId);
 
-            const data = await ajax.jsonRpc('/payment/stripe/fee_preview', 'call', {
+            const data = await rpc('/payment/stripe/fee_preview', {
                 provider_id: providerId,
             });
 
