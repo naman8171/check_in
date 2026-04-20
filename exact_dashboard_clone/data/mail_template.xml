@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="mail_template_clone_record_summary" model="mail.template">
+        <field name="name">Clone Record Summary</field>
+        <field name="model_id" ref="model_clone_record"/>
+        <field name="subject">Update: ${object.name} - ${object.subject}</field>
+        <field name="email_from">${(user.email_formatted or '')|safe}</field>
+        <field name="email_to">${object.customer_email}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>Hello ${object.customer_name or 'Customer'},</p>
+                <p>
+                    Here is the latest update for your request
+                    <strong>${object.name}</strong>.
+                </p>
+                <ul>
+                    <li><strong>Subject:</strong> ${object.subject}</li>
+                    <li><strong>Status:</strong> ${dict(object._fields['state'].selection).get(object.state)}</li>
+                    <li><strong>Priority:</strong> ${dict(object._fields['priority'].selection).get(object.priority)}</li>
+                    <li><strong>Assigned To:</strong> ${object.assigned_user_id.name or ''}</li>
+                    <li><strong>Due Date:</strong> ${format_date(object.due_date) if object.due_date else ''}</li>
+                </ul>
+                <p>${object.description or ''}</p>
+                <p>Regards,<br/>${user.name}</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

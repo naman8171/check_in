@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_clone_record" model="ir.sequence">
+        <field name="name">Clone Record</field>
+        <field name="code">clone.record</field>
+        <field name="prefix">CRD/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>
