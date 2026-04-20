@@ -9,7 +9,7 @@ class LoanPortalController(http.Controller):
     def my_loans(self, **kwargs):
         partner = request.env.user.partner_id
         loans = request.env['loan.loan'].sudo().search([('partner_id', '=', partner.id)], order='id desc')
-        return request.render('loan_management_system.portal_my_loans', {'loans': loans})
+        return request.render('loan_management_portal.portal_my_loans', {'loans': loans})
 
     @http.route('/my/loans/<int:loan_id>', type='http', auth='user', website=True)
     def my_loan_detail(self, loan_id, **kwargs):
@@ -17,7 +17,7 @@ class LoanPortalController(http.Controller):
         loan = request.env['loan.loan'].sudo().browse(loan_id)
         if not loan.exists() or loan.partner_id.id != partner.id:
             return request.not_found()
-        return request.render('loan_management_system.portal_loan_detail', {'loan': loan})
+        return request.render('loan_management_portal.portal_loan_detail', {'loan': loan})
 
     @http.route('/my/loans/<int:loan_id>/sign', type='http', auth='user', website=True, methods=['POST'], csrf=True)
     def my_loan_sign(self, loan_id, **post):
@@ -36,7 +36,7 @@ class LoanPortalController(http.Controller):
     @http.route('/loans/apply', type='http', auth='public', website=True)
     def loan_apply(self, **kwargs):
         loan_types = request.env['loan.type'].sudo().search([('active', '=', True)])
-        return request.render('loan_management_system.portal_loan_apply', {'loan_types': loan_types})
+        return request.render('loan_management_portal.portal_loan_apply', {'loan_types': loan_types})
 
     @http.route('/loans/apply/submit', type='http', auth='public', website=True, methods=['POST'], csrf=True)
     def loan_apply_submit(self, **post):
@@ -77,4 +77,4 @@ class LoanPortalController(http.Controller):
 
     @http.route('/loans/apply/thank-you', type='http', auth='public', website=True)
     def loan_apply_thank_you(self, **kwargs):
-        return request.render('loan_management_system.portal_loan_apply_thank_you')
+        return request.render('loan_management_portal.portal_loan_apply_thank_you')

@@ -6,7 +6,7 @@
     "author": "Custom",
     "website": "https://example.com",
     "license": "LGPL-3",
-    "depends": ["mail", "account", "website", "portal", "crm"],
+    "depends": ["mail", "account", "crm"],
     "data": [
         "security/loan_security.xml",
         "security/ir.model.access.csv",
@@ -29,7 +29,6 @@
         "views/loan_proofs_views.xml",
         "views/loan_config_master_views.xml",
         "views/loan_menus.xml",
-        "views/website/loan_portal_templates.xml",
 
     ],
     "application": True,
