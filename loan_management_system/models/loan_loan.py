@@ -47,7 +47,21 @@ class LoanLoan(models.Model):
     agreement_signed_date = fields.Date()
     agreement_signed_by = fields.Char(readonly=True)
     agreement_signature = fields.Binary(attachment=True)
-    request_source = fields.Selection([("backend", "Backend"), ("website", "Website")], default="backend", readonly=True)
+    request_source = fields.Selection(
+        [("backend", "Backend"), ("website", "Website"), ("internal", "Internal User")],
+        default="backend",
+        readonly=True,
+    )
+    internal_user_id = fields.Many2one(
+        "res.users",
+        string="Internal Applicant",
+        tracking=True,
+        help="Bank staff user who requested this loan.",
+    )
+    internal_department = fields.Char(
+        tracking=True,
+        help="Department of the internal applicant (for routing/approvals).",
+    )
 
     state = fields.Selection(
         [

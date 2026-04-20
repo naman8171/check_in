@@ -19,6 +19,7 @@
         "views/loan_dashboard_views.xml",
         "views/loan_dashboard_client_action.xml",
         "views/loan_views.xml",
+        "views/loan_internal_views.xml",
         "views/loan_installment_views.xml",
         "views/loan_payment_views.xml",
         "views/loan_disbursement_views.xml",
