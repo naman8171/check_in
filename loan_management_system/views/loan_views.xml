@@ -7,6 +7,9 @@
             <list>
                 <field name="name" />
                 <field name="partner_id" />
+                <field name="request_source" />
+                <field name="internal_user_id" optional="hide" />
+                <field name="internal_department" optional="hide" />
                 <field name="loan_type_id" />
                 <field name="application_date" />
                 <field name="principal_amount" />
@@ -102,6 +105,8 @@
                             <field name="lead_id" />
                             <field name="user_id" />
                             <field name="purpose" />
+                            <field name="internal_user_id" invisible="request_source != 'internal'" />
+                            <field name="internal_department" invisible="request_source != 'internal'" />
                         </group>
                         <group string="Loan Details">
                             <field name="application_date" />

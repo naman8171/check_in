@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_internal_loan_requests" model="ir.actions.act_window">
+        <field name="name">My Internal Loan Requests</field>
+        <field name="res_model">loan.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_loan_loan_search_internal"/>
+        <field name="domain">[('request_source', '=', 'internal')]</field>
+        <field name="context">{
+            'default_request_source': 'internal',
+            'default_internal_user_id': uid,
+            'default_partner_id': user.partner_id.id,
+            'search_default_my_requests': 1
+        }</field>
+    </record>
+
+    <record id="view_loan_loan_search_internal" model="ir.ui.view">
+        <field name="name">loan.loan.search.internal</field>
+        <field name="model">loan.loan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="loan_type_id"/>
+                <field name="state"/>
+                <field name="internal_user_id"/>
+                <filter name="my_requests" string="My Requests" domain="[('internal_user_id', '=', uid)]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="open" string="Open" domain="[('state', '=', 'open')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_internal_loan_apply" model="ir.actions.act_window">
+        <field name="name">Apply for Internal Loan</field>
+        <field name="res_model">loan.loan</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{
+            'default_request_source': 'internal',
+            'default_internal_user_id': uid,
+            'default_partner_id': user.partner_id.id,
+            'default_application_date': context_today(),
+            'default_first_due_date': context_today()
+        }</field>
+    </record>
+
+    <menuitem id="menu_internal_loan_root" name="Internal Loans" sequence="80"
+        groups="loan_management_system.group_loan_internal_user"/>
+
+    <menuitem id="menu_internal_loan_apply" name="Apply for Loan" parent="menu_internal_loan_root"
+        action="action_internal_loan_apply" sequence="10"
+        groups="loan_management_system.group_loan_internal_user"/>
+
+    <menuitem id="menu_internal_loan_requests" name="My Applications" parent="menu_internal_loan_root"
+        action="action_internal_loan_requests" sequence="20"
+        groups="loan_management_system.group_loan_internal_user"/>
+</odoo>
