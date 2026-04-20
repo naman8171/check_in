@@ -1,1 +1,1 @@
-from . import loan_portal
+# Controllers moved to loan_management_portal module.
