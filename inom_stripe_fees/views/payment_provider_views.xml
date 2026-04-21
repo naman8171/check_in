@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="payment_provider_form_fees" model="ir.ui.view">
+        <field name="name">payment.provider.form.custom.fees</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <!-- Add a new "Fees" page to the notebook, only visible for Stripe. -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Custom Fees"
+                      name="custom_fees"
+                      invisible="code != 'stripe'">
+                    <group>
+                        <field name="fees_custom_active"/>
+                    </group>
+                    <group invisible="not fees_custom_active">
+                        <group string="Domestic (same country as company)">
+                            <field name="fees_dom_var"/>
+                            <field name="fees_dom_fixed"/>
+                        </group>
+                        <group string="International (different country)">
+                            <field name="fees_int_var"/>
+                            <field name="fees_int_fixed"/>
+                        </group>
+                        <group string="Threshold" colspan="2">
+                            <field name="fees_free_limit"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
