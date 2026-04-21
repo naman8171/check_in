@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="past_work_catalog_page" name="Past Work Catalog Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="past-work-wrap">
+                <section class="container py-5" id="pastWorkCatalogRoot">
+                    <div class="row g-4">
+                        <aside class="col-lg-3">
+                            <div class="past-work-filter-panel shadow-sm">
+                                <h4 class="mb-3">Filter Projects</h4>
+                                <div class="mb-4" id="sectorFilterContainer">
+                                    <p class="filter-title">Sector</p>
+                                    <div class="filter-list"/>
+                                </div>
+                                <div class="mb-3" id="workTypeFilterContainer">
+                                    <p class="filter-title">Type of Work</p>
+                                    <div class="filter-list"/>
+                                </div>
+                                <button class="btn btn-outline-secondary btn-sm" id="clearPastWorkFilters">Clear filters</button>
+                            </div>
+                        </aside>
+
+                        <div class="col-lg-9">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h2 class="mb-0">Past Work</h2>
+                                <span class="text-muted" id="pastWorkCount"/>
+                            </div>
+                            <div id="pastWorkCards" class="past-work-grid"/>
+                            <div id="pastWorkEmpty" class="alert alert-info d-none mt-3 mb-0">
+                                No projects match your filters.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
