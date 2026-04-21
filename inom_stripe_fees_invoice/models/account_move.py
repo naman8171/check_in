@@ -8,7 +8,7 @@ class AccountMove(models.Model):
         string='Base amount',
         currency_field='currency_id',
         compute='_compute_stripe_fee_breakdown',
-        help='Outstanding invoice amount before Stripe processing fee.',
+        help='Invoice amount before Stripe processing fee.',
     )
     stripe_processing_fee = fields.Monetary(
         string='Stripe processing fee*',
@@ -41,9 +41,9 @@ class AccountMove(models.Model):
 
             base_amount = 0.0
             fee = 0.0
-            if is_customer_invoice and move.state == 'posted':
-                # Match portal "Pay Now" behavior: show fee on current outstanding amount.
-                base_amount = move.amount_residual
+            if is_customer_invoice:
+                # Draft/proforma uses full total; posted uses outstanding amount (portal behavior).
+                base_amount = move.amount_residual if move.state == 'posted' else move.amount_total
                 if provider and base_amount > 0:
                     fee = provider._compute_custom_fees(base_amount, move.partner_id.country_id)
 

@@ -8,13 +8,13 @@
             <xpath expr="//field[@name='invoice_payment_term_id']" position="after">
                 <field name="stripe_base_amount"
                        readonly="1"
-                       invisible="move_type not in ('out_invoice', 'out_refund') or state != 'posted'"/>
+                       invisible="move_type not in ('out_invoice', 'out_refund')"/>
                 <field name="stripe_processing_fee"
                        readonly="1"
-                       invisible="move_type not in ('out_invoice', 'out_refund') or state != 'posted'"/>
+                       invisible="move_type not in ('out_invoice', 'out_refund')"/>
                 <field name="stripe_total_to_be_charged"
                        readonly="1"
-                       invisible="move_type not in ('out_invoice', 'out_refund') or state != 'posted'"/>
+                       invisible="move_type not in ('out_invoice', 'out_refund')"/>
             </xpath>
         </field>
     </record>
