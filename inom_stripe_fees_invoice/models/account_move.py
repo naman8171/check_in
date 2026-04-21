@@ -4,37 +4,27 @@ from odoo import api, fields, models
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    stripe_fee_estimated = fields.Monetary(
-        string='Stripe Extra Fee (Estimated)',
+    stripe_base_amount = fields.Monetary(
+        string='Base amount',
         currency_field='currency_id',
-        compute='_compute_stripe_fee_amounts',
-        help='Estimated Stripe surcharge based on the current Stripe provider configuration.',
+        compute='_compute_stripe_fee_breakdown',
+        help='Outstanding invoice amount before Stripe processing fee.',
     )
-    stripe_fee_paid = fields.Monetary(
-        string='Stripe Extra Fee (Paid)',
+    stripe_processing_fee = fields.Monetary(
+        string='Stripe processing fee*',
         currency_field='currency_id',
-        compute='_compute_stripe_fee_amounts',
-        store=True,
-        help='Actual Stripe surcharge collected from completed Stripe payment transactions.',
+        compute='_compute_stripe_fee_breakdown',
+        help='Estimated Stripe surcharge based on current Stripe fee settings.',
     )
-    stripe_total_with_fee = fields.Monetary(
-        string='Total with Stripe Fee',
+    stripe_total_to_be_charged = fields.Monetary(
+        string='Total to be charged',
         currency_field='currency_id',
-        compute='_compute_stripe_fee_amounts',
-        help='Invoice total plus the estimated Stripe surcharge.',
+        compute='_compute_stripe_fee_breakdown',
+        help='Amount that will be charged when paying this invoice with Stripe.',
     )
 
-    @api.depends(
-        'move_type',
-        'state',
-        'amount_total',
-        'partner_id.country_id',
-        'company_id',
-        'transaction_ids.extra_fees',
-        'transaction_ids.state',
-        'transaction_ids.provider_id',
-    )
-    def _compute_stripe_fee_amounts(self):
+    @api.depends('move_type', 'state', 'amount_total', 'amount_residual', 'partner_id.country_id', 'company_id')
+    def _compute_stripe_fee_breakdown(self):
         providers_by_company = {
             company.id: self.env['payment.provider'].search([
                 ('code', '=', 'stripe'),
@@ -49,16 +39,14 @@ class AccountMove(models.Model):
             is_customer_invoice = move.move_type in ('out_invoice', 'out_refund')
             provider = providers_by_company.get(move.company_id.id)
 
-            if is_customer_invoice and provider and move.state == 'posted':
-                move.stripe_fee_estimated = provider._compute_custom_fees(
-                    move.amount_total,
-                    move.partner_id.country_id,
-                )
-            else:
-                move.stripe_fee_estimated = 0.0
+            base_amount = 0.0
+            fee = 0.0
+            if is_customer_invoice and move.state == 'posted':
+                # Match portal "Pay Now" behavior: show fee on current outstanding amount.
+                base_amount = move.amount_residual
+                if provider and base_amount > 0:
+                    fee = provider._compute_custom_fees(base_amount, move.partner_id.country_id)
 
-            done_stripe_transactions = move.transaction_ids.filtered(
-                lambda tx: tx.provider_id.code == 'stripe' and tx.state == 'done'
-            )
-            move.stripe_fee_paid = sum(done_stripe_transactions.mapped('extra_fees'))
-            move.stripe_total_with_fee = move.amount_total + move.stripe_fee_estimated
+            move.stripe_base_amount = base_amount
+            move.stripe_processing_fee = fee
+            move.stripe_total_to_be_charged = base_amount + fee
