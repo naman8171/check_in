@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_inom_stripe_fees" inherit_id="account.report_invoice_document">
+        <xpath expr="//tr[td//span[@t-field='o.amount_total']]" position="after">
+            <tr t-if="o.stripe_processing_fee">
+                <td><strong>Base amount</strong></td>
+                <td class="text-end">
+                    <span t-field="o.stripe_base_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </tr>
+            <tr t-if="o.stripe_processing_fee">
+                <td><strong>Stripe processing fee*</strong></td>
+                <td class="text-end">
+                    <span t-field="o.stripe_processing_fee" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </tr>
+            <tr t-if="o.stripe_processing_fee">
+                <td><strong>Total to be charged</strong></td>
+                <td class="text-end">
+                    <span t-field="o.stripe_total_to_be_charged" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+</odoo>
