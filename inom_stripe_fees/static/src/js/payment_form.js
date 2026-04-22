@@ -12,6 +12,8 @@ import publicWidget from "@web/legacy/js/public/public_widget";
 import { rpc } from "@web/core/network/rpc";
 
 const BREAKDOWN_CLASS = "inom-fee-breakdown";
+const SUMMARY_FEE_CLASS = "inom-summary-fee-row";
+const SUMMARY_TOTAL_ATTR = "data-inom-summary-total-original";
 
 publicWidget.registry.InomStripeFeeDisplay = publicWidget.Widget.extend({
     // Match every flow that renders a payment form: website checkout,
@@ -86,6 +88,7 @@ publicWidget.registry.InomStripeFeeDisplay = publicWidget.Widget.extend({
         if (fee <= 0) return;
 
         this._injectBreakdown(baseAmount, fee, baseAmount + fee);
+        this._injectSummaryFee(fee);
     },
 
     // -----------------------------------------------------------------
@@ -191,5 +194,43 @@ publicWidget.registry.InomStripeFeeDisplay = publicWidget.Widget.extend({
         document
             .querySelectorAll(`.${BREAKDOWN_CLASS}`)
             .forEach((n) => n.remove());
+        document
+            .querySelectorAll(`.${SUMMARY_FEE_CLASS}`)
+            .forEach((n) => n.remove());
+        this._restoreSummaryTotal();
+    },
+
+    _injectSummaryFee(fee) {
+        const totalLabel = [...document.querySelectorAll("div,span,strong,p")].find(
+            (el) => el.children.length === 0 && /^\s*Total\s*$/i.test(el.textContent || "")
+        );
+        if (!totalLabel) return;
+        const totalAmountEl = totalLabel.parentElement?.querySelector("strong, span:last-child");
+        if (!totalAmountEl) return;
+
+        if (!totalAmountEl.getAttribute(SUMMARY_TOTAL_ATTR)) {
+            totalAmountEl.setAttribute(SUMMARY_TOTAL_ATTR, totalAmountEl.textContent || "");
+        }
+
+        const currentTotal = parseFloat(
+            String(totalAmountEl.getAttribute(SUMMARY_TOTAL_ATTR)).replace(/[^\d.-]/g, "")
+        );
+        if (isNaN(currentTotal) || currentTotal <= 0) return;
+
+        const feeRow = document.createElement("div");
+        feeRow.className = `${SUMMARY_FEE_CLASS} d-flex justify-content-between`;
+        feeRow.innerHTML = `
+            <span>Stripe processing fee</span>
+            <span>${this._formatCurrency(fee)}</span>
+        `;
+        totalLabel.parentElement.insertAdjacentElement("beforebegin", feeRow);
+        totalAmountEl.textContent = this._formatCurrency(currentTotal + fee);
+    },
+
+    _restoreSummaryTotal() {
+        document.querySelectorAll(`[${SUMMARY_TOTAL_ATTR}]`).forEach((el) => {
+            el.textContent = el.getAttribute(SUMMARY_TOTAL_ATTR);
+            el.removeAttribute(SUMMARY_TOTAL_ATTR);
+        });
     },
 });
