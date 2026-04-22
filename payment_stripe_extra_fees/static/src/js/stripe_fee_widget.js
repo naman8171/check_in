@@ -135,18 +135,18 @@ const StripeFeeDisplay = {
     },
 
     _showSummaryFee(feeFormatted) {
-        const modalBody = document.querySelector('.modal-content .modal-body');
+        const modalBody = document.querySelector('.modal.show .modal-content .modal-body, .modal-content .modal-body');
         if (!modalBody) {
             return;
         }
 
-        const amountLabel = Array.from(modalBody.querySelectorAll('label, span, div, p, strong'))
-            .find((el) => el.textContent && el.textContent.trim().toLowerCase() === 'amount');
+        const amountLabel = Array.from(modalBody.querySelectorAll('label, span, div, p, strong, small, h6'))
+            .find((el) => el.textContent && /amount/i.test(el.textContent.trim()));
         if (!amountLabel) {
             return;
         }
 
-        const amountBlock = amountLabel.closest('.col, .col-6, .col-12, div');
+        const amountBlock = amountLabel.closest('[class*="col-"], .col, .o_payment_summary_item, .o_payment_amount, div');
         if (!amountBlock || !amountBlock.parentElement) {
             return;
         }
