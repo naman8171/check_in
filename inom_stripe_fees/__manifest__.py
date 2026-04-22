@@ -27,6 +27,7 @@ may violate Stripe's terms. Verify compliance before enabling.
     'depends': [
         'payment_stripe',
         'account',
+        'sale',
     ],
     'data': [
         'views/payment_provider_views.xml',
