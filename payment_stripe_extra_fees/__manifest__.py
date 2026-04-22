@@ -25,6 +25,7 @@
         'data/product_data.xml',
         'views/payment_provider_views.xml',
         'views/payment_transaction_views.xml',
+        'views/account_move_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [
