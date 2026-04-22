@@ -121,7 +121,7 @@ class PaymentTransaction(models.Model):
                 'name': "Stripe Processing Fee",
                 'product_uom_qty': 1.0,
                 'price_unit': fee,
-                'tax_id': [(6, 0, [])],
+                'tax_ids': [(6, 0, [])],
                 'is_stripe_fee_line': True,
             })
 
