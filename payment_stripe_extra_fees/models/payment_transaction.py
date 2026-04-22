@@ -104,6 +104,12 @@ class PaymentTransaction(models.Model):
                 print("❌ Not Stripe or fees disabled")
                 continue
 
+            # If fee was already prepared in _get_specific_create_values,
+            # do not apply it a second time.
+            if vals.get('stripe_fee_amount'):
+                print("✅ Fee already present in create values; skip recompute")
+                continue
+
             amount = vals.get('amount')
             currency = self.env['res.currency'].browse(vals.get('currency_id'))
             partner = self.env['res.partner'].browse(vals.get('partner_id'))
