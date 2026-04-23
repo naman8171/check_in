@@ -1,0 +1,8 @@
+<odoo>
+    <record id="website_menu_past_work" model="website.menu">
+        <field name="name">Past Work</field>
+        <field name="url">/past-work</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" type="int">80</field>
+    </record>
+</odoo>

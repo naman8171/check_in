@@ -1,0 +1,7 @@
+<odoo>
+    <menuitem id="menu_past_work_root" name="Past Work" sequence="20" groups="past_work.group_past_work_user,past_work.group_past_work_manager"/>
+
+    <menuitem id="menu_past_work_all" name="All Works" parent="menu_past_work_root" action="action_past_work" sequence="10" groups="past_work.group_past_work_user,past_work.group_past_work_manager"/>
+    <menuitem id="menu_past_work_categories" name="Categories" parent="menu_past_work_root" action="action_past_work_category" sequence="20" groups="past_work.group_past_work_manager"/>
+    <menuitem id="menu_past_work_tags" name="Tags" parent="menu_past_work_root" action="action_past_work_tag" sequence="30" groups="past_work.group_past_work_manager"/>
+</odoo>
