@@ -1,0 +1,21 @@
+.o_list_renderer {
+    .o_advanced_filter_row {
+        th.o_advanced_filter_cell {
+            padding: 2px 4px;
+            background: #fff;
+            border-top: 0;
+        }
+
+        .o_advanced_filter_input {
+            width: 100%;
+            min-width: 72px;
+            font-size: 11px;
+            height: 24px;
+            padding: 2px 6px;
+        }
+    }
+
+    tr.o_advanced_filter_hidden {
+        display: none;
+    }
+}
