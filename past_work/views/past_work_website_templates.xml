@@ -165,6 +165,228 @@
                         grid-template-columns: 1fr;
                     }
                 }
+
+                .pw-about-section,
+                .pw-services-section,
+                .pw-process-section,
+                .pw-contact-cta {
+                    padding: clamp(44px, 6vw, 82px) 0;
+                }
+
+                .pw-about-section {
+                    background: #ffffff;
+                }
+
+                .pw-section-heading {
+                    text-align: center;
+                    margin-bottom: clamp(26px, 3.6vw, 40px);
+                }
+
+                .pw-section-heading h2 {
+                    margin: 0;
+                    font-size: clamp(1.75rem, 3.1vw, 2.5rem);
+                    font-weight: 800;
+                    color: #0f172a;
+                    letter-spacing: -0.02em;
+                }
+
+                .pw-section-heading p {
+                    margin: 10px auto 0;
+                    max-width: 720px;
+                    color: #64748b;
+                    font-size: 1rem;
+                    line-height: 1.75;
+                }
+
+                .pw-about-content {
+                    max-width: 980px;
+                    margin: 0 auto;
+                    background: linear-gradient(120deg, #f8fafc 0%, #eef2ff 100%);
+                    border: 1px solid #e2e8f0;
+                    border-radius: 20px;
+                    padding: clamp(24px, 4vw, 40px);
+                    box-shadow: 0 15px 38px rgba(15, 23, 42, 0.07);
+                }
+
+                .pw-about-grid {
+                    display: grid;
+                    grid-template-columns: 1.2fr 0.8fr;
+                    gap: clamp(16px, 2.3vw, 28px);
+                }
+
+                .pw-about-list {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+                    display: grid;
+                    gap: 12px;
+                }
+
+                .pw-about-list li {
+                    color: #334155;
+                    display: flex;
+                    align-items: start;
+                    gap: 10px;
+                }
+
+                .pw-about-list i {
+                    color: #22c55e;
+                    margin-top: 3px;
+                }
+
+                .pw-services-section {
+                    background: #f8fafc;
+                }
+
+                .pw-services-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    gap: 18px;
+                }
+
+                .pw-service-card {
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 18px;
+                    padding: 24px;
+                    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+
+                .pw-service-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.11);
+                }
+
+                .pw-service-icon {
+                    height: 42px;
+                    width: 42px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                    background: #e0f2fe;
+                    color: #0369a1;
+                    font-size: 1.2rem;
+                    margin-bottom: 14px;
+                }
+
+                .pw-service-card h3 {
+                    margin: 0 0 10px;
+                    font-size: 1.12rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                }
+
+                .pw-service-card p {
+                    margin: 0;
+                    color: #64748b;
+                    line-height: 1.7;
+                }
+
+                .pw-process-section {
+                    background: #ffffff;
+                }
+
+                .pw-process-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    gap: 18px;
+                }
+
+                .pw-process-step {
+                    border: 1px solid #e2e8f0;
+                    border-radius: 16px;
+                    padding: 22px;
+                    background: #ffffff;
+                }
+
+                .pw-step-number {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 999px;
+                    background: #0f172a;
+                    color: #ffffff;
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin-bottom: 12px;
+                }
+
+                .pw-process-step h4 {
+                    margin: 0 0 8px;
+                    color: #0f172a;
+                    font-size: 1.02rem;
+                    font-weight: 700;
+                }
+
+                .pw-process-step p {
+                    margin: 0;
+                    color: #64748b;
+                    line-height: 1.7;
+                }
+
+                .pw-contact-cta {
+                    background: linear-gradient(130deg, #0f172a 0%, #1e293b 48%, #1d4ed8 100%);
+                }
+
+                .pw-contact-box {
+                    border-radius: 22px;
+                    padding: clamp(24px, 4vw, 42px);
+                    border: 1px solid rgba(148, 163, 184, 0.34);
+                    background: rgba(15, 23, 42, 0.42);
+                    backdrop-filter: blur(5px);
+                    text-align: center;
+                }
+
+                .pw-contact-box h2 {
+                    margin: 0;
+                    color: #f8fafc;
+                    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+                    font-weight: 800;
+                }
+
+                .pw-contact-box p {
+                    margin: 12px auto 0;
+                    max-width: 680px;
+                    color: rgba(226, 232, 240, 0.92);
+                    line-height: 1.75;
+                }
+
+                .pw-contact-actions {
+                    margin-top: 22px;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                }
+
+                .pw-contact-chip {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    border-radius: 10px;
+                    padding: 10px 14px;
+                    color: #e2e8f0;
+                    text-decoration: none;
+                    border: 1px solid rgba(148, 163, 184, 0.36);
+                    background: rgba(15, 23, 42, 0.32);
+                }
+
+                .pw-contact-chip:hover {
+                    color: #ffffff;
+                    background: rgba(15, 23, 42, 0.55);
+                }
+
+                @media (max-width: 991px) {
+                    .pw-about-grid,
+                    .pw-services-grid,
+                    .pw-process-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
             </style>
         </t>
 
@@ -216,6 +438,100 @@
                 </div>
             </section>
 
+
+
+            <section class="pw-about-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>About Our Work</h2>
+                        <p>Hum business goals ko strong design thinking aur practical development ke saath combine karte hain, taaki har project sirf sundar na lage, balki measurable impact bhi de.</p>
+                    </div>
+                    <div class="pw-about-content">
+                        <div class="pw-about-grid">
+                            <p>
+                                Har engagement me hamara focus clear rehta hai — user journey ko simple banana,
+                                brand identity ko meaningful banana, aur performance ko fast rakhna.
+                                Is approach ki wajah se hum long-term partnerships build karte hain.
+                            </p>
+                            <ul class="pw-about-list">
+                                <li><i class="bi bi-check2-circle"></i> Discovery-led planning before execution</li>
+                                <li><i class="bi bi-check2-circle"></i> Conversion-focused design decisions</li>
+                                <li><i class="bi bi-check2-circle"></i> Clean code with scalable structure</li>
+                                <li><i class="bi bi-check2-circle"></i> Transparent communication at every step</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-services-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>What We Can Build</h2>
+                        <p>End-to-end digital services jo aapke idea ko strategy se launch tak smoothly le jayein.</p>
+                    </div>
+                    <div class="pw-services-grid">
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-palette"></i></span>
+                            <h3>Brand &amp; UI Design</h3>
+                            <p>Consistent visual systems, intuitive interfaces, aur premium brand presentation.</p>
+                        </article>
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-code-slash"></i></span>
+                            <h3>Web Development</h3>
+                            <p>Fast, secure, and maintainable websites tailored to real business workflows.</p>
+                        </article>
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                            <h3>Growth Optimization</h3>
+                            <p>Performance tuning, conversion improvement, and analytics-backed iterations.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-process-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>How We Work</h2>
+                        <p>Simple process, clear ownership, aur predictable delivery timeline.</p>
+                    </div>
+                    <div class="pw-process-grid">
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">01</span>
+                            <h4>Understand</h4>
+                            <p>Business context, users, competitors, and target outcomes ko deeply map karna.</p>
+                        </div>
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">02</span>
+                            <h4>Design &amp; Build</h4>
+                            <p>Validated flows ke basis par UI, development, and content integration ko execute karna.</p>
+                        </div>
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">03</span>
+                            <h4>Launch &amp; Improve</h4>
+                            <p>Release ke baad performance review karna aur continuous improvements ship karna.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-contact-cta">
+                <div class="container">
+                    <div class="pw-contact-box">
+                        <h2>Contact Us</h2>
+                        <p>Agar aap apne next website, product, ya rebranding project par kaam start karna chahte hain, to humse connect karein. Hum aapko strategy se delivery tak guide karenge.</p>
+                        <div class="pw-contact-actions">
+                            <a class="pw-landing-btn pw-landing-btn-primary" href="/contactus">
+                                Let&apos;s Talk <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a class="pw-contact-chip" href="mailto:hello@example.com">
+                                <i class="bi bi-envelope"></i> hello@example.com
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <div class="pw-page-title">
                 <div class="container">
                     <nav aria-label="breadcrumb">
