@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="cat_branding" model="past.work.category">
+            <field name="name">Branding</field>
+            <field name="slug">filter-branding</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="cat_web" model="past.work.category">
+            <field name="name">Web Design</field>
+            <field name="slug">filter-web</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="cat_print" model="past.work.category">
+            <field name="name">Print Design</field>
+            <field name="slug">filter-print</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="cat_motion" model="past.work.category">
+            <field name="name">Motion</field>
+            <field name="slug">filter-motion</field>
+            <field name="sequence">40</field>
+        </record>
+
+    </data>
+</odoo>
