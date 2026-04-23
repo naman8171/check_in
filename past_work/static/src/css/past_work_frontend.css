@@ -110,6 +110,19 @@
     color: #fff;
 }
 
+
+.pw-filter-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.pw-filter-link:hover,
+.pw-filter-link:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
 /* ── Portfolio Card ──────────────────────────── */
 .pw-portfolio-card {
     border-radius: var(--pw-radius);
