@@ -2,7 +2,6 @@
 
 import { ListRenderer } from "@web/views/list/list_renderer";
 import { patch } from "@web/core/utils/patch";
-import { onMounted, onPatched } from "@odoo/owl";
 
 function parseFilterTokens(raw) {
     return (raw || "")
@@ -48,32 +47,40 @@ function matchText(cellText, token) {
 patch(ListRenderer.prototype, {
     setup() {
         super.setup(...arguments);
-        this._advancedFiltersByIndex = {};
+        if (!this._advancedFiltersByIndex) {
+            this._advancedFiltersByIndex = {};
+        }
+    },
 
-        onMounted(() => {
-            this._ensureAdvancedFilterRow();
-            this._applyAdvancedFilters();
-        });
+    mounted() {
+        if (super.mounted) {
+            super.mounted(...arguments);
+        }
+        this._ensureAdvancedFilterRow();
+        this._applyAdvancedFilters();
+    },
 
-        onPatched(() => {
-            this._ensureAdvancedFilterRow();
-            this._applyAdvancedFilters();
-        });
+    patched() {
+        if (super.patched) {
+            super.patched(...arguments);
+        }
+        this._ensureAdvancedFilterRow();
+        this._applyAdvancedFilters();
     },
 
     _getListTableElement() {
         if (!this.el) {
             return null;
         }
-        if (this.el.tagName === "TABLE") {
+        if (this.el.tagName && this.el.tagName.toUpperCase() === "TABLE") {
             return this.el;
         }
-        return this.el.querySelector("table.o_list_table, table");
+        return this.el.querySelector("table.o_list_table") || this.el.querySelector("table");
     },
 
     _ensureAdvancedFilterRow() {
         const table = this._getListTableElement();
-        const thead = table?.querySelector("thead");
+        const thead = table ? table.querySelector("thead") : null;
         if (!thead) {
             return;
         }
@@ -88,7 +95,7 @@ patch(ListRenderer.prototype, {
             previous.remove();
         }
 
-        const headerCells = [...headerRow.querySelectorAll("th")];
+        const headerCells = Array.from(headerRow.querySelectorAll("th"));
         if (!headerCells.length) {
             return;
         }
@@ -100,11 +107,13 @@ patch(ListRenderer.prototype, {
             const th = document.createElement("th");
             th.className = "o_advanced_filter_cell";
 
-            const fieldName = headerCell.dataset?.name || "";
-            const looksUtilityColumn = headerCell.classList.contains("o_list_record_selector")
-                || headerCell.classList.contains("o_list_button")
-                || headerCell.classList.contains("o_list_actions_header_cell");
-            const hasVisibleTitle = Boolean(headerCell.textContent.trim());
+            const fieldName = (headerCell.dataset && headerCell.dataset.name) || "";
+            const classList = headerCell.classList || { contains: () => false };
+            const looksUtilityColumn =
+                classList.contains("o_list_record_selector") ||
+                classList.contains("o_list_button") ||
+                classList.contains("o_list_actions_header_cell");
+            const hasVisibleTitle = Boolean((headerCell.textContent || "").trim());
             const isDataColumn = Boolean(fieldName) || (hasVisibleTitle && !looksUtilityColumn);
 
             if (!isDataColumn) {
@@ -115,9 +124,8 @@ patch(ListRenderer.prototype, {
             const input = document.createElement("input");
             input.type = "text";
             input.className = "o_input o_advanced_filter_input";
-            input.placeholder = headerCell.textContent.trim() || fieldName;
+            input.placeholder = (headerCell.textContent || "").trim() || fieldName;
             input.value = this._advancedFiltersByIndex[index] || "";
-            input.dataset.colIndex = String(index);
 
             input.addEventListener("input", (ev) => {
                 this._advancedFiltersByIndex[index] = ev.target.value || "";
@@ -160,7 +168,7 @@ patch(ListRenderer.prototype, {
         }
 
         rows.forEach((row) => {
-            if (row.classList.contains("o_group_header")) {
+            if (row.classList.contains("o_group_header") || row.classList.contains("o_group_total")) {
                 row.classList.remove("o_advanced_filter_hidden");
                 return;
             }
