@@ -29,7 +29,6 @@
         ],
         'website.assets_frontend': [
             'past_work/static/src/css/past_work_frontend.css',
-            'past_work/static/src/js/past_work_frontend.js',
         ],
     },
     'installable': True,

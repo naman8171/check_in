@@ -6,35 +6,16 @@ from odoo.http import request
 class PastWorkController(http.Controller):
 
     @http.route('/past-work', type='http', auth='public', website=True)
-    def past_work_index(self, filter=None, **kwargs):
+    def past_work_index(self, **kwargs):
         """
         Main portfolio listing page.
-        Supports ?filter=<category_slug> for category filtering.
+        Shows only published projects created in backend.
         """
         Project = request.env['past.work.project']
-        Category = request.env['past.work.category']
-
-        domain = [('state', '=', 'published')]
-        active_category = None
-
-        if filter and filter != '*':
-            category = Category.sudo().search([('slug', '=', filter)], limit=1)
-            if category:
-                domain.append(('category_id', '=', category.id))
-                active_category = category
-
-        projects = Project.sudo().search(domain, order='sequence, name')
-        categories = Category.sudo().search([
-            ('id', 'in', Project.sudo().search(
-                [('state', '=', 'published')]
-            ).mapped('category_id').ids)
-        ], order='sequence, name')
+        projects = Project.sudo().search([('state', '=', 'published')], order='sequence, name')
 
         return request.render('past_work.past_work_index_template', {
             'projects': projects,
-            'categories': categories,
-            'active_filter': filter or '*',
-            'active_category': active_category,
         })
 
     @http.route('/past-work/<string:slug>', type='http', auth='public', website=True)

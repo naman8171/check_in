@@ -70,44 +70,16 @@
     margin: 0;
 }
 
+/* ── Landing Hero (Index) ────────────────────── */
+.pw-landing-hero {
+    padding: 80px 0 70px;
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--pw-color-border);
+}
+
 /* ── Portfolio Section ───────────────────────── */
 .pw-portfolio-section {
     padding: 60px 0 80px;
-}
-
-/* ── Category Filters ────────────────────────── */
-.pw-filters-wrapper {
-    margin-bottom: 40px;
-}
-
-.pw-filters {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.pw-filter-btn {
-    padding: 8px 20px;
-    border-radius: 100px;
-    font-family: var(--pw-font-body);
-    font-size: 0.88rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1.5px solid var(--pw-color-border);
-    color: var(--pw-color-muted);
-    background: transparent;
-    transition: var(--pw-transition);
-    user-select: none;
-}
-
-.pw-filter-btn:hover,
-.pw-filter-btn.active {
-    background: var(--pw-color-accent);
-    border-color: var(--pw-color-accent);
-    color: #fff;
 }
 
 /* ── Portfolio Card ──────────────────────────── */
@@ -223,7 +195,7 @@
     line-height: 1.5;
 }
 
-/* ── Filter animation ────────────────────────── */
+/* ── Grid animation ──────────────────────────── */
 .pw-portfolio-item {
     transition: opacity var(--pw-transition), transform var(--pw-transition);
 }
