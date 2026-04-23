@@ -14,7 +14,6 @@ text, integer, float and relational columns.
     'data': [],
     'assets': {
         'web.assets_backend': [
-            'tree_view_advanced_search/static/src/xml/list_renderer.xml',
             'tree_view_advanced_search/static/src/js/tree_view_advanced_search.js',
             'tree_view_advanced_search/static/src/scss/tree_view_advanced_search.scss',
         ],
