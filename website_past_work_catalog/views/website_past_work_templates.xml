@@ -3,6 +3,21 @@
     <template id="past_work_catalog_page" name="Past Work Catalog Page">
         <t t-call="website.layout">
             <div id="wrap" class="past-work-wrap">
+                <section class="past-work-landing py-5">
+                    <div class="container">
+                        <div class="row align-items-center g-4">
+                            <div class="col-lg-8">
+                                <h1 class="display-5 fw-bold mb-3">Past Work</h1>
+                                <p class="lead mb-0">
+                                    Explore our completed projects across sectors and work types.
+                                </p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end">
+                                <a href="#pastWorkCatalogRoot" class="btn btn-primary btn-lg">View Projects</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <section class="container py-5" id="pastWorkCatalogRoot">
                     <div class="row g-4">
                         <aside class="col-lg-3">
