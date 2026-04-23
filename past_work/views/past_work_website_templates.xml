@@ -28,6 +28,146 @@
 
         <div id="wrap" class="past-work-page">
 
+            <section class="pw-landing-section">
+                <div class="container">
+                    <div class="pw-landing-grid">
+                        <div class="pw-landing-content">
+                            <span class="pw-landing-badge"><i class="bi bi-stars"></i> Featured Portfolio</span>
+                            <h2 class="pw-landing-title">Designing impact-driven digital experiences.</h2>
+                            <p class="pw-landing-subtitle">
+                                Explore selected work across branding, product design, and web development where strategy,
+                                creativity, and clean execution come together.
+                            </p>
+                            <div class="pw-landing-actions">
+                                <a href="#pwGrid" class="pw-landing-btn pw-landing-btn-primary">
+                                    Explore Projects <i class="bi bi-arrow-down-right"></i>
+                                </a>
+                                <a href="/contactus" class="pw-landing-btn pw-landing-btn-outline">
+                                    Start a Project <i class="bi bi-lightning-charge"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="pw-landing-card">
+                            <div class="pw-landing-stats">
+                                <div class="pw-landing-stat">
+                                    <strong>50+</strong>
+                                    <span>Projects Delivered</span>
+                                </div>
+                                <div class="pw-landing-stat">
+                                    <strong>12</strong>
+                                    <span>Industry Verticals</span>
+                                </div>
+                                <div class="pw-landing-stat">
+                                    <strong>95%</strong>
+                                    <span>Client Satisfaction</span>
+                                </div>
+                                <div class="pw-landing-stat">
+                                    <strong>24/7</strong>
+                                    <span>Collaboration Support</span>
+                                </div>
+                            </div>
+                            <p class="pw-landing-note">
+                                Built with a focus on visual clarity, performance, and business outcomes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <section class="pw-about-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>About Our Work</h2>
+                        <p>Hum business goals ko strong design thinking aur practical development ke saath combine karte hain, taaki har project sirf sundar na lage, balki measurable impact bhi de.</p>
+                    </div>
+                    <div class="pw-about-content">
+                        <div class="pw-about-grid">
+                            <p>
+                                Har engagement me hamara focus clear rehta hai — user journey ko simple banana,
+                                brand identity ko meaningful banana, aur performance ko fast rakhna.
+                                Is approach ki wajah se hum long-term partnerships build karte hain.
+                            </p>
+                            <ul class="pw-about-list">
+                                <li><i class="bi bi-check2-circle"></i> Discovery-led planning before execution</li>
+                                <li><i class="bi bi-check2-circle"></i> Conversion-focused design decisions</li>
+                                <li><i class="bi bi-check2-circle"></i> Clean code with scalable structure</li>
+                                <li><i class="bi bi-check2-circle"></i> Transparent communication at every step</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-services-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>What We Can Build</h2>
+                        <p>End-to-end digital services jo aapke idea ko strategy se launch tak smoothly le jayein.</p>
+                    </div>
+                    <div class="pw-services-grid">
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-palette"></i></span>
+                            <h3>Brand &amp; UI Design</h3>
+                            <p>Consistent visual systems, intuitive interfaces, aur premium brand presentation.</p>
+                        </article>
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-code-slash"></i></span>
+                            <h3>Web Development</h3>
+                            <p>Fast, secure, and maintainable websites tailored to real business workflows.</p>
+                        </article>
+                        <article class="pw-service-card">
+                            <span class="pw-service-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                            <h3>Growth Optimization</h3>
+                            <p>Performance tuning, conversion improvement, and analytics-backed iterations.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-process-section">
+                <div class="container">
+                    <div class="pw-section-heading">
+                        <h2>How We Work</h2>
+                        <p>Simple process, clear ownership, aur predictable delivery timeline.</p>
+                    </div>
+                    <div class="pw-process-grid">
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">01</span>
+                            <h4>Understand</h4>
+                            <p>Business context, users, competitors, and target outcomes ko deeply map karna.</p>
+                        </div>
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">02</span>
+                            <h4>Design &amp; Build</h4>
+                            <p>Validated flows ke basis par UI, development, and content integration ko execute karna.</p>
+                        </div>
+                        <div class="pw-process-step">
+                            <span class="pw-step-number">03</span>
+                            <h4>Launch &amp; Improve</h4>
+                            <p>Release ke baad performance review karna aur continuous improvements ship karna.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pw-contact-cta">
+                <div class="container">
+                    <div class="pw-contact-box">
+                        <h2>Contact Us</h2>
+                        <p>Agar aap apne next website, product, ya rebranding project par kaam start karna chahte hain, to humse connect karein. Hum aapko strategy se delivery tak guide karenge.</p>
+                        <div class="pw-contact-actions">
+                            <a class="pw-landing-btn pw-landing-btn-primary" href="/contactus">
+                                Let&apos;s Talk <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a class="pw-contact-chip" href="mailto:hello@example.com">
+                                <i class="bi bi-envelope"></i> hello@example.com
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <div class="pw-page-title">
                 <div class="container">
                     <nav aria-label="breadcrumb">
