@@ -28,42 +28,21 @@
 
         <div id="wrap" class="past-work-page">
 
-            <div class="pw-page-title">
+            <section class="pw-landing-hero">
                 <div class="container">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-door"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Past Work</li>
-                        </ol>
-                    </nav>
                     <div class="pw-title-wrapper">
-                        <h1>Past Work</h1>
-                        <p>A curated collection of projects — crafted with care and purpose.</p>
+                        <h1>Our Past Work</h1>
+                        <p>Explore published projects managed from the backend and showcased on this page.</p>
+                        <a href="#pwProjects" class="btn btn-dark mt-3">View Projects</a>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <section class="pw-portfolio-section">
+            <section class="pw-portfolio-section" id="pwProjects">
                 <div class="container">
-
-                    <div class="pw-filters-wrapper">
-                        <ul class="pw-filters" id="pwFilters">
-                            <li data-filter="*"
-                                t-att-class="'pw-filter-btn' + (' active' if active_filter == '*' else '')">
-                                All Projects
-                            </li>
-                            <t t-foreach="categories" t-as="cat">
-                                <li t-att-data-filter="'.' + cat.slug"
-                                    t-att-class="'pw-filter-btn' + (' active' if active_filter == cat.slug else '')">
-                                    <t t-out="cat.name"/>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
-
                     <div class="row gy-4 pw-portfolio-grid" id="pwGrid">
                         <t t-foreach="projects" t-as="project">
-                            <div t-att-class="'col-lg-4 col-md-6 pw-portfolio-item ' + (project.category_id.slug or '')">
+                            <div class="col-lg-4 col-md-6 pw-portfolio-item">
                                 <div class="pw-portfolio-card">
                                     <div class="pw-image-container">
                                         <t t-if="project.cover_image">
