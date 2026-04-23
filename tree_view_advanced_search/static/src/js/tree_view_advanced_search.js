@@ -2,6 +2,7 @@
 
 import { ListRenderer } from "@web/views/list/list_renderer";
 import { patch } from "@web/core/utils/patch";
+import { onMounted, onPatched } from "@odoo/owl";
 
 function parseFilterTokens(raw) {
     return (raw || "")
@@ -50,22 +51,16 @@ patch(ListRenderer.prototype, {
         if (!this._advancedFiltersByIndex) {
             this._advancedFiltersByIndex = {};
         }
-    },
 
-    mounted() {
-        if (super.mounted) {
-            super.mounted(...arguments);
-        }
-        this._ensureAdvancedFilterRow();
-        this._applyAdvancedFilters();
-    },
+        onMounted(() => {
+            this._ensureAdvancedFilterRow();
+            this._applyAdvancedFilters();
+        });
 
-    patched() {
-        if (super.patched) {
-            super.patched(...arguments);
-        }
-        this._ensureAdvancedFilterRow();
-        this._applyAdvancedFilters();
+        onPatched(() => {
+            this._ensureAdvancedFilterRow();
+            this._applyAdvancedFilters();
+        });
     },
 
     _getListTableElement() {
