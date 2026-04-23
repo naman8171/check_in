@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_past_work_user,past.work user,model_past_work,past_work.group_past_work_user,1,0,0,0
+access_past_work_category_user,past.work.category user,model_past_work_category,past_work.group_past_work_user,1,0,0,0
+access_past_work_tag_user,past.work.tag user,model_past_work_tag,past_work.group_past_work_user,1,0,0,0
+access_past_work_manager,past.work manager,model_past_work,past_work.group_past_work_manager,1,1,1,1
+access_past_work_category_manager,past.work.category manager,model_past_work_category,past_work.group_past_work_manager,1,1,1,1
+access_past_work_tag_manager,past.work.tag manager,model_past_work_tag,past_work.group_past_work_manager,1,1,1,1
