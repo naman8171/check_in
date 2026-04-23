@@ -4,18 +4,18 @@ import { ListRenderer } from "@web/views/list/list_renderer";
 import { patch } from "@web/core/utils/patch";
 import { onMounted, onPatched } from "@odoo/owl";
 
-function normalizeNumeric(value) {
-    if (typeof value !== "string") {
-        return Number.NaN;
-    }
-    return Number.parseFloat(value.replace(/,/g, "").trim());
-}
-
 function parseFilterTokens(raw) {
     return (raw || "")
         .split(",")
         .map((token) => token.trim())
         .filter(Boolean);
+}
+
+function normalizeNumeric(value) {
+    if (typeof value !== "string") {
+        return Number.NaN;
+    }
+    return Number.parseFloat(value.replace(/,/g, "").trim());
 }
 
 function tokenLooksNumeric(token) {
@@ -27,7 +27,6 @@ function matchNumeric(cellText, token) {
     if (!match) {
         return false;
     }
-
     const operator = match[1] || "=";
     const expected = Number.parseFloat(match[2]);
     const actual = normalizeNumeric(cellText);
@@ -49,25 +48,32 @@ function matchText(cellText, token) {
 patch(ListRenderer.prototype, {
     setup() {
         super.setup(...arguments);
-        this._advancedFilters = {};
+        this._advancedFiltersByIndex = {};
 
         onMounted(() => {
-            this._renderAdvancedFilterRow();
+            this._ensureAdvancedFilterRow();
             this._applyAdvancedFilters();
         });
 
         onPatched(() => {
-            this._renderAdvancedFilterRow();
+            this._ensureAdvancedFilterRow();
             this._applyAdvancedFilters();
         });
     },
 
-    _renderAdvancedFilterRow() {
+    _getListTableElement() {
         if (!this.el) {
-            return;
+            return null;
         }
+        if (this.el.tagName === "TABLE") {
+            return this.el;
+        }
+        return this.el.querySelector("table.o_list_table, table");
+    },
 
-        const thead = this.el.querySelector("table thead");
+    _ensureAdvancedFilterRow() {
+        const table = this._getListTableElement();
+        const thead = table?.querySelector("thead");
         if (!thead) {
             return;
         }
@@ -77,19 +83,31 @@ patch(ListRenderer.prototype, {
             return;
         }
 
-        const oldRow = thead.querySelector("tr.o_advanced_filter_row");
-        if (oldRow) {
-            oldRow.remove();
+        const previous = thead.querySelector("tr.o_advanced_filter_row");
+        if (previous) {
+            previous.remove();
+        }
+
+        const headerCells = [...headerRow.querySelectorAll("th")];
+        if (!headerCells.length) {
+            return;
         }
 
         const filterRow = document.createElement("tr");
         filterRow.className = "o_advanced_filter_row";
 
-        this.columns.forEach((column, index) => {
+        headerCells.forEach((headerCell, index) => {
             const th = document.createElement("th");
             th.className = "o_advanced_filter_cell";
 
-            if (!column?.name) {
+            const fieldName = headerCell.dataset?.name || "";
+            const looksUtilityColumn = headerCell.classList.contains("o_list_record_selector")
+                || headerCell.classList.contains("o_list_button")
+                || headerCell.classList.contains("o_list_actions_header_cell");
+            const hasVisibleTitle = Boolean(headerCell.textContent.trim());
+            const isDataColumn = Boolean(fieldName) || (hasVisibleTitle && !looksUtilityColumn);
+
+            if (!isDataColumn) {
                 filterRow.appendChild(th);
                 return;
             }
@@ -97,20 +115,19 @@ patch(ListRenderer.prototype, {
             const input = document.createElement("input");
             input.type = "text";
             input.className = "o_input o_advanced_filter_input";
-            input.placeholder = column.string || column.name;
-            input.value = this._advancedFilters[column.name] || "";
-            input.dataset.columnName = column.name;
-            input.dataset.columnIndex = String(index);
+            input.placeholder = headerCell.textContent.trim() || fieldName;
+            input.value = this._advancedFiltersByIndex[index] || "";
+            input.dataset.colIndex = String(index);
 
             input.addEventListener("input", (ev) => {
-                this._advancedFilters[column.name] = ev.target.value || "";
+                this._advancedFiltersByIndex[index] = ev.target.value || "";
                 this._applyAdvancedFilters();
             });
 
             input.addEventListener("keydown", (ev) => {
                 if (ev.key === "Escape") {
                     ev.target.value = "";
-                    this._advancedFilters[column.name] = "";
+                    this._advancedFiltersByIndex[index] = "";
                     this._applyAdvancedFilters();
                 }
             });
@@ -123,49 +140,42 @@ patch(ListRenderer.prototype, {
     },
 
     _applyAdvancedFilters() {
-        if (!this.el) {
+        const table = this._getListTableElement();
+        if (!table) {
             return;
         }
 
-        const rows = this.el.querySelectorAll("tbody tr.o_data_row");
+        const rows = table.querySelectorAll("tbody tr.o_data_row, tbody tr");
         if (!rows.length) {
             return;
         }
 
-        const activeFilters = Object.entries(this._advancedFilters)
-            .map(([field, raw]) => ({ field, tokens: parseFilterTokens(raw) }))
-            .filter((entry) => entry.tokens.length > 0);
+        const activeFilters = Object.entries(this._advancedFiltersByIndex)
+            .map(([index, raw]) => ({ index: Number(index), tokens: parseFilterTokens(raw) }))
+            .filter((entry) => entry.tokens.length);
 
         if (!activeFilters.length) {
             rows.forEach((row) => row.classList.remove("o_advanced_filter_hidden"));
             return;
         }
 
-        const indexByField = new Map();
-        this.columns.forEach((column, index) => {
-            if (column?.name) {
-                indexByField.set(column.name, index);
-            }
-        });
-
         rows.forEach((row) => {
-            const cells = row.querySelectorAll("td");
+            if (row.classList.contains("o_group_header")) {
+                row.classList.remove("o_advanced_filter_hidden");
+                return;
+            }
 
-            const rowMatches = activeFilters.every(({ field, tokens }) => {
-                const idx = indexByField.get(field);
-                if (idx === undefined) {
-                    return true;
-                }
-                const cell = cells[idx];
+            const cells = row.querySelectorAll("td");
+            const rowMatches = activeFilters.every(({ index, tokens }) => {
+                const cell = cells[index];
                 if (!cell) {
                     return false;
                 }
-
                 const cellText = (cell.textContent || "").trim();
-                const useNumeric = tokens.every(tokenLooksNumeric);
+                const numericMode = tokens.every(tokenLooksNumeric);
 
                 return tokens.some((token) => {
-                    if (useNumeric) {
+                    if (numericMode) {
                         return matchNumeric(cellText, token);
                     }
                     return matchText(cellText, token);
