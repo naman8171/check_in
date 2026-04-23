@@ -2,6 +2,7 @@
    Past Work — Frontend JS
    - Portfolio grid category filtering (no isotope dep needed)
    - Smooth show/hide with CSS transitions
+   - Keeps filter in URL so server + client filters stay in sync
 ══════════════════════════════════════════════════════════ */
 
 (function () {
@@ -13,24 +14,30 @@
 
     function initPortfolioFilter() {
         var filterBtns = document.querySelectorAll('.pw-filter-btn');
+        var filterLinks = document.querySelectorAll('.pw-filter-link');
         var gridItems  = document.querySelectorAll('.pw-portfolio-item');
 
-        if (!filterBtns.length || !gridItems.length) return;
+        if (!filterBtns.length || !gridItems.length || !filterLinks.length) return;
 
-        filterBtns.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var filter = btn.getAttribute('data-filter');
+        filterLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                var parentBtn = link.closest('.pw-filter-btn');
+                var filter = link.getAttribute('data-filter') || '*';
+                var slug = link.getAttribute('data-filter-slug') || '*';
 
                 // ── Update active button ──
                 filterBtns.forEach(function (b) { b.classList.remove('active'); });
-                btn.classList.add('active');
+                if (parentBtn) {
+                    parentBtn.classList.add('active');
+                }
 
                 // ── Filter items ──
                 gridItems.forEach(function (item) {
                     if (filter === '*') {
                         showItem(item);
                     } else {
-                        // filter looks like ".filter-branding"
                         var cls = filter.replace('.', '');
                         if (item.classList.contains(cls)) {
                             showItem(item);
@@ -40,10 +47,24 @@
                     }
                 });
 
-                // ── Re-layout grid to avoid gaps ──
+                updateFilterInUrl(slug);
                 relayout();
             });
         });
+    }
+
+    function updateFilterInUrl(slug) {
+        if (!window.history || !window.history.replaceState) {
+            return;
+        }
+
+        var url = new URL(window.location.href);
+        if (!slug || slug === '*') {
+            url.searchParams.delete('filter');
+        } else {
+            url.searchParams.set('filter', slug);
+        }
+        window.history.replaceState({}, '', url.toString());
     }
 
     function showItem(item) {
