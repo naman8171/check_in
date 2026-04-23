@@ -3,6 +3,8 @@
         <field name="name">Past Work</field>
         <field name="url">/past-work</field>
         <field name="parent_id" ref="website.main_menu"/>
+        <field name="website_id" ref="website.default_website"/>
+        <field name="is_visible" eval="True"/>
         <field name="sequence" type="int">80</field>
     </record>
 </odoo>
