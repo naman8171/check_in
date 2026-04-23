@@ -553,19 +553,19 @@
                     <div class="pw-filters-wrapper">
                         <ul class="pw-filters" id="pwFilters">
                             <li t-att-class="'pw-filter-btn' + (' active' if active_filter == '*' else '')">
-                                <a href="/past-work"
-                                   class="pw-filter-link"
-                                   data-filter="*"
-                                   data-filter-slug="*">All Projects</a>
+                                <button type="button"
+                                        class="pw-filter-link"
+                                        data-filter="*"
+                                        data-filter-slug="*">All Projects</button>
                             </li>
                             <t t-foreach="categories" t-as="cat">
                                 <li t-att-class="'pw-filter-btn' + (' active' if active_filter == cat.slug else '')">
-                                    <a t-att-href="'/past-work?filter=' + cat.slug"
-                                       class="pw-filter-link"
-                                       t-att-data-filter="'.' + cat.slug"
-                                       t-att-data-filter-slug="cat.slug or '*'">
+                                    <button type="button"
+                                            class="pw-filter-link"
+                                            t-att-data-filter="'.' + cat.slug"
+                                            t-att-data-filter-slug="cat.slug or '*'">
                                         <t t-out="cat.name"/>
-                                    </a>
+                                    </button>
                                 </li>
                             </t>
                         </ul>
