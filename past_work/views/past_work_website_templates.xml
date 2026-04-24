@@ -444,14 +444,13 @@
                 <div class="container">
                     <div class="pw-section-heading">
                         <h2>About Our Work</h2>
-                        <p>Hum business goals ko strong design thinking aur practical development ke saath combine karte hain, taaki har project sirf sundar na lage, balki measurable impact bhi de.</p>
+                        <p>We combine business goals with strong design thinking and practical development, so every project not only looks great but also delivers measurable impact.</p>
                     </div>
                     <div class="pw-about-content">
                         <div class="pw-about-grid">
                             <p>
-                                Har engagement me hamara focus clear rehta hai — user journey ko simple banana,
-                                brand identity ko meaningful banana, aur performance ko fast rakhna.
-                                Is approach ki wajah se hum long-term partnerships build karte hain.
+                                In every engagement, our focus stays clear — simplify the user journey, make the brand identity meaningful, and keep performance fast.
+                                This approach helps us build long-term partnerships.
                             </p>
                             <ul class="pw-about-list">
                                 <li><i class="bi bi-check2-circle"></i> Discovery-led planning before execution</li>
@@ -468,13 +467,13 @@
                 <div class="container">
                     <div class="pw-section-heading">
                         <h2>What We Can Build</h2>
-                        <p>End-to-end digital services jo aapke idea ko strategy se launch tak smoothly le jayein.</p>
+                        <p>End-to-end digital services that take your idea smoothly from strategy to launch.</p>
                     </div>
                     <div class="pw-services-grid">
                         <article class="pw-service-card">
                             <span class="pw-service-icon"><i class="bi bi-palette"></i></span>
                             <h3>Brand &amp; UI Design</h3>
-                            <p>Consistent visual systems, intuitive interfaces, aur premium brand presentation.</p>
+                            <p>Consistent visual systems, intuitive interfaces, and premium brand presentation.</p>
                         </article>
                         <article class="pw-service-card">
                             <span class="pw-service-icon"><i class="bi bi-code-slash"></i></span>
@@ -494,23 +493,23 @@
                 <div class="container">
                     <div class="pw-section-heading">
                         <h2>How We Work</h2>
-                        <p>Simple process, clear ownership, aur predictable delivery timeline.</p>
+                        <p>A simple process, clear ownership, and a predictable delivery timeline.</p>
                     </div>
                     <div class="pw-process-grid">
                         <div class="pw-process-step">
                             <span class="pw-step-number">01</span>
                             <h4>Understand</h4>
-                            <p>Business context, users, competitors, and target outcomes ko deeply map karna.</p>
+                            <p>Deeply map business context, users, competitors, and target outcomes.</p>
                         </div>
                         <div class="pw-process-step">
                             <span class="pw-step-number">02</span>
                             <h4>Design &amp; Build</h4>
-                            <p>Validated flows ke basis par UI, development, and content integration ko execute karna.</p>
+                            <p>Execute UI, development, and content integration based on validated flows.</p>
                         </div>
                         <div class="pw-process-step">
                             <span class="pw-step-number">03</span>
                             <h4>Launch &amp; Improve</h4>
-                            <p>Release ke baad performance review karna aur continuous improvements ship karna.</p>
+                            <p>Review performance after release and ship continuous improvements.</p>
                         </div>
                     </div>
                 </div>
@@ -520,7 +519,7 @@
                 <div class="container">
                     <div class="pw-contact-box">
                         <h2>Contact Us</h2>
-                        <p>Agar aap apne next website, product, ya rebranding project par kaam start karna chahte hain, to humse connect karein. Hum aapko strategy se delivery tak guide karenge.</p>
+                        <p>If you are planning your next website, product, or rebranding project, connect with us. We will guide you from strategy to delivery.</p>
                         <div class="pw-contact-actions">
                             <a class="pw-landing-btn pw-landing-btn-primary" href="/contactus">
                                 Let&apos;s Talk <i class="bi bi-arrow-right"></i>
