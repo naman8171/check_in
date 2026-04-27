@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_module_explanation_activity_manager,module.explanation.activity manager,model_module_explanation_activity,module_explanation_tracker.group_module_explanation_manager,1,1,1,1
-access_module_explanation_activity_user,module.explanation.activity user,model_module_explanation_activity,base.group_user,1,1,0,0
