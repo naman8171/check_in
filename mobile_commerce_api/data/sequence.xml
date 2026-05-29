@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_mobile_jwt_secret" model="ir.sequence">
+        <field name="name">Mobile JWT Secret</field>
+        <field name="code">mobile.jwt.secret</field>
+        <field name="prefix">MJWT</field>
+        <field name="padding">32</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
