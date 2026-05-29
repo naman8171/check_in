@@ -47,12 +47,11 @@ class MobileAppConfig(models.Model):
     notification_ids = fields.One2many('mobile.notification', 'app_config_id')
     device_ids = fields.One2many('mobile.device', 'app_config_id')
 
-
-    @api.depends('website_id', 'website_id.pricelist_id', 'website_id.pricelist_id.currency_id', 'company_id.currency_id')
+    @api.depends('website_id', 'company_id.currency_id')
     def _compute_currency_id(self):
         for record in self:
-            pricelist = getattr(record.website_id, 'pricelist_id', False)
-            record.currency_id = (pricelist.currency_id if pricelist else False) or record.company_id.currency_id
+            website_currency = getattr(record.website_id, 'currency_id', False)
+            record.currency_id = website_currency or record.company_id.currency_id
 
     _sql_constraints = [
         ('website_company_unique', 'unique(website_id, company_id)', 'Only one mobile configuration is allowed per website and company.'),
