@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_mobile_commerce_root" name="Mobile Commerce" sequence="45" groups="mobile_commerce_api.group_mobile_user"/>
+    <menuitem id="menu_mobile_dashboard" name="Dashboard" parent="menu_mobile_commerce_root" action="action_mobile_dashboard" sequence="1"/>
+    <menuitem id="menu_mobile_configuration" name="Configuration" parent="menu_mobile_commerce_root" sequence="10"/>
+    <menuitem id="menu_mobile_app_config" name="Mobile App Settings" parent="menu_mobile_configuration" action="action_mobile_app_config" sequence="10"/>
+    <menuitem id="menu_mobile_api_key" name="API Keys" parent="menu_mobile_configuration" action="action_mobile_api_key" sequence="20" groups="mobile_commerce_api.group_mobile_admin"/>
+    <menuitem id="menu_mobile_content" name="Home Page" parent="menu_mobile_commerce_root" sequence="20"/>
+    <menuitem id="menu_mobile_banner" name="Banners" parent="menu_mobile_content" action="action_mobile_banner" sequence="10"/>
+    <menuitem id="menu_mobile_slider" name="Sliders" parent="menu_mobile_content" action="action_mobile_slider" sequence="20"/>
+    <menuitem id="menu_mobile_home_section" name="Home Sections" parent="menu_mobile_content" action="action_mobile_home_section" sequence="30"/>
+    <menuitem id="menu_mobile_engagement" name="Engagement" parent="menu_mobile_commerce_root" sequence="30"/>
+    <menuitem id="menu_mobile_notification" name="Notifications" parent="menu_mobile_engagement" action="action_mobile_notification" sequence="10"/>
+    <menuitem id="menu_mobile_device" name="Devices" parent="menu_mobile_engagement" action="action_mobile_device" sequence="20"/>
+    <menuitem id="menu_mobile_catalog" name="Catalog" parent="menu_mobile_commerce_root" sequence="40"/>
+    <menuitem id="menu_mobile_product_review" name="Product Reviews" parent="menu_mobile_catalog" action="action_mobile_product_review" sequence="10"/>
+    <menuitem id="menu_mobile_wishlist" name="Wishlists" parent="menu_mobile_catalog" action="action_mobile_wishlist" sequence="20" groups="mobile_commerce_api.group_mobile_admin"/>
+    <menuitem id="menu_mobile_product_comparison" name="Product Comparisons" parent="menu_mobile_catalog" action="action_mobile_product_comparison" sequence="30" groups="mobile_commerce_api.group_mobile_admin"/>
+    <menuitem id="menu_mobile_technical" name="Technical" parent="menu_mobile_commerce_root" sequence="90" groups="mobile_commerce_api.group_mobile_admin"/>
+    <menuitem id="menu_mobile_api_log" name="API Logs" parent="menu_mobile_technical" action="action_mobile_api_log" sequence="10"/>
+</odoo>
