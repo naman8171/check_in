@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_mobile_commerce" model="ir.module.category">
+        <field name="name">Mobile Commerce</field>
+        <field name="description">Mobile commerce API administration</field>
+        <field name="sequence">35</field>
+    </record>
+
+    <record id="group_mobile_user" model="res.groups">
+        <field name="name">Mobile Commerce User</field>
+        <field name="category_ids" eval="[(4, ref('mobile_commerce_api.module_category_mobile_commerce'))]"/>
+    </record>
+
+    <record id="group_mobile_manager" model="res.groups">
+        <field name="name">Mobile Commerce Manager</field>
+        <field name="category_ids" eval="[(4, ref('mobile_commerce_api.module_category_mobile_commerce'))]"/>
+        <field name="implied_ids" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="group_mobile_admin" model="res.groups">
+        <field name="name">Mobile Commerce Administrator</field>
+        <field name="category_ids" eval="[(4, ref('mobile_commerce_api.module_category_mobile_commerce'))]"/>
+        <field name="implied_ids" eval="[(4, ref('mobile_commerce_api.group_mobile_manager'))]"/>
+    </record>
+
+    <record id="rule_mobile_app_config_company" model="ir.rule">
+        <field name="name">Mobile app configuration multi-company</field>
+        <field name="model_id" ref="model_mobile_app_config"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="rule_mobile_api_key_company" model="ir.rule">
+        <field name="name">Mobile API key multi-company</field>
+        <field name="model_id" ref="model_mobile_api_key"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="rule_mobile_device_company" model="ir.rule">
+        <field name="name">Mobile device multi-company</field>
+        <field name="model_id" ref="model_mobile_device"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="rule_mobile_notification_company" model="ir.rule">
+        <field name="name">Mobile notification multi-company</field>
+        <field name="model_id" ref="model_mobile_notification"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="rule_mobile_banner_company" model="ir.rule">
+        <field name="name">Mobile banner multi-company</field>
+        <field name="model_id" ref="model_mobile_banner"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+
+    <record id="rule_mobile_api_log_company" model="ir.rule">
+        <field name="name">Mobile API log multi-company</field>
+        <field name="model_id" ref="model_mobile_api_log"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('mobile_commerce_api.group_mobile_user'))]"/>
+    </record>
+</odoo>
