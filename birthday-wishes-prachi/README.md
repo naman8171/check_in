@@ -17,8 +17,9 @@ npm run build
 
 ## Features
 
-- Premium birthday landing page design for Prachi
-- Hinglish birthday wishes and celebration sections
+- Premium animated birthday landing page design for Prachi
+- Hinglish birthday wishes, surprise card, marquee wishes, and celebration sections
+- Confetti rain, floating balloons, glowing name text, animated cake candles, and hover effects
 - Upload multiple images and preview them instantly
 - Fully responsive layout for mobile, tablet, and desktop
 - Built with React and Vite
