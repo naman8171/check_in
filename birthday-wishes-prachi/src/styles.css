@@ -83,7 +83,6 @@ input {
 
 .eyebrow,
 .section-heading p,
-.photo-copy > p:first-child,
 .surprise-copy > p:first-child {
   display: inline-flex;
   align-items: center;
@@ -142,8 +141,7 @@ h1 span {
 }
 
 .primary-button,
-.secondary-button,
-.upload-button {
+.secondary-button {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -158,8 +156,7 @@ h1 span {
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.primary-button::after,
-.upload-button::after {
+.primary-button::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -168,8 +165,7 @@ h1 span {
   animation: buttonShine 2.8s ease-in-out infinite;
 }
 
-.primary-button,
-.upload-button {
+.primary-button {
   border: 0;
   color: white;
   background: linear-gradient(135deg, #ff2e88, #ff9d2e);
@@ -184,8 +180,7 @@ h1 span {
 }
 
 .primary-button:hover,
-.secondary-button:hover,
-.upload-button:hover {
+.secondary-button:hover {
   transform: translateY(-3px) scale(1.02);
 }
 
@@ -244,10 +239,6 @@ h1 span {
   line-height: 1;
 }
 
-.empty-icon {
-  font-size: 2.65rem;
-  line-height: 1;
-}
 
 .birthday-card h2 {
   margin: 24px 0 12px;
@@ -377,7 +368,6 @@ h1 span {
 }
 
 .memory-section,
-.photo-section,
 .surprise-section,
 .wish-orbit-section {
   position: relative;
@@ -391,7 +381,6 @@ h1 span {
 }
 
 .section-heading h2,
-.photo-copy h2,
 .surprise-copy h2 {
   color: #36133f;
   font-size: clamp(2rem, 5vw, 4rem);
@@ -607,97 +596,6 @@ h1 span {
   background: rgba(255, 255, 255, 0.1);
   animation: slideIn 700ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
   animation-delay: var(--delay);
-}
-
-.photo-section {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(24px, 4vw, 48px);
-  align-items: start;
-  padding: clamp(24px, 4vw, 40px);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 36px;
-  background: rgba(255, 255, 255, 0.56);
-  box-shadow: 0 24px 70px rgba(136, 62, 128, 0.15);
-  backdrop-filter: blur(16px);
-}
-
-.photo-copy p:not(:first-child) {
-  color: #70406e;
-  line-height: 1.75;
-}
-
-.upload-button {
-  margin-top: 14px;
-}
-
-.upload-button input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.photo-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 18px;
-  min-height: 330px;
-}
-
-.empty-gallery,
-.uploaded-photo {
-  border: 1px dashed rgba(255, 46, 136, 0.35);
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.66);
-}
-
-.empty-gallery {
-  grid-column: 1 / -1;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  padding: 36px;
-  color: #8a4f7f;
-  text-align: center;
-}
-
-.empty-gallery h3 {
-  margin: 16px 0 8px;
-  color: #44204a;
-  font-size: 1.5rem;
-}
-
-.uploaded-photo {
-  margin: 0;
-  padding: 10px;
-  overflow: hidden;
-  box-shadow: 0 16px 35px rgba(136, 62, 128, 0.12);
-  animation: photoPop 360ms ease both;
-}
-
-.uploaded-photo img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1.1;
-  object-fit: cover;
-  border-radius: 18px;
-  transition: transform 240ms ease;
-}
-
-.uploaded-photo:hover img {
-  transform: scale(1.06);
-}
-
-.uploaded-photo figcaption {
-  padding: 10px 4px 2px;
-  overflow: hidden;
-  color: #6f3d6d;
-  font-size: 0.86rem;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .floating-decorations,
@@ -957,7 +855,6 @@ h1 span {
 
 @media (max-width: 980px) {
   .hero-section,
-  .photo-section,
   .surprise-section,
   .wish-orbit-section {
     grid-template-columns: 1fr;
@@ -1004,13 +901,11 @@ h1 span {
 
   .hero-actions,
   .primary-button,
-  .secondary-button,
-  .upload-button {
+  .secondary-button {
     width: 100%;
   }
 
   .birthday-card,
-  .photo-section,
   .surprise-section,
   .wish-orbit-section {
     border-radius: 26px;
@@ -1023,5 +918,352 @@ h1 span {
 
   .orbit-center {
     width: 190px;
+  }
+}
+
+/* Code-based image sections: change only the image paths in src/main.jsx. */
+.birthday-card-section,
+.photo-story-section {
+  position: relative;
+  z-index: 2;
+  margin-top: 34px;
+}
+
+.birthday-card-section .birthday-card {
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.hero-visual {
+  position: relative;
+  min-height: 560px;
+}
+
+.photo-collage {
+  position: relative;
+  min-height: 560px;
+  perspective: 1200px;
+}
+
+.hero-photo-frame,
+.scattered-photo,
+.code-photo-card {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, #ff2e88, #ffd36d, #8a6cff) border-box;
+  border: 8px solid transparent;
+  box-shadow: 0 30px 80px rgba(91, 31, 91, 0.22);
+}
+
+.hero-photo-frame::before,
+.scattered-photo::before,
+.code-photo-card::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.hero-photo-frame::after,
+.scattered-photo::after,
+.code-photo-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(115deg, transparent 0 34%, rgba(255, 255, 255, 0.45) 48%, transparent 62% 100%);
+  transform: translateX(-140%);
+  animation: photoShine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-photo-frame img,
+.scattered-photo img,
+.code-photo-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 211, 109, 0.65), transparent 24%),
+    linear-gradient(135deg, #ffe3f1, #eee8ff);
+  transition: transform 500ms ease, filter 500ms ease;
+}
+
+.hero-photo-frame:hover img,
+.code-photo-card:hover img {
+  transform: scale(1.08) rotate(1deg);
+  filter: saturate(1.1) contrast(1.04);
+}
+
+.hero-photo-main {
+  position: absolute;
+  inset: 38px 58px 22px 42px;
+  border-radius: 44px;
+  transform: rotate(-3deg);
+  animation: collageFloat 5s ease-in-out infinite;
+}
+
+.hero-photo-small {
+  position: absolute;
+  z-index: 3;
+  width: min(42%, 220px);
+  aspect-ratio: 0.82;
+  border-radius: 32px;
+  animation: miniPhotoFloat 4.4s ease-in-out infinite;
+}
+
+.hero-photo-small.top {
+  top: 0;
+  right: 0;
+  transform: rotate(8deg);
+}
+
+.hero-photo-small.bottom {
+  left: 0;
+  bottom: 12px;
+  transform: rotate(-10deg);
+  animation-delay: -1.8s;
+}
+
+.collage-badge {
+  position: absolute;
+  right: 22px;
+  bottom: 42px;
+  z-index: 4;
+  display: grid;
+  gap: 2px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 24px;
+  color: white;
+  background: linear-gradient(135deg, rgba(255, 46, 136, 0.92), rgba(255, 157, 46, 0.92));
+  box-shadow: 0 22px 48px rgba(255, 46, 136, 0.28);
+  animation: badgePulse 2.8s ease-in-out infinite;
+}
+
+.collage-badge span {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.collage-badge strong {
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.scattered-photo-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scattered-photo {
+  position: absolute;
+  width: 136px;
+  aspect-ratio: 0.78;
+  border-width: 6px;
+  border-radius: 28px;
+  opacity: 0.72;
+  filter: blur(0.1px);
+  animation: scatteredFloat 7s ease-in-out infinite;
+}
+
+.float-photo-one {
+  top: 670px;
+  left: 3%;
+  transform: rotate(-12deg);
+}
+
+.float-photo-two {
+  top: 1040px;
+  right: 4%;
+  transform: rotate(10deg);
+  animation-delay: -3s;
+}
+
+.centered-heading {
+  max-width: 860px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.centered-heading p {
+  justify-content: center;
+}
+
+.centered-heading span {
+  display: block;
+  color: #70406e;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.code-photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.code-photo-card {
+  min-height: 420px;
+  border-radius: 34px;
+  animation: photoCardReveal 700ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  animation-delay: var(--photo-delay);
+}
+
+.code-photo-card:nth-child(even) {
+  transform: translateY(28px);
+}
+
+.code-photo-card img {
+  height: 100%;
+  min-height: 420px;
+}
+
+.photo-frame-glow {
+  position: absolute;
+  inset: auto -40px -60px auto;
+  z-index: 2;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 211, 109, 0.42);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.code-photo-card figcaption {
+  position: absolute;
+  inset: auto 16px 16px;
+  z-index: 3;
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 22px;
+  color: white;
+  background: linear-gradient(135deg, rgba(53, 19, 63, 0.76), rgba(255, 46, 136, 0.64));
+  backdrop-filter: blur(12px);
+}
+
+.code-photo-card figcaption strong {
+  font-size: 1.12rem;
+}
+
+.code-photo-card figcaption span {
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+@keyframes photoShine {
+  0%, 35% {
+    transform: translateX(-140%);
+  }
+  65%, 100% {
+    transform: translateX(140%);
+  }
+}
+
+@keyframes collageFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-1deg);
+  }
+}
+
+@keyframes miniPhotoFloat {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -18px;
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scatteredFloat {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -24px;
+  }
+}
+
+@keyframes photoCardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(42px) scale(0.94) rotate(-1deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@media (max-width: 1180px) {
+  .code-photo-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .hero-visual,
+  .photo-collage {
+    min-height: 500px;
+  }
+
+  .scattered-photo {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-visual,
+  .photo-collage {
+    min-height: 420px;
+  }
+
+  .hero-photo-main {
+    inset: 34px 22px 24px;
+  }
+
+  .hero-photo-small {
+    width: 42%;
+  }
+
+  .collage-badge {
+    right: 10px;
+    bottom: 22px;
+  }
+
+  .code-photo-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .code-photo-card:nth-child(even) {
+    transform: none;
   }
 }

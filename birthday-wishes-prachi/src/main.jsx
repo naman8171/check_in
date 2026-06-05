@@ -27,6 +27,26 @@ const wishHighlights = [
   'Prachi, tumhari birthday party memories forever shine karein',
 ]
 
+// Yahan apni image paths change kar dena. Images ko `public/images/` folder me rakho
+// aur path ko `/images/file-name.jpg` format me update karo.
+const heroPhotos = [
+  { src: '/images/prachi-hero-1.jpg', alt: 'Prachi birthday portrait', className: 'hero-photo-main' },
+  { src: '/images/prachi-hero-2.jpg', alt: 'Prachi smiling memory', className: 'hero-photo-small top' },
+  { src: '/images/prachi-hero-3.jpg', alt: 'Prachi celebration moment', className: 'hero-photo-small bottom' },
+]
+
+const memoryPhotos = [
+  { src: '/images/prachi-memory-1.jpg', title: 'Cute Moment', note: 'Yahan apni favorite Prachi photo ka path lagao.' },
+  { src: '/images/prachi-memory-2.jpg', title: 'Party Vibe', note: 'Birthday celebration wali image ke liye perfect frame.' },
+  { src: '/images/prachi-memory-3.jpg', title: 'Best Smile', note: 'Smile, cake ya friends ke saath memory add karo.' },
+  { src: '/images/prachi-memory-4.jpg', title: 'Golden Memory', note: 'Is path ko code me change karke apni image dikhao.' },
+]
+
+const scatteredPhotos = [
+  { src: '/images/prachi-floating-1.jpg', alt: 'Floating Prachi memory one', className: 'float-photo-one' },
+  { src: '/images/prachi-floating-2.jpg', alt: 'Floating Prachi memory two', className: 'float-photo-two' },
+]
+
 const confettiPieces = Array.from({ length: 42 }, (_, index) => ({
   id: index,
   left: `${(index * 23) % 100}%`,
@@ -36,39 +56,13 @@ const confettiPieces = Array.from({ length: 42 }, (_, index) => ({
 }))
 
 function App() {
-  const [photos, setPhotos] = React.useState([])
   const [surpriseOpen, setSurpriseOpen] = React.useState(false)
-  const objectUrls = React.useRef([])
-
-  const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files || [])
-
-    const imageFiles = files.filter((file) => file.type.startsWith('image/'))
-    const previews = imageFiles.map((file) => {
-      const src = URL.createObjectURL(file)
-      objectUrls.current.push(src)
-
-      return {
-        id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
-        name: file.name,
-        src,
-      }
-    })
-
-    setPhotos((currentPhotos) => [...previews, ...currentPhotos])
-    event.target.value = ''
-  }
-
-  React.useEffect(() => {
-    return () => {
-      objectUrls.current.forEach((src) => URL.revokeObjectURL(src))
-    }
-  }, [])
 
   return (
     <main className="page-shell">
       <AnimatedBackdrop />
       <ConfettiRain />
+      <ScatteredPhotos />
 
       <section className="hero-section" aria-label="Birthday landing page for Prachi">
         <div className="hero-content reveal-up">
@@ -80,12 +74,25 @@ function App() {
           </p>
 
           <div className="hero-actions">
-            <a href="#photos" className="primary-button"><Icon label="camera" symbol="📸" /> Add Photos</a>
+            <a href="#photos" className="primary-button"><Icon label="camera" symbol="📸" /> View Photos</a>
             <a href="#surprise" className="secondary-button"><Icon label="heart" symbol="♥" /> Open Surprise</a>
           </div>
         </div>
 
-        <div className="birthday-card reveal-up delay-one" id="wish">
+        <div className="hero-visual reveal-up delay-one">
+          <div className="photo-collage" aria-label="Prachi photo collage">
+            {heroPhotos.map((photo) => (
+              <figure className={`hero-photo-frame ${photo.className}`} key={photo.src}>
+                <img src={photo.src} alt={photo.alt} />
+              </figure>
+            ))}
+            <div className="collage-badge"><span>Prachi</span><strong>Birthday Girl</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="birthday-card-section" id="wish">
+        <div className="birthday-card reveal-up delay-one">
           <div className="card-glow" />
           <div className="sparkle-ring" />
           <div className="card-icon" aria-hidden="true">🎉</div>
@@ -159,6 +166,29 @@ function App() {
         </div>
       </section>
 
+      <section className="photo-story-section" id="photos">
+        <div className="section-heading centered-heading">
+          <p><Icon label="image" symbol="🖼️" /> Code Photo Gallery</p>
+          <h2>Images path code me change karo</h2>
+          <span>
+            `memoryPhotos` array me bas `src` path update karna hai. Images ko `public/images/` folder me rakho aur CSS automatically beautiful frames bana degi.
+          </span>
+        </div>
+
+        <div className="code-photo-gallery">
+          {memoryPhotos.map((photo, index) => (
+            <figure className="code-photo-card" key={photo.src} style={{ '--photo-delay': `${index * 0.14}s` }}>
+              <div className="photo-frame-glow" />
+              <img src={photo.src} alt={`${photo.title} for Prachi`} />
+              <figcaption>
+                <strong>{photo.title}</strong>
+                <span>{photo.note}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       <section className="wish-orbit-section" aria-label="Animated wish highlights">
         <div className="orbit-center">
           <span>Prachi</span>
@@ -172,38 +202,19 @@ function App() {
           ))}
         </div>
       </section>
-
-      <section className="photo-section" id="photos">
-        <div className="photo-copy">
-          <p><Icon label="image" symbol="🖼️" /> Custom Photo Gallery</p>
-          <h2>Apni images add karo</h2>
-          <p>
-            Neeche upload button se Prachi ki photos ya birthday memories add kar sakte ho. Select karte hi photos page par preview ho jayengi.
-          </p>
-          <label className="upload-button">
-            <input type="file" accept="image/*" multiple onChange={handleImageUpload} />
-            <Icon label="image" symbol="🖼️" /> Choose Birthday Images
-          </label>
-        </div>
-
-        <div className="photo-gallery" aria-live="polite">
-          {photos.length === 0 ? (
-            <div className="empty-gallery">
-              <div className="empty-icon" aria-hidden="true">📷</div>
-              <h3>No photos yet</h3>
-              <p>Prachi ki best photos upload karke yahan beautiful gallery bana do.</p>
-            </div>
-          ) : (
-            photos.map((photo) => (
-              <figure className="uploaded-photo" key={photo.id}>
-                <img src={photo.src} alt={`Uploaded birthday memory: ${photo.name}`} />
-                <figcaption>{photo.name}</figcaption>
-              </figure>
-            ))
-          )}
-        </div>
-      </section>
     </main>
+  )
+}
+
+function ScatteredPhotos() {
+  return (
+    <div className="scattered-photo-layer" aria-hidden="true">
+      {scatteredPhotos.map((photo) => (
+        <figure className={`scattered-photo ${photo.className}`} key={photo.src}>
+          <img src={photo.src} alt={photo.alt} />
+        </figure>
+      ))}
+    </div>
   )
 }
 
