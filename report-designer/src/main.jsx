@@ -3,12 +3,22 @@ import { createRoot } from 'react-dom/client'
 import './styles.css'
 
 const paletteItems = [
-  { type: 'heading', label: 'Heading', icon: 'T', defaultContent: 'Monthly Sales Report' },
-  { type: 'text', label: 'Text Block', icon: '¶', defaultContent: 'Write executive summary, insights, or notes here.' },
-  { type: 'metric', label: 'Metric Card', icon: '↗', defaultContent: '$128.4K' },
-  { type: 'chart', label: 'Chart', icon: '▥', defaultContent: 'Revenue Trend' },
-  { type: 'table', label: 'Table', icon: '▦', defaultContent: 'Top Regions' },
-  { type: 'signature', label: 'Signature', icon: '✍', defaultContent: 'Approved by Team Lead' },
+  { type: 'heading', label: 'Heading', icon: 'T', defaultContent: 'Monthly Sales Report', group: 'Content' },
+  { type: 'subheading', label: 'Subheading', icon: 'H2', defaultContent: 'Executive overview and highlights', group: 'Content' },
+  { type: 'text', label: 'Text Block', icon: '¶', defaultContent: 'Write executive summary, insights, or notes here.', group: 'Content' },
+  { type: 'quote', label: 'Quote / Callout', icon: '❝', defaultContent: 'Customer retention improved because teams focused on faster follow-ups.', group: 'Content' },
+  { type: 'divider', label: 'Divider', icon: '—', defaultContent: 'Section Break', group: 'Layout' },
+  { type: 'spacer', label: 'Spacer', icon: '↕', defaultContent: '24px spacing', group: 'Layout' },
+  { type: 'metric', label: 'Metric Card', icon: '↗', defaultContent: '$128.4K', group: 'Data' },
+  { type: 'progress', label: 'Progress Bar', icon: '%', defaultContent: '72% Quarterly target achieved', group: 'Data' },
+  { type: 'chart', label: 'Bar Chart', icon: '▥', defaultContent: 'Revenue Trend', group: 'Data' },
+  { type: 'donut', label: 'Donut Chart', icon: '◔', defaultContent: 'Channel Mix', group: 'Data' },
+  { type: 'table', label: 'Table', icon: '▦', defaultContent: 'Top Regions', group: 'Data' },
+  { type: 'image', label: 'Image / Logo', icon: '▧', defaultContent: 'Drop brand logo, product image, or cover visual here', group: 'Media' },
+  { type: 'checklist', label: 'Checklist', icon: '☑', defaultContent: `Validate data\nReview recommendations\nShare final report`, group: 'Planning' },
+  { type: 'timeline', label: 'Timeline', icon: '⏱', defaultContent: `Research\nDraft\nReview\nPublish`, group: 'Planning' },
+  { type: 'risk', label: 'Risk Badge', icon: '!', defaultContent: 'Medium risk: inventory variance needs review', group: 'Planning' },
+  { type: 'signature', label: 'Signature', icon: '✍', defaultContent: 'Approved by Team Lead', group: 'Footer' },
 ]
 
 const starterBlocks = [
@@ -16,7 +26,9 @@ const starterBlocks = [
   { id: 'block-2', type: 'metric', content: '$128.4K', width: 'half', theme: 'emerald' },
   { id: 'block-3', type: 'metric', content: '+24.8%', width: 'half', theme: 'violet' },
   { id: 'block-4', type: 'chart', content: 'Revenue Trend', width: 'full', theme: 'blue' },
-  { id: 'block-5', type: 'text', content: 'Drag blocks from the left panel, reorder them inside the canvas, and customize the selected block from the right panel.', width: 'full', theme: 'slate' },
+  { id: 'block-5', type: 'progress', content: '72% Quarterly target achieved', width: 'half', theme: 'amber' },
+  { id: 'block-6', type: 'donut', content: 'Channel Mix', width: 'half', theme: 'rose' },
+  { id: 'block-7', type: 'text', content: 'Drag blocks from the left panel, reorder them inside the canvas, and customize the selected block from the right panel.', width: 'full', theme: 'slate' },
 ]
 
 const themes = ['indigo', 'emerald', 'violet', 'blue', 'amber', 'rose', 'slate']
@@ -34,7 +46,7 @@ function App() {
       id: `block-${crypto.randomUUID()}`,
       type,
       content: palette?.defaultContent ?? 'New report block',
-      width: type === 'metric' ? 'half' : 'full',
+      width: ['metric', 'progress', 'donut', 'risk', 'image'].includes(type) ? 'half' : 'full',
       theme: themes[Math.floor(Math.random() * (themes.length - 1))],
     }
 
@@ -107,7 +119,7 @@ function App() {
             <span>01</span>
             <h2>Blocks</h2>
           </div>
-          <p className="muted">In cards ko drag karke report canvas me add karein.</p>
+          <p className="muted">In cards ko drag karke report canvas me add karein. Click bhi kar sakte ho.</p>
           <div className="palette-list">
             {paletteItems.map((item) => (
               <button
@@ -119,7 +131,7 @@ function App() {
                 onDragStart={(event) => event.dataTransfer.setData('component/type', item.type)}
               >
                 <span>{item.icon}</span>
-                <strong>{item.label}</strong>
+                <strong>{item.label}<small>{item.group}</small></strong>
               </button>
             ))}
           </div>
@@ -218,11 +230,22 @@ function ReportBlock({ block, isSelected, onClick, onMove }) {
 
 function BlockPreview({ block }) {
   if (block.type === 'heading') return <h2>{block.content}</h2>
+  if (block.type === 'subheading') return <><h3 className="subheading-title">{block.content}</h3><p>Use this element to introduce a new report section.</p></>
   if (block.type === 'text') return <p>{block.content}</p>
+  if (block.type === 'quote') return <blockquote>{block.content}</blockquote>
+  if (block.type === 'divider') return <div className="divider-preview"><span />{block.content}<span /></div>
+  if (block.type === 'spacer') return <div className="spacer-preview"><span>{block.content}</span></div>
   if (block.type === 'metric') return <><strong className="metric-value">{block.content}</strong><span className="metric-label">Key metric</span></>
+  if (block.type === 'progress') return <><h3>{block.content}</h3><div className="progress-track"><span /></div><small className="progress-caption">Target status</small></>
   if (block.type === 'chart') return <><h3>{block.content}</h3><div className="mini-chart"><span /><span /><span /><span /><span /></div></>
+  if (block.type === 'donut') return <><h3>{block.content}</h3><div className="donut-wrap"><div className="donut-chart" /><ul><li>Direct 45%</li><li>Partner 32%</li><li>Organic 23%</li></ul></div></>
   if (block.type === 'table') return <><h3>{block.content}</h3><div className="mini-table"><span /><span /><span /><span /><span /><span /></div></>
+  if (block.type === 'image') return <><div className="image-placeholder">▧</div><p>{block.content}</p></>
+  if (block.type === 'checklist') return <ul className="check-list">{block.content.split('\n').map((item) => <li key={item}>{item}</li>)}</ul>
+  if (block.type === 'timeline') return <ol className="timeline-list">{block.content.split('\n').map((item) => <li key={item}>{item}</li>)}</ol>
+  if (block.type === 'risk') return <><strong className="risk-badge">Risk Note</strong><p>{block.content}</p></>
   return <><h3>Signature</h3><p>{block.content}</p></>
 }
+
 
 createRoot(document.getElementById('root')).render(<App />)
