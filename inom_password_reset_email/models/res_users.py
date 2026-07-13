@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import contextlib
 import logging
 
 from odoo import _, models
@@ -46,15 +45,17 @@ class ResUsers(models.Model):
                 options={"post_process": True},
             )[user.id]
 
-            with contextlib.closing(self.env.cr.savepoint()):
-                mail = self.env["mail.mail"].sudo().create({
+            with self.env.cr.savepoint():
+                mail = self.env["mail.mail"].sudo().with_context(
+                    disable_automatic_emails_bypass=True,
+                ).create({
                     "subject": self.with_context(lang=user_lang).env._("Reset your EY account password"),
                     "email_from": user.company_id.email_formatted or user.email_formatted,
                     "body_html": body,
                     "email_to": user.email,
                     **email_values,
                 })
-                mail.send()
+                mail.with_context(disable_automatic_emails_bypass=True).send()
 
             _logger.info("EY password reset email sent for user <%s> to <%s>", user.login, user.email)
 

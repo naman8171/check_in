@@ -6,7 +6,7 @@
     "category": "Administration",
     "author": "EY",
     "license": "LGPL-3",
-    "depends": ["auth_signup", "mail"],
+    "depends": ["auth_signup", "mail", "disable_automatic_emails"],
     "data": [
         "data/password_reset_template.xml",
     ],

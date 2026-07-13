@@ -8,6 +8,7 @@ This Odoo 18 Community module replaces the standard password reset email templat
 - Removes default product branding and references from the email body and footer.
 - Adds EY colors, company name, logo, and custom password reset copy.
 - Keeps the standard reset token generation intact while sending an EY-specific subject and email body.
+- Bypasses `disable_automatic_emails` only for this custom password reset email, so default automatic emails remain disabled.
 
 ## Installation
 
