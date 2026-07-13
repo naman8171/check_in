@@ -12,6 +12,15 @@ class MailMail(models.Model):
     def _disable_automatic_emails_bypassed(self):
         return self.env["ir.mail_server"]._disable_automatic_emails_bypassed()
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        if (
+            self._disable_automatic_emails_enabled()
+            and not self._disable_automatic_emails_bypassed()
+        ):
+            return self.browse()
+        return super().create(vals_list)
+
     def send(self, auto_commit=False, raise_exception=False, post_send_callback=None):
         if (
             self._disable_automatic_emails_enabled()
