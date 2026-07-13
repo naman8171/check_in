@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mail.ir_cron_mail_scheduler_action" model="ir.cron">
+        <field name="active">False</field>
+    </record>
+</odoo>
