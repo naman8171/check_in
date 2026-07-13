@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="disable_automatic_emails_enabled" model="ir.config_parameter">
+        <field name="key">disable_automatic_emails.enabled</field>
+        <field name="value">True</field>
+    </record>
+</odoo>
