@@ -4,10 +4,10 @@ This Odoo 18 Community module replaces the standard password reset email templat
 
 ## Features
 
-- Overrides the `auth_signup.reset_password_email` mail template.
+- Overrides the `auth_signup.reset_password_email` QWeb email view.
 - Removes default product branding and references from the email body and footer.
 - Adds EY colors, company name, logo, and custom password reset copy.
-- Keeps Odoo's standard reset flow and reset URL generation intact.
+- Keeps the standard reset token generation intact while sending an EY-specific subject and email body.
 
 ## Installation
 
