@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!-- One record per branded template this module ships.
+         Add a new <record> block here whenever a new custom email is
+         built (e.g. invoice_email, welcome_email) - the Settings dropdown
+         will pick it up automatically, no view/code change needed. -->
+    <record id="notification_template_password_reset" model="inom.notification.template">
+        <field name="name">Password Reset Email</field>
+        <field name="technical_key">password_reset</field>
+        <field name="view_id" ref="auth_signup.reset_password_email" />
+    </record>
+
+    <record id="notification_template_welcome_email" model="inom.notification.template">
+        <field name="name">Welcome / Set Password Email</field>
+        <field name="technical_key">welcome_email</field>
+        <field name="view_id" ref="inom_password_reset_email.welcome_email_view" />
+    </record>
+</odoo>

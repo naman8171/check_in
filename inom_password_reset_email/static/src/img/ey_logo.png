@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90" role="img" aria-labelledby="title desc">
+  <title id="title">EY logo</title>
+  <desc id="desc">EY branded yellow beam over black EY letters.</desc>
+  <rect width="160" height="90" fill="#ffffff"/>
+  <path d="M15 17 145 5 147 17 17 30z" fill="#ffe600"/>
+  <path d="M33 38h38v10H45v9h24v10H45v11h27v10H33z" fill="#2e2e38"/>
+  <path d="M76 38h14l15 21 15-21h14l-23 32v18H99V70z" fill="#2e2e38"/>
+</svg>
