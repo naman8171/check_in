@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!--
+        Place the Course Image as an avatar to the LEFT of the event title.
+
+        Two fixes vs. the previous version:
+          1. ``hasclass('oe_title')`` instead of ``@class='oe_title'`` -
+             Odoo 17+ adds spacing utility classes like ``pe-2`` to the
+             title div, so strict-equality matching silently misses it.
+             hasclass() matches the token, not the whole attribute.
+          2. ``position="before"`` instead of ``position="inside"`` -
+             ``oe_avatar`` is meant to sit next to the title block, not
+             inside it. When placed inside, the H1 title fills the
+             container and the image upload area is hidden behind it
+             (which is why uploads appeared "missing" in the backend
+             even though the field was technically rendered).
+
+        The label override ("Course Image") and the help text live on
+        this <field> tag so the model file stays clean of presentation
+        strings.
+    -->
+    <record id="view_event_form_inherit_training_catalog" model="ir.ui.view">
+        <field name="name">event.event.form.training.catalog</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <field name="image_1920"
+                    widget="image"
+                    class="oe_avatar oe_right"
+                    string="Thumbnail Image"
+                    options="{'preview_image': 'image_128'}" />
+            </xpath>
+
+            <xpath expr="//group[.//field[@name='date_begin']]" position="after">
+                <group string="Training Catalog">
+                    <field name="provider_type" />
+                    <field name="content_type" />
+                    <field name="level_pathway"
+                        placeholder="e.g. Foundation - Engagement Pathway" />
+                    <field name="intro_heading"
+                        placeholder="e.g. Join us for this 24 hours Event" />
+                    <field name="intro_text" widget="html"
+                        placeholder="Introduction paragraph shown on the event page..." />
+                    <field name="show_in_portfolio" />
+                    <field name="is_unscheduled_course" />
+                    <field name="currency_id" invisible="1" />
+                    <field name="course_price" widget="monetary" readonly="1"
+                        options="{'currency_field': 'currency_id'}"
+                        help="Auto-filled from the cheapest available event ticket (Book Now price)." />
+                    <field name="booking_url" widget="url" invisible="1" />
+                    <field name="more_info_url" widget="url" invisible="1" />
+                    <field name="training_pdf_attachment_id" />
+                </group>
+                <!-- <group string="Event Page Intro"
+                    help="Shown at the top of the public event detail page in place of Odoo's default introduction.
+                Leave both fields empty to keep the standard description.">
+                    <field name="intro_heading"
+                        placeholder="e.g. Join us for this 24 hours Event" />
+                    <field name="intro_text" widget="html"
+                        placeholder="Introduction paragraph shown on the event page..." />
+                </group> -->
+                <group string="Course Detail Page"
+                    help="Content for the redesigned course detail page. Info boxes accept one value per line; leave a field empty to hide that box.">
+                    <field name="cover_image" widget="image"
+                        string="Cover / Header Image"
+                        options="{'size': [600, 600]}" />
+                    <field name="course_duration"
+                        placeholder="2 DAYS&#10;9-4 PM" />
+                    <field name="course_delivery"
+                        placeholder="FACE TO FACE&#10;ONLINE CLASSROOM" />
+                    <field name="course_format"
+                        placeholder="FACE TO FACE&#10;ONLINE CLASSROOM" />
+                    <field name="course_prerequisite"
+                        placeholder="ESSENTIALS OF ENGAGEMENT CORE PATHWAY" />
+                    <field name="participants_text" widget="html"
+                        placeholder="Who this course is for..." />
+                    <field name="learning_outcomes" widget="html"
+                        placeholder="Learning outcomes for this course..." />
+                </group>
+                <group string="Facilitator"
+                    help="Shown in the 'YOUR FACILITATOR' block at the bottom of the course detail page. Leave all empty to hide the block.">
+                    <field name="facilitator_image" widget="image"
+                        string="Facilitator Photo"
+                        options="{'size': [400, 400]}" />
+                    <field name="facilitator_name"
+                        placeholder="e.g. Joel Levin" />
+                    <field name="facilitator_bio" widget="html"
+                        placeholder="Short facilitator biography..." />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_event_search_inherit_training_catalog" model="ir.ui.view">
+        <field name="name">event.event.search.training.catalog</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator />
+                <filter name="training_scheduled" string="Scheduled"
+                    domain="[('schedule_state','=','scheduled')]" />
+                <filter name="training_unscheduled" string="Unscheduled"
+                    domain="[('schedule_state','=','unscheduled')]" />
+                <filter name="training_published" string="Published"
+                    domain="[('visibility_state','=','published')]" />
+                <filter name="training_unpublished" string="Unpublished"
+                    domain="[('visibility_state','=','unpublished')]" />
+                <separator />
+                <filter name="provider_aha" string="Aha Academy"
+                    domain="[('provider_type','=','aha')]" />
+                <filter name="provider_iap2" string="IAP2"
+                    domain="[('provider_type','=','iap2')]" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

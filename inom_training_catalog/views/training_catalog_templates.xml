@@ -1,0 +1,1666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="training_catalog_page" name="Training Catalog">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+
+                <!-- ════════════════════════════════════════════════
+                     SCOPED CARD STYLES
+                     Only affects elements with the .itc-* prefix so
+                     nothing else on the page is touched.
+                     ════════════════════════════════════════════════ -->
+                <style>
+                    /* Lora (italic) for the Level &amp; Pathway line. @import must
+                       be the first thing in the stylesheet. */
+                    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500;1,600&amp;display=swap');
+                    .itc-card {
+                        position: relative;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        padding: 22px 22px 24px;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        font-family: 'Avenir Regular', 'Avenir', 'Nunito Sans',
+                        -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma,
+                        'Helvetica Neue', Arial, sans-serif;
+                        font-weight: 400;
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    }
+                    .itc-card:hover { transform: translateY(-3px); }
+
+                    /* ─── Card header (title + optional IAP2 logo) ─── */
+                    .itc-card-header {
+                        margin-bottom: 14px;
+                        text-align: center;
+                        padding-right: 0;
+                        min-height: 32px;
+                    }
+                    .itc-card-iap2 .itc-card-header {
+                        padding-right: 0;
+                    }
+                    .itc-card-title {
+                        margin: 0;
+                        font-family: 'Avenir Regular', 'Avenir', 'Nunito Sans',
+                        -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma,
+                        'Helvetica Neue', Arial, sans-serif;
+                        font-size: 1.7rem;
+                        font-weight: 700;
+                        line-height: 1.18;
+                        letter-spacing: -0.005em;
+                    }
+                    .itc-card-aha .itc-card-title {
+                        color: #ffffff;
+                        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+                    }
+                    .itc-card-iap2 .itc-card-title {
+                        color: #1d6a3a;
+                        font-size: 1.55rem;
+                    }
+
+                    /* ─── Level &amp; Pathway line (below the title) ─── */
+                    .itc-card-level {
+                        font-family: 'Lora', Georgia, 'Times New Roman', serif;
+                        font-style: italic;
+                        font-weight: 500;
+                        color: #e8a821;
+                        text-align: center;
+                        font-size: 1.02rem;
+                        line-height: 1.4;
+                        margin: 0 0 14px;
+                    }
+
+                    /* ─── Cover image strip ─── */
+                    .itc-card-image {
+                        width: 100%;
+                        aspect-ratio: 16 / 5;
+                        overflow: hidden;
+                        background: #1a1a1a;
+                        border-radius: 4px;
+                        border: 2px solid #ffffff;
+                        border-radius: 10px;
+                        box-sizing: border-box;
+                        margin-bottom: 14px;
+                    }
+                    .itc-card-image img {
+                        width: 100%; height: 100%;
+                        object-fit: cover;
+                        display: block;
+                    }
+                    .itc-card-image-fallback {
+                        width: 100%; height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #8a8a8a;
+                        font-size: 2rem;
+                        background:
+                            linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+                    }
+
+                    /* ─── Short description ─── */
+                    .itc-card-desc {
+                        text-align: center;
+                        margin: 0 8px 14px;
+                        font-size: 0.92rem;
+                        line-height: 1.5;
+                        max-height: 4.5em;
+                        overflow: hidden;
+                        position: relative;
+                    }
+                    .itc-card-desc p { margin: 0; }
+                    .itc-card-desc p + p { margin-top: 4px; }
+                    .itc-card-aha .itc-card-desc { color: #ffffff; }
+                    .itc-card-iap2 .itc-card-desc { color: #374151; }
+
+                    /* ── Normalize anything authors paste into Description ──
+                       Odoo's Description is a rich HTML field. Authors often
+                       leave H2/H3 headings, font-size spans, opacity 0.5
+                       "muted" text, etc. Those bring their own typography
+                       which overflows / overlaps inside our tightly clipped
+                       card. Force every child element to inherit the card's
+                       own typography so nothing escapes the box. */
+                    .itc-card-desc, .itc-card-desc * {
+                        font-size: 0.92rem !important;
+                        line-height: 1.5 !important;
+                        font-weight: 400 !important;
+                        color: inherit !important;
+                        background: transparent !important;
+                        opacity: 1 !important;
+                        text-align: center !important;
+                        font-family: inherit !important;
+                        text-shadow: none !important;
+                    }
+                    .itc-card-desc h1, .itc-card-desc h2, .itc-card-desc h3,
+                    .itc-card-desc h4, .itc-card-desc h5, .itc-card-desc h6 {
+                        font-weight: 700 !important;
+                        margin: 0 0 2px !important;
+                        display: block;
+                    }
+                    .itc-card-desc p,
+                    .itc-card-desc div,
+                    .itc-card-desc ul,
+                    .itc-card-desc ol {
+                        margin: 0 0 4px !important;
+                        padding: 0 !important;
+                    }
+                    .itc-card-desc img { display: none !important; }
+                    .itc-card-desc br { display: none; }
+
+                    /* ─── Dotted divider ─── */
+                    .itc-card-divider {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        margin: 4px 28px 14px;
+                    }
+                    .itc-card-divider span {
+                        flex: 1; height: 1px;
+                        border-top: 2px dotted currentColor;
+                        opacity: 0.55;
+                    }
+                    .itc-card-aha .itc-card-divider { color: #ffffff; }
+                    .itc-card-aha .itc-card-divider span { opacity: 1; }
+                    .itc-card-iap2 .itc-card-divider { color: #1d6a3a; opacity: 0.85; }
+
+                    /* ─── Schedule line (date+time / login / contact-us) ─── */
+                    .itc-card-schedule {
+                        text-align: center;
+                        margin: 0 12px 18px;
+                        flex: 1 1 auto;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-height: 38px;
+                    }
+                    .itc-card-datetime { font-size: 0.95rem; line-height: 1.45; }
+                    .itc-dt-label { opacity: 0.78; margin-right: 4px; }
+                    .itc-dt-spacer { display: inline-block; width: 14px; }
+                    .itc-card-datetime strong { font-weight: 700; }
+
+                    .itc-card-login {
+                        font-size: 1rem;
+                        font-weight: 600;
+                    }
+                    .itc-card-login a { color: inherit; text-decoration: none; }
+                    .itc-card-login a:hover { text-decoration: underline; }
+
+                    .itc-card-contact {
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                        line-height: 1.45;
+                        padding: 0 6px;
+                    }
+
+                    .itc-card-aha .itc-card-datetime,
+                    .itc-card-aha .itc-card-login,
+                    .itc-card-aha .itc-card-contact { color: #ffffff; }
+                    .itc-card-iap2 .itc-card-datetime,
+                    .itc-card-iap2 .itc-card-login,
+                    .itc-card-iap2 .itc-card-contact { color: #111827; }
+
+                    /* ─── Footer: buttons + (optional) Aha! brand mark ─── */
+                    .itc-card-footer {
+                        display: flex;
+                        align-items: flex-end;
+                        justify-content: space-between;
+                        gap: 12px;
+                        margin-top: auto;
+                    }
+                    .itc-card-actions {
+                        display: flex;
+                        gap: 8px;
+                        align-items: center;
+                        flex-wrap: wrap;
+                    }
+
+                    /* ─── Button base ─── */
+                    .itc-btn {
+                        flex: 0 0 auto;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        min-width: 78px;
+                        height: 44px;
+                        padding: 6px 14px;
+                        border-radius: 999px;
+                        font-size: 0.78rem;
+                        font-weight: 700;
+                        line-height: 1.05;
+                        text-decoration: none;
+                        text-transform: none;
+                        letter-spacing: 0.02em;
+                        cursor: pointer;
+                        border: 1px solid transparent;
+                        white-space: nowrap;
+                        transition: transform 0.15s ease, background 0.15s ease,
+                            color 0.15s ease, border-color 0.15s ease;
+                    }
+                    .itc-btn:hover { transform: translateY(-1px); text-decoration: none; }
+                    .itc-btn-disabled {
+                        opacity: 0.55;
+                        cursor: not-allowed;
+                        pointer-events: none;
+                    }
+
+                    /* ─── Aha! buttons ─── */
+                    .itc-card-aha .itc-btn-primary {
+                        background: #23214f; color: #ffffff; border-color: #2563eb;
+                    }
+                    .itc-card-aha .itc-btn-primary:hover {
+                        background: #23214f; border-color: #1d4ed8; color: #ffffff;
+                    }
+                    .itc-card-aha .itc-btn-light {
+                        background: #ffffff; color: #23214f; border-color: #ffffff;
+                    }
+                    .itc-card-aha .itc-btn-light:hover {
+                        background: #f1f5f9; color: #23214f;
+                    }
+                    .itc-card-aha .itc-btn-ghost {
+                        background: transparent; color: #ffffff;
+                        border-color: rgba(255, 255, 255, 0.55);
+                    }
+                    .itc-card-aha .itc-btn-ghost:hover {
+                        background: rgba(255, 255, 255, 0.12); color: #ffffff;
+                        border-color: #ffffff;
+                    }
+
+                    /* ─── IAP2 buttons ─── */
+                    .itc-card-iap2 .itc-btn-primary {
+                        background: #1d6a3a; color: #ffffff; border-color: #1d6a3a;
+                    }
+                    .itc-card-iap2 .itc-btn-primary:hover {
+                        background: #155a30; border-color: #155a30; color: #ffffff;
+                    }
+                    .itc-card-iap2 .itc-btn-light {
+                        background: #ffffff; color: #1d6a3a; border-color: #1d6a3a;
+                    }
+                    .itc-card-iap2 .itc-btn-light:hover { background: #ecfdf5; }
+                    .itc-card-iap2 .itc-btn-ghost {
+                        background: transparent; color: #1d6a3a;
+                        border-color: rgba(29, 106, 58, 0.45);
+                    }
+                    .itc-card-iap2 .itc-btn-ghost:hover {
+                        background: rgba(29, 106, 58, 0.08); border-color: #1d6a3a;
+                    }
+
+                    /* ─── Aha! brand-mark (bottom-right) ─── */
+                    .itc-aha-mark {
+                        text-align: right;
+                        line-height: 1;
+                        flex-shrink: 0;
+                        padding-bottom: 6px;
+                        pointer-events: none;
+                    }
+
+                    /* ─── Header FAQ buttons (top-right of the page) ───
+                       Rounded-rectangle shape (not a full pill), matching
+                       the Course Catalogue / Scheduled Training tab buttons.
+                       Brand-coloured per provider:
+                         Aha Courses  → Aha blue  (#23214f, same as the
+                                        Aha card "Book Now" button)
+                         EI Courses   → IAP2 green (#1d6a3a, same as the
+                                        IAP2 card buttons) */
+                    .itc-faq-btn {
+                        font-size: 0.95rem;
+                        padding: 8px 26px;
+                        height: 48px;
+                        border-radius: 8px;
+                    }
+                    .itc-faq-btn-aha {
+                        background: #23214f;
+                        color: #ffffff;
+                        border-color: #23214f;
+                    }
+                    .itc-faq-btn-aha:hover {
+                        background: #191740;
+                        border-color: #191740;
+                        color: #ffffff;
+                    }
+                    .itc-faq-btn-iap2 {
+                        background: #1d6a3a;
+                        color: #ffffff;
+                        border-color: #1d6a3a;
+                    }
+                    .itc-faq-btn-iap2:hover {
+                        background: #155a30;
+                        border-color: #155a30;
+                        color: #ffffff;
+                    }
+                    /* Phones: full-width stacked FAQ buttons below the title. */
+                    @media (max-width: 575px) {
+                        .itc-page-header { flex-direction: column; }
+                        .itc-faq-row { width: 100%; }
+                        .itc-faq-row .itc-faq-btn { flex: 1 1 auto; }
+                    }
+                    .itc-aha-mark img {
+                        height: 92px;
+                        width: auto;
+                        display: block;
+                    }
+
+                    /* ─── Brand colour-schemes ─── */
+
+                    /* ── Aha Academy: dark navy background, white text ── */
+                    .itc-card-aha {
+                        background: #23214f;
+                        color: #ffffff;
+                        box-shadow: 0 8px 24px rgba(21, 32, 71, 0.18);
+                    }
+                    .itc-card-aha:hover { box-shadow: 0 14px 32px rgba(21, 32, 71, 0.28); }
+
+                    /* ── IAP2 / Engagement Institute: white card + green theme ──
+                       Matches the unscheduled card palette intentionally.
+                       Green border instead of plain grey so IAP2 cards are
+                       visually distinct from a plain white background. */
+                    .itc-card-iap2 {
+                        background: #ffffff;
+                        color: #1f2937;
+                        border: 1px solid #c8e6c9;
+                        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+                    }
+                    .itc-card-iap2:hover { box-shadow: 0 10px 24px rgba(29, 106, 58, 0.18); }
+
+                    /* IAP2 title — green, no text-shadow */
+                    .itc-card-iap2 .itc-card-title {
+                        color: #1d6a3a;
+                        text-shadow: none;
+                    }
+
+                    /* IAP2 description text */
+                    .itc-card-iap2 .itc-card-desc { color: #374151; }
+
+                    /* IAP2 schedule / login / contact text */
+                    .itc-card-iap2 .itc-card-datetime,
+                    .itc-card-iap2 .itc-card-login,
+                    .itc-card-iap2 .itc-card-contact { color: #111827; }
+
+                    /* IAP2 dotted divider */
+                    .itc-card-iap2 .itc-card-divider { color: #1d6a3a; opacity: 0.85; }
+                    .itc-card-iap2 .itc-card-divider span { opacity: 0.85; }
+
+                    /* IAP2 buttons — all green */
+                    .itc-card-iap2 .itc-btn-primary {
+                        background: #1d6a3a; color: #ffffff; border-color: #1d6a3a;
+                    }
+                    .itc-card-iap2 .itc-btn-primary:hover {
+                        background: #155a30; border-color: #155a30; color: #ffffff;
+                    }
+                    .itc-card-iap2 .itc-btn-light {
+                        background: #ffffff; color: #1d6a3a; border-color: #1d6a3a;
+                    }
+                    .itc-card-iap2 .itc-btn-light:hover { background: #ecfdf5; }
+                    .itc-card-iap2 .itc-btn-ghost {
+                        background: transparent; color: #1d6a3a;
+                        border-color: rgba(29, 106, 58, 0.45);
+                    }
+                    .itc-card-iap2 .itc-btn-ghost:hover {
+                        background: rgba(29, 106, 58, 0.08); border-color: #1d6a3a;
+                    }
+
+                    /* ══════════════════════════════════════════════════
+                       UNSCHEDULED OVERRIDE — IAP2 only
+                       Aha! unscheduled cards keep their navy blue theme.
+                       IAP2 unscheduled cards get green and white.
+                       :not(.itc-card-aha) ensures Aha! is never touched.
+                       ══════════════════════════════════════════════════ */
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) {
+                        background: #ffffff;
+                        color: #1f2937;
+                        border: 1px solid #c8e6c9;
+                        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha):hover {
+                        box-shadow: 0 10px 24px rgba(29, 106, 58, 0.18);
+                    }
+
+                    /* "UNSCHEDULED" pill so the distinction is obvious. */
+                    .itc-status-pill {
+                        position: absolute;
+                        top: 14px; right: 14px;
+                        padding: 4px 10px;
+                        border-radius: 999px;
+                        font-size: 0.65rem;
+                        font-weight: 800;
+                        letter-spacing: 0.12em;
+                        text-transform: uppercase;
+                        line-height: 1;
+                        z-index: 2;
+                    }
+                    /* Aha! unscheduled pill: white/transparent on navy (same as scheduled) */
+                    .itc-card-aha .itc-status-pill-unscheduled {
+                        background: rgba(255, 255, 255, 0.18);
+                        color: #ffffff;
+                        border: 1px solid rgba(255, 255, 255, 0.45);
+                    }
+                    /* IAP2 / other unscheduled pill: solid green */
+                    .itc-status-pill-unscheduled {
+                        background: #1d6a3a;
+                        color: #ffffff;
+                    }
+                    /* Aha! scheduled pill: white/transparent on navy */
+                    .itc-status-pill-scheduled {
+                        background: rgba(255, 255, 255, 0.18);
+                        color: #ffffff;
+                        border: 1px solid rgba(255, 255, 255, 0.45);
+                    }
+                    /* IAP2 scheduled pill: solid green */
+                    .itc-card-iap2 .itc-status-pill-scheduled {
+                        background: #1d6a3a;
+                        color: #ffffff;
+                        border-color: #1d6a3a;
+                    }
+
+                    /* IAP2 unscheduled — title, desc, text, divider, buttons */
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-title {
+                        color: #1d6a3a;
+                        text-shadow: none;
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-desc { color: #374151; }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-datetime,
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-login,
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-contact { color: #111827; }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-divider { color: #1d6a3a; }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-card-divider span { opacity: 0.85; }
+
+                    /* IAP2 unscheduled buttons — green */
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-primary {
+                        background: #1d6a3a; color: #ffffff; border-color: #1d6a3a;
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-primary:hover {
+                        background: #155a30; border-color: #155a30;
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-light {
+                        background: #ffffff; color: #1d6a3a; border-color: #1d6a3a;
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-light:hover { background: #ecfdf5; }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-ghost {
+                        background: transparent; color: #1d6a3a;
+                        border-color: rgba(29, 106, 58, 0.45);
+                    }
+                    .itc-card.itc-card-unscheduled:not(.itc-card-aha) .itc-btn-ghost:hover {
+                        background: rgba(29, 106, 58, 0.08); border-color: #1d6a3a;
+                    }
+
+                    /* Aha! / IAP2 brand mark: shown on ALL provider cards
+                       (scheduled + unscheduled), bottom-right. */
+                    .itc-card-aha .itc-aha-mark { display: block; }
+
+                    /* Make the wrapping Bootstrap col stretch the card. */
+                    .itc-card-col { display: flex; }
+                    .itc-card-col > .itc-card { flex: 1 1 auto; }
+
+                    /* ──────────────────────────────────────────────────
+                       Mobile responsiveness
+                       Breakpoints chosen to align with Bootstrap 5:
+                         &lt; 992px : tablets &amp; phones (cards single-column)
+                         &lt; 768px : small tablets / large phones
+                         &lt; 576px : phones (xs)
+                         &lt; 380px : small phones
+                       ────────────────────────────────────────────────── */
+
+                    /* Tablet / large phone — single-column cards already
+                       happens via Bootstrap col-12 col-lg-6, but we also
+                       make the date/time line wrap onto two lines so it
+                       never overflows on narrow cards. */
+                    @media (max-width: 991px) {
+                        .itc-card-image { aspect-ratio: 16 / 5.5; }
+                    }
+
+                    /* Filter form is dense — let dropdowns breathe. */
+                    @media (max-width: 767px) {
+                        .itc-filter-form .col-6,
+                        .itc-filter-form .col-12 { padding-bottom: 4px; }
+                    }
+
+                    /* Phones */
+                    @media (max-width: 575px) {
+                        .itc-card { padding: 18px 16px 20px; }
+                        .itc-card-title { font-size: 1.5rem; }
+                        .itc-card-iap2 .itc-card-title { font-size: 1.35rem; }
+
+                        /* Smaller pill on phones, with matching reduced gutter
+                           so the title doesn't get squashed. */
+                        .itc-status-pill {
+                            top: 10px; right: 10px;
+                            padding: 3px 8px;
+                            font-size: 0.58rem;
+                            letter-spacing: 0.08em;
+                        }
+                        .itc-card-header,
+                        .itc-card-iap2 .itc-card-header { padding-right: 0; }
+
+                        /* Tighter side-margins so content has room to breathe. */
+                        .itc-card-divider { margin: 4px 14px 12px; }
+                        .itc-card-desc { margin: 0 4px 12px; }
+                        .itc-card-schedule { margin: 0 6px 14px; }
+
+                        /* Let "Date: …" and "Time: …" stack on their own
+                           lines when the card is too narrow for one row. */
+                        .itc-dt-spacer {
+                            display: block;
+                            width: 0;
+                            height: 4px;
+                        }
+
+                        /* Buttons + Aha! mark wrap, brand mark drops below. */
+                        .itc-card-footer { flex-wrap: wrap; row-gap: 10px; }
+                        .itc-card-actions { width: 100%; justify-content: flex-start; }
+                        .itc-aha-mark { padding-bottom: 0; margin-left: auto; }
+
+                    }
+
+                    /* Small phones — squeeze card buttons to fit a 320–360px viewport. */
+                    @media (max-width: 380px) {
+                        .itc-btn {
+                            min-width: 64px;
+                            padding: 6px 10px;
+                            font-size: 0.72rem;
+                        }
+                        .itc-card-title { font-size: 1.35rem; }
+                        .itc-card-iap2 .itc-card-title { font-size: 1.2rem; }
+                        .itc-aha-mark img { height: 70px; }
+                    }
+                </style>
+
+                <section class="s_text_block py-5">
+                    <div class="container">
+                        <!-- Page header: title on the left, the two FAQ
+                             buttons on the right. On small screens the
+                             buttons wrap below the title. -->
+                        <div
+                            class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3 itc-page-header">
+                            <h1 class="mb-0">Training Courses</h1>
+                            <div class="d-flex flex-wrap gap-2 itc-faq-row">
+                                <a target="_blank" rel="noopener" href="/aha-academy-1#"
+                                    class="itc-btn itc-faq-btn itc-faq-btn-aha">FAQ Aha Courses</a>
+                                <a target="_blank" rel="noopener" href="/engagement-institute#EI_FAQ"
+                                    class="itc-btn itc-faq-btn itc-faq-btn-iap2">FAQ EI Courses</a>
+                            </div>
+                        </div>
+                        <p class="text-muted">
+                            Browse upcoming events and the full portfolio of courses.
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2 mb-4 itc-tab-row" role="group">
+                            <!-- Portfolio is the DEFAULT view (controller falls back
+                                 to view_mode="portfolio"), so its button sits first. -->
+                            <a
+                                t-attf-class="btn itc-tab-btn #{'btn-primary' if view_mode == 'portfolio' else 'btn-outline-primary'}"
+                                t-attf-href="/training_catalogue/portfolio?provider_type=#{provider_type or ''}&amp;content_type=#{content_type or ''}&amp;q=#{q or ''}&amp;scheduled=#{scheduled or ''}&amp;published=#{published or ''}">Course
+                                Catalogue</a>
+                            <a
+                                t-attf-class="btn itc-tab-btn #{'btn-primary' if view_mode == 'upcoming' else 'btn-outline-primary'}"
+                                t-attf-href="/training_catalogue/upcoming?provider_type=#{provider_type or ''}&amp;content_type=#{content_type or ''}&amp;q=#{q or ''}&amp;scheduled=#{scheduled or ''}&amp;published=#{published or ''}">Scheduled
+                                Training</a>
+                        </div>
+
+                        <form method="get" class="row g-2 mb-4 itc-filter-form">
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <input type="text" name="q" class="form-control"
+                                    placeholder="Search by course name…" t-att-value="q or ''" />
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <select name="provider_type" class="form-select"
+                                    aria-label="Provider">
+                                    <option value="">All Pathways</option>
+                                    <option value="aha" t-att-selected="provider_type == 'aha'">Aha!
+                                        Academy</option>
+                                    <option value="iap2" t-att-selected="provider_type == 'iap2'">Engagement
+                                        Institute (IAP2)</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <select name="content_type" class="form-select" aria-label="Topic">
+                                    <option value="">All topics</option>
+                                    <option value="engagement"
+                                        t-att-selected="content_type == 'engagement'">Engagement</option>
+                                    <option value="conflict"
+                                        t-att-selected="content_type == 'conflict'">Conflict</option>
+                                    <option value="facilitation"
+                                        t-att-selected="content_type == 'facilitation'">Facilitation</option>
+                                    <option value="evaluation"
+                                        t-att-selected="content_type == 'evaluation'">Evaluation</option>
+                                </select>
+                            </div>
+                            <!-- The Scheduled / Unscheduled filter dropdown was
+                                 removed: scheduled and unscheduled courses are
+                                 now shown together. (The controller still reads
+                                 the `scheduled` param for backward compatibility
+                                 but no longer filters on it.) -->
+                            <!-- Published / Unpublished is an admin-only filter
+                                 (public users only ever see published courses
+                                 anyway, enforced in the controller). Hide it
+                                 from the public-facing toolbar. -->
+                            <t t-if="not is_public_user">
+                                <div class="col-6 col-md-2">
+                                    <select name="published" class="form-select"
+                                        aria-label="Publish state">
+                                        <option value="">Published + Unpublished</option>
+                                        <option value="published"
+                                            t-att-selected="published == 'published'">Published only</option>
+                                        <option value="unpublished"
+                                            t-att-selected="published == 'unpublished'">Unpublished
+                                            only</option>
+                                    </select>
+                                </div>
+                            </t>
+                            <div class="col-12 col-sm-6 col-md-1 d-grid">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+
+                        <t t-if="not events">
+                            <div class="alert alert-info">No courses found for the selected filters.</div>
+                        </t>
+
+                        <div class="row g-3" t-if="events">
+                            <t t-foreach="events" t-as="course">
+
+                                <!-- ════════════════════════════════════════════
+                                     EVENT CARD — designed exactly per the doc.
+                                     Two visual brands:
+                                       provider_type == 'aha'  → dark-navy + gold
+                                       provider_type == 'iap2' → white card + green
+                                     IAP2 + public visitor: dates are hidden behind
+                                     a "Login for details" link, per the design.
+                                     ════════════════════════════════════════════ -->
+
+                                <t t-set="brand_class"
+                                    t-value="'itc-card-iap2' if course.provider_type == 'iap2' else 'itc-card-aha'" />
+                                <t t-set="is_scheduled"
+                                    t-value="course.schedule_state == 'scheduled'" />
+
+                                <div class="col-12 col-lg-6 itc-card-col">
+                                    <article
+                                        t-attf-class="itc-card #{brand_class}#{'' if is_scheduled else ' itc-card-unscheduled'}">
+
+                                        <!-- Status pill (Scheduled / Unscheduled) -->
+                                        <!-- <t t-if="is_scheduled">
+                                            <span class="itc-status-pill itc-status-pill-scheduled">
+                                                SCHEDULED</span>
+                                        </t>
+                                        <t t-else="">
+                                            <span
+                                                class="itc-status-pill itc-status-pill-unscheduled">
+                                                UNSCHEDULED</span>
+                                        </t> -->
+
+                                        <!-- Title -->
+                                        <header class="itc-card-header">
+                                            <h3 class="itc-card-title" t-esc="course.name" />
+                                        </header>
+
+                                        <!-- Level &amp; Pathway (centered, Lora italic,
+                                             #e8a821). Backend-managed per event; hidden
+                                             when empty. -->
+                                        <div class="itc-card-level"
+                                            t-if="course.level_pathway"
+                                            t-esc="course.level_pathway" />
+
+                                        <!-- Thumbnail image (graceful fallback) -->
+                                        <div class="itc-card-image">
+                                            <img
+                                                t-attf-src="/web/image/event.event/#{course.id}/image_1024"
+                                                t-att-alt="course.name"
+                                                loading="lazy"
+                                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                            <div class="itc-card-image-fallback"
+                                                style="display:none;">
+                                                <i class="fa fa-users" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Card intro (line-clamped via CSS).
+                                             Mirrors the event detail page: show the
+                                             module-managed intro fields when set,
+                                             otherwise fall back to the standard
+                                             description so un-filled events are
+                                             unaffected. -->
+                                        <t t-set="itc_has_intro"
+                                            t-value="course.intro_heading or course.intro_text" />
+                                        <div class="itc-card-desc"
+                                            t-if="itc_has_intro or course.description">
+                                            <t t-if="itc_has_intro">
+                                                <h3 t-if="course.intro_heading"
+                                                    t-out="course.intro_heading" />
+                                                <t t-if="course.intro_text"
+                                                    t-out="course.intro_text" />
+                                            </t>
+                                            <t t-else="">
+                                                <t t-out="course.description" />
+                                            </t>
+                                        </div>
+
+                                        <!-- Dotted divider -->
+                                        <div class="itc-card-divider" aria-hidden="true">
+                                            <span />
+                                            <span />
+                                        </div>
+
+                                        <!-- Schedule block: date+time / "Login for details" /
+                                        "Contact us…" -->
+                                        <div class="itc-card-schedule">
+                                            <t t-if="is_scheduled">
+                                                <!-- Date shown without time on the card.
+                                                       Logged in            -> full Date
+                                                       Public + Aha!        -> full Date
+                                                       Public + IAP2        -> Month only -->
+                                                <t t-if="not is_public_user">
+                                                    <div class="itc-card-datetime">
+                                                        <span class="itc-dt-label">Date:</span>
+                                                        <strong>
+                                                            <span
+                                                                t-out="course.catalog_date_display()" />
+                                                        </strong>
+                                                    </div>
+                                                </t>
+                                                <t t-else="">
+                                                    <!-- IAP2 (public): show the MONTH only -->
+                                                    <t t-if="course.provider_type == 'iap2'">
+                                                        <div class="itc-card-datetime">
+                                                            <span class="itc-dt-label">Month:</span>
+                                                            <strong>
+                                                                <span t-field="course.date_begin"
+                                                                    t-options='{"widget": "datetime", "format": "MMMM y"}' />
+                                                            </strong>
+                                                        </div>
+                                                    </t>
+                                                    <!-- Aha! and any other provider (public):
+                                                         show the full DATE, but no time. -->
+                                                    <t t-else="">
+                                                        <div class="itc-card-datetime">
+                                                            <span class="itc-dt-label">Date:</span>
+                                                            <strong>
+                                                                <span
+                                                                    t-out="course.catalog_date_display()" />
+                                                            </strong>
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="itc-card-contact">
+                                                    Contact us for inhouse options or to register
+                                                    your interest in an upcoming date
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                        <!-- Footer: buttons + (Aha!) brand mark -->
+                                        <div class="itc-card-footer">
+                                            <div class="itc-card-actions">
+
+                                                <!-- Book Now + More Information are shown to
+                                                     ALL visitors — IAP2 now matches Aha!. The
+                                                     login-only gating that previously replaced
+                                                     these buttons with a single "Log In" CTA
+                                                     for logged-out IAP2 visitors has been
+                                                     removed. (The date still shows "Login for
+                                                     details" when logged out, and the detail
+                                                     page still gates booking behind login.) -->
+                                                <!-- BOOK NOW — booking link if set,
+                                                         otherwise the course detail/booking
+                                                         page. Shown ONLY for SCHEDULED
+                                                         courses; unscheduled courses keep
+                                                         just the "More Information" CTA. -->
+                                                <a t-if="course.booking_url and is_scheduled"
+                                                    t-att-href="course.booking_url"
+                                                    class="itc-btn itc-btn-primary">BOOK<br /> NOW</a>
+                                                <a t-if="not course.booking_url and is_scheduled"
+                                                    t-attf-href="/event/#{course.id}/register"
+                                                    class="itc-btn itc-btn-primary">BOOK<br /> NOW</a>
+
+                                                <!-- Download PDF — only rendered when
+                                                         a PDF is attached. -->
+                                                <t t-if="course.website_pdf_url()">
+                                                    <a t-att-href="course.website_pdf_url()"
+                                                        class="itc-btn itc-btn-light">Download<br />
+                                                        PDF</a>
+                                                </t>
+
+                                                <!-- More Information — explicit link if
+                                                         set, otherwise the SAME detail/booking
+                                                         page as Book Now. Shown for both
+                                                         scheduled and unscheduled courses. -->
+                                                <a t-if="course.more_info_url"
+                                                    t-att-href="course.more_info_url"
+                                                    class="itc-btn itc-btn-ghost">More<br />
+                                                    Information</a>
+                                                <a t-if="not course.more_info_url"
+                                                    t-attf-href="/event/#{course.id}/register"
+                                                    class="itc-btn itc-btn-ghost">More<br />
+                                                    Information</a>
+
+                                            </div>
+
+                                            <!-- Provider brand-mark, bottom-right.
+                                                 Both IAP2 (Engagement Institute) and Aha!
+                                                 Academy show their logo here. Swap the
+                                                 files in /static/src/img/ to update. -->
+                                            <t t-if="course.provider_type == 'iap2'">
+                                                <div class="itc-aha-mark" aria-hidden="true">
+                                                    <img
+                                                        src="/inom_training_catalog/static/src/img/EI_Logo.png"
+                                                        alt="Engagement Institute" />
+                                                </div>
+                                            </t>
+                                            <t t-if="course.provider_type == 'aha'">
+                                                <div class="itc-aha-mark" aria-hidden="true">
+                                                    <img
+                                                        src="/inom_training_catalog/static/src/img/aha_academy_logo.jpeg"
+                                                        alt="Aha! Academy" />
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                    </article>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <record id="training_catalog_menu_item_new" model="website.menu">
+        <field name="name">Course Training</field>
+        <field name="url">/training_catalogue</field>
+        <field name="parent_id" ref="website.main_menu" />
+        <field name="sequence" eval="80" />
+    </record>
+
+    <!--
+        ════════════════════════════════════════════════════════════════
+        COURSE DETAIL PAGE  (redesigned)
+        Replaces Odoo's default event-page body for training courses
+        (events that have a provider_type) with a custom single-column
+        layout: banner, level/pathway subtitle, four info boxes
+        (Duration / Delivery / Format / Prerequisite), "About this Course",
+        action buttons (Book Now / Download Flyer) and a Participants
+        section. Themed green for IAP2, navy for Aha!.
+
+        Events WITHOUT a provider_type keep the standard intro/description
+        behaviour, so non-training events are untouched.
+
+        Odoo's default cover and mobile date strip are hidden via scoped
+        body:has(.itc-course-detail) CSS so only the LEFT column is restyled;
+        the right-hand registration sidebar (Register / Starts / Ends / Add to
+        calendar / Location / Organizer) is left exactly as Odoo renders it.
+        ════════════════════════════════════════════════════════════════
+    -->
+    <template id="event_page_intro_fields"
+        name="Course Detail Page - Custom Layout"
+        inherit_id="website_event.event_description_full">
+        <xpath expr="//div[@t-field='event.description']" position="replace">
+            <t t-if="event.show_in_portfolio">
+                <t t-set="itc_brand"
+                    t-value="'iap2' if event.provider_type == 'iap2' else 'aha'" />
+                <t t-set="itc_scheduled"
+                    t-value="event.schedule_state == 'scheduled'" />
+                <div t-attf-class="itc-course-detail itc-detail-#{itc_brand}">
+
+                    <style>
+                        /* Hide Odoo's default cover and mobile date strip ONLY
+                           on course pages (scoped via :has). The right-hand
+                           registration sidebar is intentionally KEPT. */
+                        body:has(.itc-course-detail) .o_wevent_event_main_cover,
+                        body:has(.itc-course-detail) .o_wevent_event_main_dates_mobile {
+                            display: none !important;
+                        }
+                        /* Hide ONLY the per-event menu links (Home / Talks /
+                           Practical) in the submenu bar; the breadcrumb path
+                           and everything else stays as-is. */
+                        body:has(.itc-course-detail) #o_wevent_submenu_desktop ul.nav,
+                        body:has(.itc-course-detail) #o_wevent_submenu_desktop .dropdown,
+                        body:has(.itc-course-detail) #o_wevent_submenu_mobile .dropdown {
+                            display: none !important;
+                        }
+                        /* Course price in the right sidebar (after date/time,
+                           before venue). Sidebar sits outside .itc-course-detail,
+                           so scope via :has on the body. */
+                        body:has(.itc-course-detail) .itc-price-block .itc-price-value {
+                            font-size: 1.6rem;
+                            font-weight: 700;
+                            line-height: 1.2;
+                            color: #23214f;
+                        }
+                        /* Keep the whole right sidebar (Book Now + Time + Venue
+                           + Price) pinned while the long left column scrolls.
+                           Desktop only; on mobile the sidebar stacks normally.
+                           align-self prevents the column from stretching, which
+                           would otherwise stop position: sticky from working. */
+                        @media (min-width: 992px) {
+                            body:has(.itc-course-detail) #o_wevent_event_main_sidebar {
+                                position: -webkit-sticky;
+                                position: sticky;
+                                top: 90px;
+                                align-self: flex-start;
+                            }
+                        }
+
+                        .itc-course-detail {
+                            --itc-accent: #5aa05a;
+                            --itc-accent-strong: #2f7d44;
+                            --itc-ink: #3f3f3f;
+                            --itc-muted: #8c8c8c;
+                            --itc-border: #d9d9d9;
+                            font-family: 'Avenir Regular', 'Avenir', 'Nunito Sans', -apple-system,
+                                BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+                            font-weight: 700;
+                            color: var(--itc-ink);
+                        }
+
+                        /* ── Back to catalog link (top-left, above banner) ──
+                           Outlined pill using the brand accent (Aha blue /
+                           IAP2 green); fills on hover. Sits at the very top of
+                           the course detail column, left-aligned. */
+                        .itc-detail-back-row {
+                            margin: 0 0 14px;
+                        }
+                        .itc-detail-back {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            padding: 8px 16px;
+                            border-radius: 999px;
+                            border: 1px solid var(--itc-accent-strong);
+                            background: transparent;
+                            color: var(--itc-accent-strong);
+                            font-size: 0.8rem;
+                            font-weight: 700;
+                            letter-spacing: 0.03em;
+                            text-transform: uppercase;
+                            text-decoration: none;
+                            line-height: 1;
+                            transition: background 0.15s ease, color 0.15s ease;
+                        }
+                        .itc-detail-back:hover {
+                            background: var(--itc-accent-strong);
+                            color: #ffffff;
+                            text-decoration: none;
+                        }
+                        .itc-detail-back .itc-detail-back-icon {
+                            font-size: 1rem;
+                            line-height: 1;
+                        }
+
+                        /* IAP2 / Engagement Institute use the green theme defined
+                           above (the .itc-course-detail defaults). */
+
+                        /* ── Aha Consulting: blue / navy brand theme ──
+                           Mirrors the Aha catalog cards (navy field + blue action
+                           buttons). Only the accent colours and the banner
+                           background change; the layout is identical to IAP2. */
+                        .itc-detail-aha {
+                            --itc-accent: #23214f;        /* Aha navy  — section titles, icons */
+                            --itc-accent-strong: #23214f; /* Aha blue  — buttons, ghost border */
+                        }
+                        .itc-detail-aha .itc-detail-banner {
+                            background: #23214f;
+                        }
+
+                        /* Banner */
+                        .itc-detail-banner {
+                            position: relative;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            background: #1d6a3a;
+                            line-height: 0;
+                        }
+                        .itc-detail-banner-img {
+                            width: 100%;
+                            height: auto;
+                            /* max-height: 340px; */
+                            object-fit: cover;
+                            object-position: center;
+                            display: block;
+                        }
+                        .itc-detail-banner-overlay {
+                            position: absolute;
+                            left: 26px;
+                            right: 150px;
+                            bottom: 22px;
+                            line-height: 1.1;
+                        }
+                        .itc-detail-title {
+                            color: #ffffff;
+                            font-size: clamp(1.6rem, 4vw, 2.3rem);
+                            font-weight: 800;
+                            margin: 0;
+                            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+                        }
+                        .itc-detail-badge {
+                            position: absolute;
+                            right: 18px;
+                            bottom: 16px;
+                            width: 110px;
+                            height: 110px;
+                            background: transparent;
+                            padding: 0;
+                            object-fit: contain;
+                        }
+                        .itc-detail-badge--circle {
+                            background: transparent;
+                            border-radius: 50%;
+                            padding: 0;
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                            object-fit: cover;
+                        }
+
+                        /* Subtitle */
+                        .itc-detail-subtitle {
+                            font-size: 0.92rem;
+                            color: var(--itc-ink);
+                            margin: 16px 2px 26px;
+                        }
+
+                        /* Info boxes */
+                        .itc-detail-boxes {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+                            gap: 12px;
+                            margin-bottom: 8px;
+                        }
+                        .itc-detail-box {
+                            border: 1px solid var(--itc-border);
+                            border-radius: 6px;
+                            padding: 14px 14px 16px;
+                            background-color: #f5f5f5; /* Aha: very light gray */
+                            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
+                        }
+                        /* IAP2 / Engagement Institute: pale green tint, same shadow */
+                        .itc-detail-iap2 .itc-detail-box {
+                            background-color: #edf6ef;
+                            border-color: #cfe6d6;
+                            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
+                        }
+                        .itc-detail-box-label {
+                            font-size: 1.25rem;
+                            font-weight: 800;
+                            letter-spacing: 0.02em;
+                            color: var(--itc-ink);
+                            margin-bottom: 12px;
+                        }
+                        .itc-detail-box-value {
+                            font-size: 1 rem;
+                            line-height: 1.7;
+                            color: var(--itc-ink);
+                            white-space: pre-line;
+                        }
+
+                        /* Section titles + about */
+                        .itc-detail-section-title {
+                            color: var(--itc-accent);
+                            font-size: clamp(1.7rem, 3.5vw, 2.2rem);
+                            font-weight: 500;
+                            margin: 30px 0 12px;
+                        }
+
+                        /* ── Your Facilitator block ── */
+                        .itc-facilitator {
+                            display: flex;
+                            align-items: stretch;
+                            margin-top: 30px;
+                            border: 1px solid var(--itc-border);
+                            border-radius: 8px;
+                            overflow: hidden;
+                            background: #ffffff;
+                            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+                        }
+                        .itc-facilitator-body {
+                            flex: 1 1 auto;
+                            padding: 24px 28px;
+                        }
+                        .itc-facilitator-heading {
+                            margin: 0 0 12px;
+                            color: var(--itc-accent);
+                            font-size: 1.2rem;
+                            font-weight: 700;
+                            letter-spacing: 0.06em;
+                            text-transform: uppercase;
+                        }
+                        .itc-facilitator-name {
+                            margin: 0 0 12px;
+                            font-family: 'Lora', Georgia, 'Times New Roman', serif;
+                            font-style: italic;
+                            font-weight: 400;
+                            font-size: 1.1rem;
+                            color: var(--itc-ink);
+                        }
+                        .itc-facilitator-bio {
+                            font-weight: 400;
+                            font-size: 0.92rem;
+                            line-height: 1.55;
+                            color: var(--itc-ink);
+                        }
+                        .itc-facilitator-bio p { margin: 0 0 8px; }
+                        .itc-facilitator-photo {
+                            flex: 0 0 36%;
+                            max-width: 340px;
+                        }
+                        .itc-facilitator-photo img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            display: block;
+                        }
+                        /* Aha: navy card with white text (matches the banner) */
+                        .itc-detail-aha .itc-facilitator {
+                            background: #23214f;
+                            border-color: #23214f;
+                        }
+                        .itc-detail-aha .itc-facilitator-heading,
+                        .itc-detail-aha .itc-facilitator-name,
+                        .itc-detail-aha .itc-facilitator-bio {
+                            color: #ffffff;
+                        }
+
+                        /* ── Training Terms and Conditions line ── */
+                        .itc-detail-terms {
+                            margin-top: 28px;
+                            padding-top: 16px;
+                            border-top: 1px solid var(--itc-border);
+                            text-align: center;
+                            font-weight: 700;
+                            font-size: 1.25 rem;
+                            color: var(--itc-muted);
+                        }
+                        .itc-detail-terms a {
+                            color: var(--itc-accent-strong);
+                            text-decoration: underline;
+                        }
+
+                        /* Stack the facilitator block on small screens */
+                        @media (max-width: 575.98px) {
+                            .itc-facilitator { flex-direction: column; }
+                            .itc-facilitator-photo {
+                                flex-basis: auto;
+                                max-width: none;
+                                height: 220px;
+                            }
+                        }
+                        .itc-detail-about {
+                            font-size: 0.95rem;
+                            line-height: 1.75;
+                            color: #4a4a4a;
+                        }
+                        .itc-detail-about p { margin-bottom: 1rem; }
+
+                        /* Buttons */
+                        .itc-detail-actions {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 12px;
+                            margin: 22px 0 4px;
+                        }
+                        .itc-detail-btn {
+                            display: inline-block;
+                            padding: 10px 22px;
+                            border-radius: 4px;
+                            font-size: 0.8rem;
+                            font-weight: 700;
+                            letter-spacing: 0.03em;
+                            text-transform: uppercase;
+                            text-decoration: none;
+                            transition: opacity 0.2s ease;
+                        }
+                        .itc-detail-btn:hover { opacity: 0.88; text-decoration: none; }
+                        .itc-detail-btn-primary { background: var(--itc-accent-strong); color: #ffffff; }
+                        .itc-detail-btn-ghost {
+                            background: transparent;
+                            color: var(--itc-accent-strong);
+                            border: 1px solid var(--itc-accent-strong);
+                        }
+
+                        /* Divider */
+                        .itc-detail-divider {
+                            border: 0;
+                            border-top: 1px solid var(--itc-border);
+                            margin: 30px 0;
+                        }
+
+                        /* Participants */
+                        .itc-detail-participants {
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 14px;
+                            font-size: 0.95rem;
+                            line-height: 1.7;
+                            color: #4a4a4a;
+                        }
+                        /* Learning Outcomes panel ONLY: tinted, padded, shadowed.
+                           The Participants block stays plain (no background). */
+                        .itc-detail-outcomes {
+                            padding: 20px 22px;
+                            border-radius: 8px;
+                            background: #f5f5f5; /* Aha: very light gray */
+                            border: 1px solid var(--itc-border);
+                            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+                        }
+                        /* IAP2 / Engagement Institute: pale green tint */
+                        .itc-detail-iap2 .itc-detail-outcomes {
+                            background: #edf6ef;
+                            border-color: #cfe6d6;
+                            box-shadow: 0 4px 14px rgba(29, 106, 58, 0.10);
+                        }
+                        .itc-detail-participants-icon {
+                            color: var(--itc-accent);
+                            font-size: 1.4rem;
+                            margin-top: 2px;
+                            flex: 0 0 auto;
+                        }
+                        /* Open-book "Learning Outcomes" icon (inline SVG). Inherits
+                           the brand accent colour via currentColor. */
+                        .itc-lo-icon {
+                            width: 2.4rem;
+                            height: 2.4rem;
+                            flex: 0 0 auto;
+                            margin-top: 2px;
+                            color: var(--itc-accent);
+                        }
+                        .itc-lo-icon svg { width: 100%; height: 100%; display: block; }
+
+                        /* Unscheduled-course "Enquire" block (right sidebar) */
+                        .itc-enquire-block { text-align: center; }
+                        .itc-enquire-block .itc-enquire-lead {
+                            font-weight: 700;
+                            margin-bottom: 1rem;
+                        }
+                        .itc-enquire-block .itc-enquire-text { margin-bottom: 1.25rem; }
+                        .itc-enquire-block .itc-enquire-btn {
+                            font-weight: 700;
+                            text-transform: none;
+                        }
+
+                        /* Scheduled + not-logged-in "Sign in" block (right sidebar) */
+                        .itc-signin-block { text-align: center; }
+                        .itc-signin-block .itc-signin-lead {
+                            font-weight: 700;
+                            margin-bottom: 1rem;
+                        }
+                        .itc-signin-block .itc-signin-text {
+                            font-weight: 700;
+                            margin-bottom: 1.25rem;
+                        }
+                        .itc-signin-block .itc-signin-btn {
+                            font-weight: 700;
+                            text-transform: none;
+                        }
+                        .itc-signin-block .itc-signin-date {
+                            margin-top: 1rem;
+                            font-size: 1.3rem;
+                            font-weight: 800;
+                        }
+                        .itc-signin-block .itc-signin-date-iap2 { color: #1d6a3a; }
+                        .itc-signin-block .itc-signin-date-aha { color: #23214f; }
+
+                        @media (max-width: 767px) {
+                            .itc-detail-banner-img { max-height: 220px; }
+                            .itc-detail-banner-overlay { left: 18px; right: 90px; bottom: 16px; }
+                        }
+                    </style>
+
+                    <!-- Back to catalog (top-left). Returns the visitor to the
+                         public training catalog listing — or, if a
+                         `back_url` query param was carried through from
+                         wherever the course link was clicked (e.g. a
+                         widget embedded on another page), back to that
+                         page instead. Validated to only accept an
+                         internal relative path (starts with a single
+                         "/", never "//") so this can't be turned into an
+                         open redirect.
+
+                         The #itc-training-courses fragment is appended
+                         here (not by whoever set back_url) because URL
+                         fragments never reach the server — appending it
+                         upstream would just be silently dropped. It's
+                         the anchor id the page_section module's widget
+                         wrapper carries, so the browser scrolls straight
+                         to the widget instead of landing at the page top.
+                         Harmless no-op if the target page has no such
+                         element. -->
+                    <t t-set="itc_back_url_raw" t-value="request.params.get('back_url') or ''" />
+                    <t t-set="itc_back_href"
+                        t-value="(itc_back_url_raw + '#itc-training-courses') if (itc_back_url_raw.startswith('/') and not itc_back_url_raw.startswith('//')) else '/training_catalogue'" />
+                    <div class="itc-detail-back-row">
+                        <a t-att-href="itc_back_href" class="itc-detail-back">
+                            <i class="fa fa-angle-left itc-detail-back-icon"
+                                aria-hidden="true" />
+                            <span>Back to Portfolio</span>
+                        </a>
+                    </div>
+
+                    <!-- Banner: dedicated cover/header image when one is set,
+                         otherwise fall back to the thumbnail image so existing
+                         courses keep their banner. + title + accreditation badge -->
+                    <div class="itc-detail-banner">
+                        <t t-set="itc_banner_field"
+                            t-value="'cover_image' if event.cover_image else 'image_1920'" />
+                        <img class="itc-detail-banner-img"
+                            t-attf-src="/web/image/event.event/#{event.id}/#{itc_banner_field}"
+                            t-att-alt="event.name"
+                            onerror="this.style.display='none';" />
+                        <div class="itc-detail-banner-overlay">
+                            <h1 class="itc-detail-title" t-field="event.name" />
+                        </div>
+                        <img t-if="event.provider_type == 'iap2'"
+                            class="itc-detail-badge"
+                            src="/inom_training_catalog/static/src/img/EI_Logo.png"
+                            alt="Engagement Institute" />
+                        <img t-if="event.provider_type != 'iap2'"
+                            class="itc-detail-badge itc-detail-badge--circle"
+                            src="/inom_training_catalog/static/src/img/aha_academy_logo.jpeg"
+                            alt="Aha! Academy" />
+                    </div>
+
+                    <!-- Level / Pathway subtitle -->
+                    <p t-if="event.level_pathway or event.subtitle"
+                        class="itc-detail-subtitle">
+                        <t t-out="event.level_pathway or event.subtitle" />
+                    </p>
+
+                    <!-- Info boxes -->
+                    <div class="itc-detail-boxes">
+                        <div t-if="event.course_duration" class="itc-detail-box">
+                            <div class="itc-detail-box-label">DURATION :</div>
+                            <div class="itc-detail-box-value" t-out="event.course_duration" />
+                        </div>
+                        <div t-if="event.course_delivery" class="itc-detail-box">
+                            <div class="itc-detail-box-label">DELIVERY :</div>
+                            <div class="itc-detail-box-value" t-out="event.course_delivery" />
+                        </div>
+                        <div t-if="event.course_format" class="itc-detail-box">
+                            <div class="itc-detail-box-label">FORMAT :</div>
+                            <div class="itc-detail-box-value" t-out="event.course_format" />
+                        </div>
+                        <div t-if="event.course_prerequisite" class="itc-detail-box">
+                            <div class="itc-detail-box-label">PREREQUISITE</div>
+                            <div class="itc-detail-box-value" t-out="event.course_prerequisite" />
+                        </div>
+                    </div>
+
+                    <!-- About this Course -->
+                    <h2 class="itc-detail-section-title">About this Course</h2>
+                    <div class="itc-detail-about">
+                        <t t-if="event.intro_text">
+                            <div t-field="event.intro_text" itemprop="description" />
+                        </t>
+                        <t t-else="">
+                            <div t-field="event.description" itemprop="description" />
+                        </t>
+                    </div>
+
+                    <!-- Actions: Book Now (scheduled only) / Request Info + Download Flyer.
+                         Book Now is shown ONLY for scheduled courses — including when a
+                         booking_url is set — so unscheduled courses never show it. -->
+                    <div class="itc-detail-actions">
+                        <a t-if="event.booking_url and itc_scheduled"
+                            t-att-href="event.booking_url"
+                            class="itc-detail-btn itc-detail-btn-primary">BOOK NOW</a>
+                        <a t-elif="itc_scheduled"
+                            t-attf-href="/event/#{event.id}/register"
+                            class="itc-detail-btn itc-detail-btn-primary">BOOK NOW</a>
+                        <a t-else=""
+                            href="/contactus"
+                            class="itc-detail-btn itc-detail-btn-primary">REQUEST INFO</a>
+
+                        <a t-if="event.website_pdf_url()"
+                            t-att-href="event.website_pdf_url()"
+                            class="itc-detail-btn itc-detail-btn-ghost">DOWNLOAD FLYER</a>
+                    </div>
+
+                    <!-- Participants -->
+                    <t t-if="event.participants_text">
+                        <hr class="itc-detail-divider" />
+                        <h2 class="itc-detail-section-title">Participants</h2>
+                        <div class="itc-detail-participants">
+                            <i class="fa fa-graduation-cap itc-detail-participants-icon"
+                                aria-hidden="true" />
+                            <div class="itc-detail-participants-text"
+                                t-field="event.participants_text" />
+                        </div>
+                    </t>
+                    <t t-if="event.learning_outcomes">
+                        <hr class="itc-detail-divider" />
+                        <h2 class="itc-detail-section-title">Learning Outcomes</h2>
+                        <div class="itc-detail-participants itc-detail-outcomes">
+                            <span class="itc-lo-icon" aria-hidden="true">
+                                <svg viewBox="0 0 64 64" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Idea rays -->
+                                    <g stroke="currentColor" stroke-width="2.5"
+                                        stroke-linecap="round">
+                                        <line x1="32" y1="3" x2="32" y2="9" />
+                                        <line x1="20" y1="7" x2="23.5" y2="12" />
+                                        <line x1="44" y1="7" x2="40.5" y2="12" />
+                                    </g>
+                                    <!-- Bulb -->
+                                    <circle cx="32" cy="20" r="8" stroke="currentColor"
+                                        stroke-width="2.5" />
+                                    <line x1="28" y1="27.5" x2="36" y2="27.5"
+                                        stroke="currentColor" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <line x1="29.5" y1="30.5" x2="34.5" y2="30.5"
+                                        stroke="currentColor" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <!-- Open book -->
+                                    <path
+                                        d="M8 38 C 8 36, 24 34, 32 40 C 40 34, 56 36, 56 38
+                                        L 56 56 C 56 54, 40 52, 32 58 C 24 52, 8 54, 8 56 Z"
+                                        stroke="currentColor" stroke-width="2.5"
+                                        stroke-linejoin="round" />
+                                    <line x1="32" y1="40" x2="32" y2="58"
+                                        stroke="currentColor" stroke-width="2.5" />
+                                    <!-- Text lines -->
+                                    <g stroke="currentColor" stroke-width="1.6"
+                                        stroke-linecap="round" opacity="0.85">
+                                        <line x1="13" y1="42" x2="27" y2="43.5" />
+                                        <line x1="13" y1="46" x2="27" y2="47.5" />
+                                        <line x1="13" y1="50" x2="27" y2="51.5" />
+                                        <line x1="37" y1="43.5" x2="51" y2="42" />
+                                        <line x1="37" y1="47.5" x2="51" y2="46" />
+                                        <line x1="37" y1="51.5" x2="51" y2="50" />
+                                    </g>
+                                </svg>
+                            </span>
+                            <div class="itc-detail-participants-text"
+                                t-field="event.learning_outcomes" />
+                        </div>
+                    </t>
+
+                    <!-- Your Facilitator (name, bio and photo from the Event form) -->
+                    <t
+                        t-if="event.facilitator_name or event.facilitator_bio or event.facilitator_image">
+                        <div class="itc-facilitator">
+                            <div class="itc-facilitator-body">
+                                <h3 class="itc-facilitator-heading">YOUR FACILITATOR</h3>
+                                <p t-if="event.facilitator_name"
+                                    class="itc-facilitator-name"
+                                    t-out="event.facilitator_name" />
+                                <div t-if="event.facilitator_bio"
+                                    class="itc-facilitator-bio"
+                                    t-field="event.facilitator_bio" />
+                            </div>
+                            <div t-if="event.facilitator_image"
+                                class="itc-facilitator-photo">
+                                <img
+                                    t-attf-src="/web/image/event.event/#{event.id}/facilitator_image"
+                                    t-att-alt="event.facilitator_name or 'Facilitator'" />
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Training Terms and Conditions (hard-coded link).
+                         Change the href below to your Terms page URL. -->
+                    <div class="itc-detail-terms">
+                        <span>View our Training Terms and Conditions </span>
+                        <a href="https://portal.ahaconsulting.net.au/terms">here</a>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <!-- Non-training events: original intro/description behaviour -->
+                <t t-if="event.intro_heading or event.intro_text">
+                    <div class="mt-4 itc_event_intro">
+                        <h2 t-if="event.intro_heading"
+                            t-field="event.intro_heading"
+                            placeholder="Event Page Heading" />
+                        <div t-if="event.intro_text"
+                            t-field="event.intro_text"
+                            itemprop="description" />
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="mt-4" t-field="event.description"
+                        itemprop="description" />
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <!--
+        ════════════════════════════════════════════════════════════════
+        DETAIL PAGE — RIGHT SIDEBAR for UNSCHEDULED courses
+        For courses (show_in_portfolio) that are unscheduled
+        (schedule_state != 'scheduled'):
+          • the registration CTA (Register/Book Now button) and the
+            Starts/Ends dates block are hidden — both on the desktop
+            sidebar and the mobile CTA;
+          • an "Enquire" block is shown in their place.
+        Scheduled courses and non-course events are unaffected.
+        ════════════════════════════════════════════════════════════════
+    -->
+    <template id="event_sidebar_unscheduled"
+        name="Course Detail - Sidebar (unscheduled / login-gated)"
+        inherit_id="website_event.event_description_full">
+
+        <!-- Blocks injected at the TOP of the sidebar, before the registration
+             CTA. Mutually exclusive:
+               • UNSCHEDULED course                       → "Enquire" block
+               • SCHEDULED course + visitor NOT logged in → "Sign in" block -->
+        <xpath
+            expr="//aside[@id='o_wevent_event_main_sidebar']/div[@t-if='opt_event_registration_block']"
+            position="before">
+            <!-- Unscheduled: enquire about in-house / register interest. -->
+            <div t-if="event.show_in_portfolio and event.schedule_state != 'scheduled'"
+                class="itc-enquire-block o_wevent_bordered_block pb-4 mb-4">
+                <p class="itc-enquire-lead">This course is not currently scheduled.</p>
+                <p class="itc-enquire-text">Enquire about in-house training or register
+                    your interest in an upcoming mixed-client class.</p>
+                <a href="/contactus"
+                    class="btn btn-primary w-100 itc-enquire-btn">Enquire Now</a>
+            </div>
+            <!-- Scheduled but not logged in: licensed content gated behind login. -->
+            <div
+                t-if="event.show_in_portfolio and event.schedule_state == 'scheduled' and request.env.user._is_public()"
+                class="itc-signin-block o_wevent_bordered_block pb-4 mb-4">
+                <p class="itc-signin-lead">As required by the Engagement Institute,
+                    licensed programs are only visible to logged-in users.</p>
+                <p class="itc-signin-text">Sign in to view dates and book.</p>
+                <a t-attf-href="/web/login?redirect=#{request.httprequest.full_path}"
+                    class="btn btn-primary w-100 itc-signin-btn">Log In / Sign In</a>
+                <!-- Date teaser shown BELOW the Log In / Sign In button.
+                       IAP2 -> Month only (e.g. June 2026)
+                       Aha! -> full Date (e.g. 15 June 2026) -->
+                <div t-if="event.date_begin"
+                    t-attf-class="itc-signin-date itc-signin-date-#{'iap2' if event.provider_type == 'iap2' else 'aha'}">
+                    <span t-if="event.provider_type == 'iap2'"
+                        t-field="event.date_begin"
+                        t-options='{"widget": "datetime", "format": "MMMM y"}' />
+                    <span t-else=""
+                        t-field="event.date_begin"
+                        t-options='{"widget": "datetime", "format": "d MMMM y"}' />
+                </div>
+            </div>
+        </xpath>
+
+        <!-- The registration CTA + dates show ONLY for a SCHEDULED course viewed
+             by a LOGGED-IN user. They are hidden when the course is unscheduled
+             OR the visitor is not logged in (replaced by the blocks above). -->
+        <xpath
+            expr="//aside[@id='o_wevent_event_main_sidebar']/div[@t-if='opt_event_registration_block']"
+            position="attributes">
+            <attribute name="t-if">opt_event_registration_block and not (event.show_in_portfolio and
+                (event.schedule_state != 'scheduled' or request.env.user._is_public()))</attribute>
+        </xpath>
+        <!-- Price block: inserted AFTER the date/time block and BEFORE the
+             Location block. Shown when a price is set and the visitor is
+             allowed to see restricted fields (Aha Academy: always; IAP2:
+             logged-in users only). Placed before the dates-block attribute
+             change below so the xpath still matches the original t-if. -->
+        <xpath
+            expr="//aside[@id='o_wevent_event_main_sidebar']/div[@t-if='opt_event_dates_block or opt_event_calendar_block']"
+            position="after">
+            <div t-if="event.course_price and event.website_can_see_restricted_fields()"
+                class="o_wevent_sidebar_block o_wevent_bordered_block pb-3 mb-4 itc-price-block">
+                <h6 class="o_wevent_sidebar_title">Price</h6>
+                <div class="itc-price-value">
+                    <span t-field="event.course_price"
+                        t-options="{'widget': 'monetary', 'display_currency': event.currency_id}" />
+                </div>
+            </div>
+        </xpath>
+        <xpath
+            expr="//aside[@id='o_wevent_event_main_sidebar']/div[@t-if='opt_event_dates_block or opt_event_calendar_block']"
+            position="attributes">
+            <attribute name="t-if">(opt_event_dates_block or opt_event_calendar_block) and not
+                (event.show_in_portfolio and (event.schedule_state != 'scheduled' or
+                request.env.user._is_public()))</attribute>
+        </xpath>
+        <xpath
+            expr="//div[@t-if='opt_event_registration_block'][contains(@class, 'o_wevent_event_main_cta_block')]"
+            position="attributes">
+            <attribute name="t-if">opt_event_registration_block and not (event.show_in_portfolio and
+                (event.schedule_state != 'scheduled' or request.env.user._is_public()))</attribute>
+        </xpath>
+
+        <!-- Hide Location &amp; Organizer for not-logged-in visitors on course
+             pages. All three of Odoo's sidebar variants are guarded so nothing
+             leaks: the addressed Location (t-if), the "Online event" fallback
+             Location (t-elif), and the Organizer block. The Share block and the
+             logged-in view are left untouched. -->
+        <xpath expr="//div[@t-if='opt_event_location_block and event.address_id']"
+            position="attributes">
+            <attribute name="t-if">opt_event_location_block and event.address_id and not
+                (event.show_in_portfolio and request.env.user._is_public())</attribute>
+        </xpath>
+        <xpath expr="//div[@t-elif='opt_event_location_block']" position="attributes">
+            <attribute name="t-elif">opt_event_location_block and not
+                (event.show_in_portfolio and request.env.user._is_public())</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='opt_event_organizer_block and event.organizer_id']"
+            position="attributes">
+            <attribute name="t-if">opt_event_organizer_block and event.organizer_id and not
+                (event.show_in_portfolio and request.env.user._is_public())</attribute>
+        </xpath>
+    </template>
+
+    <!--
+        DETAIL PAGE — rename the registration CTA from "Register" to
+        "Book Now". The CTA only renders for scheduled courses (it is
+        hidden for unscheduled ones above), so scheduled courses now show
+        a "Book Now" button on the right.
+    -->
+    <template id="registration_book_now_text"
+        name="Registration CTA - Book Now"
+        inherit_id="website_event.registration_template">
+        <xpath expr="//a[@t-att-href]" position="replace">
+            <a t-if="event_page and event.event_registrations_open" type="button"
+                t-attf-class="btn btn-primary {{cta_additional_classes}}"
+                t-att-href="'/event/%s/register' % (slug(event))">
+                Book Now
+            </a>
+        </xpath>
+        <xpath expr="//button[@data-bs-toggle='modal']" position="replace">
+            <button t-elif="event.event_registrations_open" type="button"
+                data-bs-toggle="modal"
+                t-attf-class="btn btn-primary {{cta_additional_classes}}"
+                t-attf-data-bs-target="#modal_{{'slot' if event.is_multi_slots else 'ticket'}}_registration">
+                Book Now
+            </button>
+        </xpath>
+    </template>
+</odoo>
