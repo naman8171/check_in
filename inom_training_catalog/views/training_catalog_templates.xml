@@ -50,8 +50,8 @@
                         letter-spacing: -0.005em;
                     }
                     .itc-card-aha .itc-card-title {
-                        color: #ffffff;
-                        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+                        color: #111827;
+                        text-shadow: none;
                     }
                     .itc-card-iap2 .itc-card-title {
                         color: #1d6a3a;
@@ -110,7 +110,7 @@
                     }
                     .itc-card-desc p { margin: 0; }
                     .itc-card-desc p + p { margin-top: 4px; }
-                    .itc-card-aha .itc-card-desc { color: #ffffff; }
+                    .itc-card-aha .itc-card-desc { color: #111827; }
                     .itc-card-iap2 .itc-card-desc { color: #374151; }
 
                     /* ── Normalize anything authors paste into Description ──
@@ -159,8 +159,8 @@
                         border-top: 2px dotted currentColor;
                         opacity: 0.55;
                     }
-                    .itc-card-aha .itc-card-divider { color: #ffffff; }
-                    .itc-card-aha .itc-card-divider span { opacity: 1; }
+                    .itc-card-aha .itc-card-divider { color: #111827; }
+                    .itc-card-aha .itc-card-divider span { opacity: 0.75; }
                     .itc-card-iap2 .itc-card-divider { color: #1d6a3a; opacity: 0.85; }
 
                     /* ─── Schedule line (date+time / login / contact-us) ─── */
@@ -194,7 +194,7 @@
 
                     .itc-card-aha .itc-card-datetime,
                     .itc-card-aha .itc-card-login,
-                    .itc-card-aha .itc-card-contact { color: #ffffff; }
+                    .itc-card-aha .itc-card-contact { color: #111827; }
                     .itc-card-iap2 .itc-card-datetime,
                     .itc-card-iap2 .itc-card-login,
                     .itc-card-iap2 .itc-card-contact { color: #111827; }
@@ -246,24 +246,24 @@
 
                     /* ─── Aha! buttons ─── */
                     .itc-card-aha .itc-btn-primary {
-                        background: #23214f; color: #ffffff; border-color: #2563eb;
+                        background: #2563eb; color: #ffffff; border-color: #2563eb;
                     }
                     .itc-card-aha .itc-btn-primary:hover {
-                        background: #23214f; border-color: #1d4ed8; color: #ffffff;
+                        background: #1d4ed8; border-color: #1d4ed8; color: #ffffff;
                     }
                     .itc-card-aha .itc-btn-light {
-                        background: #ffffff; color: #23214f; border-color: #ffffff;
+                        background: #ffffff; color: #2563eb; border-color: #2563eb;
                     }
                     .itc-card-aha .itc-btn-light:hover {
-                        background: #f1f5f9; color: #23214f;
+                        background: #eff6ff; color: #1d4ed8; border-color: #1d4ed8;
                     }
                     .itc-card-aha .itc-btn-ghost {
-                        background: transparent; color: #ffffff;
-                        border-color: rgba(255, 255, 255, 0.55);
+                        background: #ffffff; color: #2563eb;
+                        border-color: #2563eb;
                     }
                     .itc-card-aha .itc-btn-ghost:hover {
-                        background: rgba(255, 255, 255, 0.12); color: #ffffff;
-                        border-color: #ffffff;
+                        background: #eff6ff; color: #1d4ed8;
+                        border-color: #1d4ed8;
                     }
 
                     /* ─── IAP2 buttons ─── */
@@ -338,17 +338,19 @@
                         height: 92px;
                         width: auto;
                         display: block;
+                        border-radius: 999px;
                     }
 
                     /* ─── Brand colour-schemes ─── */
 
-                    /* ── Aha Academy: dark navy background, white text ── */
+                    /* ── Aha Academy: white background with black text ── */
                     .itc-card-aha {
-                        background: #23214f;
-                        color: #ffffff;
-                        box-shadow: 0 8px 24px rgba(21, 32, 71, 0.18);
+                        background: #ffffff;
+                        color: #111827;
+                        border: 1px solid #e5e7eb;
+                        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
                     }
-                    .itc-card-aha:hover { box-shadow: 0 14px 32px rgba(21, 32, 71, 0.28); }
+                    .itc-card-aha:hover { box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12); }
 
                     /* ── IAP2 / Engagement Institute: white card + green theme ──
                        Matches the unscheduled card palette intentionally.
